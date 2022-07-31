@@ -1,0 +1,7 @@
+{
+    "extends": ["plugin:vue/vue3-recommended"],
+    "rules": {
+        "no-unused-vars": "warn",
+        "no-undef": "warn"
+    }
+}
