@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import RedirectPage from "@/views/RedirectPage.vue";
 import MacrosPage from "@/views/MacrosPage.vue";
+import WelcomePage from "@/views/WelcomePage.vue";
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     name: "Macros",
     component: MacrosPage,
   },
+  {
+    path: "/welcome",
+    name: "Welcome",
+    component: WelcomePage,
+  }
 ];
 
 const router = createRouter({

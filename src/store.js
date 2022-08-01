@@ -1,34 +1,53 @@
-export function get(key, defaultValue) {
+import { BaseDirectory, createDir, writeFile, readTextFile } from "@tauri-apps/api/fs";
 
+export async function get(key, defaultValue) {
+    return new Promise(async (resolve, reject) => {
+        let data;
+        try {
+            data = JSON.parse(await readDataFile());
+        } catch(e) {} finally {
+            if (data) {
+                resolve(data[key] || defaultValue);
+            } else {
+                resolve(defaultValue);
+            }
+        }
+    });
 }
 
-export function set(key, value) {
+export async function set(key, value) {
     createDataFolder();
+    let data;
+    try {
+        data = JSON.parse(await readDataFile().catch(() => "{}"));
+    } catch(e) {} finally {
+        if(!data) data = {};
+        data[key] = value;
+        setFileData({...data});
+    }
 }
-
-import { BaseDirectory, createDir } from "@tauri-apps/api/fs";
 
 const createDataFolder = async () => {
-    console.log("ran");
-
     await createDir("codeMacros", {
         dir: BaseDirectory.Config,
         recursive: true,
-    });
+    })
 };
 
-const createDataFile = async () => {
-    try {
-        await writeFile(
-            {
-                contents: "[]",
-                path: `./data/data.json`,
-            },
-            {
-                dir: dir,
-            }
-        );
-    } catch (e) {
-        console.log(e);
-    }
+const setFileData = async (data) => {
+    return writeFile(
+        {
+            contents: JSON.stringify(data),
+            path: `codeMacros/config.json`,
+        },
+        {
+            dir: BaseDirectory.Config,
+        }
+    );
 };
+
+const readDataFile = () => {
+    return readTextFile("codeMacros/config.json", {
+        dir: BaseDirectory.Config,
+    })
+}
