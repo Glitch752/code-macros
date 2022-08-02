@@ -4,12 +4,19 @@
 
 <template>
   <TitlebarElement />
-  <router-view />
+  <div class="relative">
+    <router-view />
+  </div>
 </template>
 
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
+  }
+  .relative {
+    position: relative;
+    top: 24px;
+    height: 100%;
   }
   #app {
     --inset: 0;
@@ -17,7 +24,7 @@
     inset: var(--inset);
     background-color: #1c2433dd;
     color: white;
-    font-family: 'Open Sans';
+    font-family: 'Source Sans Pro';
     border: 3px solid #30467777;
   }
   #app.maximized {
@@ -26,5 +33,30 @@
   }
   body {
     overflow: hidden;
+  }
+  .button {
+    font-size: 1.5em;
+    font-weight: 500;
+    color: white;
+    text-decoration: none;
+    background-color: var(--defaultBG);
+    padding: 5px 15px;
+    margin: 10px;
+    cursor: pointer;
+    display: inline-block;
+    transform: translate(0, 0);
+    box-shadow: 3px 3px var(--defaultBoxBG);
+    border: none;
+    outline: none;
+  }
+  .button:hover {
+    background-color: var(--hoverBG);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px var(--hoverBoxBG);
+  }
+  .button:active {
+    background-color: var(--activeBG);
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px var(--activeBoxBG);
   }
 </style>

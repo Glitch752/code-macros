@@ -9,7 +9,7 @@
       <li>And more</li>
     </ul>
     <p>This is very much a work in progress!</p>
-    <router-link to="/macros" class="getStarted">Get started</router-link>
+    <router-link to="/macros" class="getStarted button">Get started</router-link>
   </div>
 </template>
 
@@ -24,26 +24,11 @@
       margin: 0;
   }
   .getStarted {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-    background-color: #2c4d94;
-    padding: 5px 15px;
-    margin: 10px;
-    cursor: pointer;
-    display: inline-block;
-    transform: translate(0, 0);
-    box-shadow: 3px 3px #233e77;
-  }
-  .getStarted:hover {
-    background-color: #2f54a3;
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px #2a498d;
-  }
-  .getStarted:active {
-    background-color: #23407e;
-    transform: translate(1px, 1px);
-    box-shadow: 2px 2px #1c315f;
+    --defaultBG: #2c4d94;
+    --defaultBoxBG: #233e77;
+    --hoverBG: #2f54a3;
+    --hoverBoxBG: #2a498d;
+    --activeBG: #23407e;
+    --activeBoxBG: #1c315f;
   }
 </style>
