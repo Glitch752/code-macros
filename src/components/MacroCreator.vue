@@ -1,22 +1,17 @@
 <script setup>
-  import { reactive, watch } from 'vue';
-  import * as store from '@/store';
+  import { ref, watch } from 'vue';
 
-  const props = defineProps(["selectedMacro", "macros", "macroIndex"]);
+  const props = defineProps(["selectedMacro", "setMacro"]);
 
-  const selectedMacro = reactive(props.selectedMacro || {});
+  const selectedMacro = ref(props.selectedMacro);
 
-  watch(selectedMacro, (newValue, oldValue) => {
-    console.log(selectedMacro, props.macros);
-    let newMacro = {...selectedMacro};
-    let newMacros = [...props.macros];
-    newMacros[props.macroIndex] = newMacro;
-    store.set('macros', newMacros);
-  });
+  watch(selectedMacro, (newValue) => {
+    props.setMacro(newValue);
+  }, { deep: true });
 </script>
 
 <template>
-  <div v-if="selectedMacro === {}">
+  <div v-if="selectedMacro === null">
     Select a macro to get started!
   </div>
   <div v-else>

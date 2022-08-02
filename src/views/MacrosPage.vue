@@ -27,8 +27,16 @@
   }
 
   function selectMacro(macro) {
+    let index = macros.value.indexOf(macro);
+    macro.index = index;
     selectedMacro.value = macro;
-    selectedMacroIndex.value = macros.value.indexOf(macro);
+    selectedMacroIndex.value = index;
+  }
+
+  function setMacro(macro) {
+    const currentMacros = [...macros.value];
+    currentMacros[macro.index] = {...macro, index: undefined};
+    store.set('macros', currentMacros);
   }
 </script>
 
@@ -56,7 +64,7 @@
     </div>
   </div>
   <div class="rightPane">
-    <MacroCreator v-if="macrosLoaded" :selectedMacro="selectedMacro" :macros="macros" :macroIndex="selectedMacroIndex"/>
+    <MacroCreator v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :key="selectedMacroIndex"/>
   </div>
 </template>
 
