@@ -49,12 +49,11 @@
     </div>
     <div v-else-if="macrosLoaded">
       <div v-for="macro in macros" class="macro" :class="{ activeMacro: macro === selectedMacro }" :key="macro" @click="selectMacro(macro)">
-        <div class="macroName">
-          {{ macro.name }}
-        </div>
-        <div class="macroDescription">
-          {{ macro.description }}
-        </div>
+        <div class="macroName">{{ macro.name }}</div>
+        <div class="macroDescription">{{ macro.description }}</div>
+      </div>
+      <div class="addMacroButton macro" @click="addMacro">
+        <span>+++++++++</span> Add macro
       </div>
     </div>
     <div class="loading" v-else>
@@ -88,6 +87,10 @@
   .activeMacro:hover {
     border: 3px solid #40495f;
   }
+  .macroDescription {
+    font-size: 12px;
+    color: #8e959c;
+  }
   h1 {
     text-align: center;
     margin: 0;
@@ -119,5 +122,21 @@
     --hoverBoxBG: #2a8a8d;
     --activeBG: #23787e;
     --activeBoxBG: #1c5f5f;
+  }
+  .addMacroButton {
+    height: 50px;
+    font-size: 30px;
+    font-weight: 500;
+    color: #bbb;
+  }
+  .addMacroButton:hover {
+    color: #fff;
+  }
+  .addMacroButton span {
+    font-size: 60px;
+    color: #a7aebd77;
+    position: absolute;
+    z-index: -1;
+    font-weight: bold;
   }
 </style>
