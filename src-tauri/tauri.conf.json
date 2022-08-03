@@ -59,10 +59,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
         "resizable": true,
         "title": "Code Macros",
-        "width": 800,
+        "width": 1200,
+        "height": 800,
         "transparent": true,
         "decorations": false
       }
