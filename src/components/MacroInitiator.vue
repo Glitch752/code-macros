@@ -7,7 +7,7 @@
   const { initiator, deleteInitiator } = toRefs(props);
 
   const initiatorTypes = [
-    {name: "Keypress", description: "Do something when a certain key combination is used.", value: "keypress", defaultData: { keys: ["a"], time: { min: 20, max: 80 } }},
+    {name: "Keypress", description: "Do something when a certain key combination is used.", value: "keypress", defaultData: { keys: ["a"], activateTime: "press", time: { min: 0, max: 1 } }},
     {name: "Application Launched", description: "Do something when a certain application is launched.", value: "appLaunched", defaultData: { appPath: "/" }},
   ];
 
@@ -33,19 +33,41 @@
                 </div>
             </div>
         </span>
-        <div v-if="initiator.type === 'keypress'" class="initiatorData">
+        <template v-if="initiator.type === 'keypress'">
             <span class="initiatorType">
                 <span>{{ initiator.data.keys.join(" + ") }}</span>
                 <div class="initiatorSelect narrow">
                     <KeyCombination :initiator="initiator"/>
                 </div>
             </span>
-            <!-- <SliderRange :min="0" :max="10" :step="0.1" :defaultValue1="initiator.data.time.min" :defaultValue2="initiator.data.time.max" /> -->
-        </div>
+            <span class="initiatorType">
+              <span>{{ initiator.data.activateTime === 'press' ? 'On press' : 'On release' }}</span>
+              <div class="initiatorSelect right">
+                  <div 
+                    v-for="activateTime in [
+                      {name: 'On press', value: 'press', description: 'When the key combination is pressed.'},
+                      {name: 'On release', value: 'release', description: 'When the key combination is released. Allows you to set a timeframe that triggers the action.'}
+                    ]" 
+                    class="initiatorSelectOption" 
+                    :class="{selected: initiator.type === activateTime.value }"
+                    :key="activateTime" 
+                    @click="initiator.data.activateTime = activateTime.value">
+                      <span>{{ activateTime.name }}</span>
+                      <p>{{ activateTime.description }}</p>
+                  </div>
+              </div>
+          </span>
+          <div v-if="initiator.data.activateTime === 'release'" class="initiatorType slider noArrow">
+            <SliderRange :min="0" :max="10" :step="0.1" :defaultValue1="initiator.data.time.min" :defaultValue2="initiator.data.time.max" @change="(e) => {
+              initiator.data.time.min = e.value1;
+              initiator.data.time.max = e.value2;
+            }"/>
+          </div>
+        </template>
         <svg 
-        class="deleteInitiator" 
-        @click="deleteInitiator(initiator)"
-        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+          class="deleteInitiator" 
+          @click="deleteInitiator(initiator)"
+          xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
             <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
         </svg>
     </div>
@@ -63,8 +85,14 @@
     cursor: pointer;
     fill: #b62d2d;
   }
-  .initiatorData {
+  .slider {
+    position: relative;
     display: inline-block;
+    height: 30px;
+    --opacity: 0;
+  }
+  .slider:hover {
+    --opacity: 1;
   }
   .initiatorType {
     border: 3px solid #141a2766;
@@ -74,7 +102,7 @@
     width: 250px;
     display: inline-block;
   }
-  .initiatorType::after {
+  .initiatorType:not(.noArrow)::after {
     position: absolute;
     content: "";
     /* Down arrow */
@@ -95,6 +123,11 @@
     width: 620px;
     display: none;
     flex-wrap: wrap;
+    z-index: 200;
+  }
+  .initiatorSelect.right {
+    right: -3px;
+    left: auto;
   }
   .initiatorSelect.narrow {
     width: 300px;

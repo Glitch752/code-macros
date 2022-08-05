@@ -1,68 +1,59 @@
 <script setup>
   import { toRefs, ref } from "vue";
 
-  const props = defineProps(["min", "max", "step", "value1", "value2"]);
+  const props = defineProps(["min", "max", "step", "defaultValue1", "defaultValue2"]);
   const emit = defineEmits(["change"]);
 
   const { min, max, step, defaultValue1, defaultValue2 } = toRefs(props);
 
-  let value1 = ref(defaultValue1);
-  let value2 = ref(defaultValue2);
+  let value1 = ref(defaultValue1.value);
+  let value2 = ref(defaultValue2.value);
 
   function slider1Input(e) {
-    let elem = e.target;
-    elem.value = Math.min(elem.value, elem.parentNode.childNodes[2].value - 1);
-    var value = (100 / (parseInt(elem.max) - parseInt(elem.min))) * parseInt(elem.value) - (100 / (parseInt(elem.max) - parseInt(elem.min))) * parseInt(elem.min);
-    var children = elem.parentNode.childNodes[0].childNodes;
-    children[0].style.width = value + '%';
-    children[2].style.left = value + '%';
-    children[3].style.left = value + '%';
-    children[5].style.left = value + '%';
-    value1.value = elem.value;
+    value1.value = Math.round(Math.min(value1.value, value2.value - step.value) * 10) / 10;
+    emit("change", { value1: value1.value, value2: value2.value });
   }
   function slider2Input(e) {
-    let elem = e.target;
-    elem.value = Math.max(elem.value, elem.parentNode.childNodes[1].value - (-1));
-    var value = (100 / (parseInt(elem.max) - parseInt(elem.min))) * parseInt(elem.value) - (100 / (parseInt(elem.max) - parseInt(elem.min))) * parseInt(elem.min);
-    var children = elem.parentNode.childNodes[0].childNodes;
-    children[1].style.width =  (100 - value) + '%';
-    children[2].style.right = (100 - value) + '%';
-    children[4].style.left = value + '%';
-    children[6].style.left = value + '%';
-    value2.value = elem.value;
+    value2.value = Math.round(Math.max(value2.value, value1.value - (-step.value)) * 10) / 10;
+    emit("change", { value1: value1.value, value2: value2.value });
+  }
+
+  function toPercent(value, min, max) {
+    return (100 / (parseFloat(max) - parseFloat(min))) * parseFloat(value) - (100 / (parseFloat(max) - parseFloat(min))) * parseFloat(min);
   }
 </script>
 
 <template>
   <div class="container">
-    <div class="slider" id="slider-distance">
+    <div class="slider">
       <div>
-        <div class="inverse-left" style="width:70%;"></div>
-        <div class="inverse-right" style="width:70%;"></div>
-        <div class="range" style="left:30%;right:40%;"></div>
-        <span class="thumb" style="left:30%;"></span>
-        <span class="thumb" style="left:60%;"></span>
-        <div class="sign" style="left:30%;">
-          <span id="value">{{value1 || "30"}}</span>
+        <div class="inverse-left" :style="`width: ${toPercent(value1, min, max)}%`"></div>
+        <div class="inverse-right" :style="`width: ${100 - toPercent(value1, min, max)}%`"></div>
+        <div class="range" :style="`left: ${toPercent(value1, min, max)}%; right: ${100 - toPercent(value2, min, max)}%`"></div>
+        <span class="thumb" :style="`left: ${toPercent(value1, min, max)}%`"></span>
+        <span class="thumb" :style="`left: ${toPercent(value2, min, max)}%`"></span>
+        <div class="sign" :style="`left: ${toPercent(value1, min, max)}%`">
+          <span id="value">{{value1}}</span>
         </div>
-        <div class="sign" style="left:60%;">
-          <span id="value">{{value2 || "60"}}</span>
+        <div class="sign" :style="`left: ${toPercent(value2, min, max)}%`">
+          <span id="value">{{value2}}</span>
+        </div>
       </div>
-    </div>
-    <input class="input" type="range" value="30" :max="max" :min="min" :step="step" @input="slider1Input" />
-    <input class="input" type="range" value="60" :max="max" :min="min" :step="step" @input="slider2Input" />
+      <input class="input" type="range" v-model="value1" :max="max" :min="min" :step="step" @input="slider1Input" />
+      <input class="input" type="range" v-model="value2" :max="max" :min="min" :step="step" @input="slider2Input" />
     </div>
   </div>
 </template>
 
 <style scoped>
   .container {
-    --accent: #47a54f;
+    --accent: #477ba5;
     --track: #2e3544cc;
-    --thumb: #2d5730;
+    --thumb: #2d4657;
     position: absolute;
-    top: -20px;
-    display: inline-block;
+    top: -40px;
+    margin-left: -28px;
+    height: 0px !important;
   }
   .slider {
     position: relative;
@@ -71,7 +62,7 @@
     text-align: left;
     margin: 45px 0 10px 0;
     display: inline-block;
-    width: 250px;
+    width: 275px;
   }
 
   .slider > div {
@@ -158,6 +149,8 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    opacity: var(--opacity, 1);
+    pointer-events: none;
   }
 
   .slider > div > .sign > span {

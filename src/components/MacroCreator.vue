@@ -19,7 +19,7 @@
   }
 
   function addInitiator() {
-    let initiators = getData(selectedMacro).initiators;
+    let initiators = getData(selectedMacro.value).initiators;
     initiators.push({
       type: "nothing",
       data: {},
@@ -30,7 +30,7 @@
   }
 
   function addFunction() {
-    let functions = getData(selectedMacro).functions;
+    let functions = getData(selectedMacro.value).functions;
     functions.push({
       name: "Function",
       parameters: [],
@@ -41,14 +41,14 @@
   }
 
   function deleteInitiator(initiator) {
-    let initiators = getData(selectedMacro).initiators;
+    let initiators = getData(selectedMacro.value).initiators;
     initiators.splice(initiators.indexOf(initiator), 1);
     if(!selectedMacro.value.macro) selectedMacro.value.macro = {};
     selectedMacro.value.macro.initiators = initiators;
   }
 
   function deleteFunction(function_) {
-    let functions = getData(selectedMacro).functions;
+    let functions = getData(selectedMacro.value).functions;
     functions.splice(functions.indexOf(function_), 1);
     if(!selectedMacro.value.macro) selectedMacro.value.macro = {};
     selectedMacro.value.macro.functions = functions;
