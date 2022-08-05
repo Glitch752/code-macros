@@ -1,26 +1,47 @@
 <script setup>
   import { toRefs } from 'vue';
-  const props = defineProps(["initiator", "initiatorTypes", "deleteInitiator"]);
+  import KeyCombination from './KeyCombination.vue';
+  import SliderRange from './SliderRange.vue';
+  const props = defineProps(["initiator", "deleteInitiator"]);
 
-  const { initiator, initiatorTypes, deleteInitiator } = toRefs(props);
+  const { initiator, deleteInitiator } = toRefs(props);
+
+  const initiatorTypes = [
+    {name: "Keypress", description: "Do something when a certain key combination is used.", value: "keypress", defaultData: { keys: ["a"], time: { min: 20, max: 80 } }},
+    {name: "Application Launched", description: "Do something when a certain application is launched.", value: "appLaunched", defaultData: { appPath: "/" }},
+  ];
+
+  function setInitiator(initiatorType) {
+    initiator.value.type = initiatorType.value;
+    initiator.value.data = initiatorType.defaultData;
+  }
 </script>
 
 <template>
     <div class="initiator">
         <span class="initiatorType">
-            <span>{{ initiatorTypes.find(initiatorType => initiatorType.value === initiator.type).name }}</span>
+            <span>{{ initiatorTypes.find(initiatorType => initiatorType.value === initiator.type)?.name || "nothing" }}</span>
             <div class="initiatorSelect">
                 <div 
                 v-for="initiatorType in initiatorTypes" 
                 class="initiatorSelectOption" 
                 :class="{selected: initiator.type === initiatorType.value }"
                 :key="initiatorType" 
-                @click="initiator.type = initiatorType.value">
+                @click="setInitiator(initiatorType)">
                     <span>{{ initiatorType.name }}</span>
                     <p>{{ initiatorType.description }}</p>
                 </div>
             </div>
         </span>
+        <div v-if="initiator.type === 'keypress'" class="initiatorData">
+            <span class="initiatorType">
+                <span>{{ initiator.data.keys.join(" + ") }}</span>
+                <div class="initiatorSelect narrow">
+                    <KeyCombination :initiator="initiator"/>
+                </div>
+            </span>
+            <!-- <SliderRange :min="0" :max="10" :step="0.1" :defaultValue1="initiator.data.time.min" :defaultValue2="initiator.data.time.max" /> -->
+        </div>
         <svg 
         class="deleteInitiator" 
         @click="deleteInitiator(initiator)"
@@ -42,6 +63,30 @@
     cursor: pointer;
     fill: #b62d2d;
   }
+  .initiatorData {
+    display: inline-block;
+  }
+  .initiatorType {
+    border: 3px solid #141a2766;
+    margin: 5px;
+    padding: 0 25px 0 10px;
+    position: relative;
+    width: 250px;
+    display: inline-block;
+  }
+  .initiatorType::after {
+    position: absolute;
+    content: "";
+    /* Down arrow */
+    width: 0;
+    height: 0;
+    --size: 6px;
+    border-left: var(--size) solid transparent;
+    border-right: var(--size) solid transparent;
+    border-top: var(--size) solid #fff;
+    top: calc(50% - var(--size) / 2);
+    right: 5px;
+  }
   .initiatorSelect {
     position: absolute;
     background-color: #222a3a99;
@@ -50,6 +95,9 @@
     width: 620px;
     display: none;
     flex-wrap: wrap;
+  }
+  .initiatorSelect.narrow {
+    width: 300px;
   }
   .initiatorSelectOption {
     margin: 5px;
@@ -84,28 +132,7 @@
     border: 3px solid #141a27;
     position: relative;
   }
-  .initiator span {
+  .initiatorType > span, .initiatorSelectOption > span {
     font-size: 20px;
-  }
-  .initiatorType {
-    border: 3px solid #141a2766;
-    margin: 5px;
-    padding: 0 25px 0 10px;
-    position: relative;
-    width: 250px;
-    display: inline-block;
-  }
-  .initiatorType::after {
-    position: absolute;
-    content: "";
-    /* Down arrow */
-    width: 0;
-    height: 0;
-    --size: 6px;
-    border-left: var(--size) solid transparent;
-    border-right: var(--size) solid transparent;
-    border-top: var(--size) solid #fff;
-    top: calc(50% - var(--size) / 2);
-    right: 5px;
   }
 </style>

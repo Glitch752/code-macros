@@ -53,11 +53,6 @@
     if(!selectedMacro.value.macro) selectedMacro.value.macro = {};
     selectedMacro.value.macro.functions = functions;
   }
-
-  const initiatorTypes = [
-    {name: "Keypress", description: "Do something when a certain key combination is used.", value: "keypress"},
-    {name: "Application Launched", description: "Do something when a certain application is launched.", value: "appLaunched"}
-  ];
 </script>
 
 <template>
@@ -69,7 +64,7 @@
     <input class="macroDescription" type="text" v-model="selectedMacro.description" placeholder="Description"/>
     <h2>Initiators</h2>
     <div v-for="initiator in getData(selectedMacro).initiators" :key="initiator">
-      <MacroInitiator :initiator="initiator" :initiatorTypes="initiatorTypes" :deleteInitiator="deleteInitiator"/>
+      <MacroInitiator :initiator="initiator" :deleteInitiator="deleteInitiator"/>
     </div>
     <button class="addInitiator" @click="addInitiator">Add initiator</button>
     <h2>Functions</h2>
