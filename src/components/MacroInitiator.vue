@@ -2,6 +2,11 @@
   import { toRefs } from 'vue';
   import KeyCombination from './KeyCombination.vue';
   import SliderRange from './SliderRange.vue';
+
+  import FileSelector from './FileSelector.vue';
+
+  import { readTextFile } from '@tauri-apps/api/fs';
+
   const props = defineProps(["initiator", "deleteInitiator"]);
 
   const { initiator, deleteInitiator } = toRefs(props);
@@ -9,6 +14,7 @@
   const initiatorTypes = [
     {name: "Keypress", description: "Do something when a certain key combination is used.", value: "keypress", defaultData: { keys: ["a"], activateTime: "press", time: { min: 0, max: 1 } }},
     {name: "Application Launched", description: "Do something when a certain application is launched.", value: "appLaunched", defaultData: { appPath: "/" }},
+    {name: "Time", description: "Do something when a certain cron expression is met.", value: "time", defaultData: { cron: "* * * * *" }},
   ];
 
   function setInitiator(initiatorType) {
@@ -64,6 +70,31 @@
             }"/>
           </div>
         </template>
+        <template v-else-if="initiator.type === 'appLaunched'">
+            <span class="initiatorType">
+                <span>{{ initiator.data.appPath }}</span>
+                <div class="initiatorSelect narrow">
+                    <!-- TODO: make this a list of applications instead of a file selected -->
+                    <!-- This would require looking through a ton of different directories depending on the OS, though, as far as I can tell -->
+                    <FileSelector :filterName="'executable'" :filterExtensions="['exe', 'app', 'AppImage', 'desktop', '']" @selected="(file) => {
+                      if(file.path.endsWith('.desktop')) {
+                        readTextFile(file.path).then(content => {
+                          let lines = content.split('\n');
+                          let appPath = lines.find(line => line.startsWith('Exec='))?.split('=')[1];
+                          initiator.data.appPath = appPath;
+                        });
+                      } else {
+                        initiator.data.appPath = file.path;
+                      }
+                    }" />
+                </div>
+            </span>
+        </template>
+        <template v-else-if="initiator.type === 'time'">
+          <span class="initiatorType noArrow">
+            <input type="text" v-model="initiator.data.cron" placeholder="CRON syntax" class="initiatorTypeInput" />
+          </span>
+        </template>
         <svg 
           class="deleteInitiator" 
           @click="deleteInitiator(initiator)"
@@ -94,12 +125,27 @@
   .slider:hover {
     --opacity: 1;
   }
+  .initiatorTypeInput {
+    position: absolute;
+    inset: 0;
+    border: none;
+    padding: 0;
+    font-size: 16px;
+    outline: 3px solid transparent;
+    background: transparent;
+    transition: border-color 0.2s ease-in-out;
+    color: white;
+  }
+  .initiatorTypeInput:hover, .initiatorTypeInput:focus {
+    outline: 3px solid #141a2766;
+  }
   .initiatorType {
     border: 3px solid #141a2766;
     margin: 5px;
     padding: 0 25px 0 10px;
     position: relative;
     width: 250px;
+    min-height: 31px;
     display: inline-block;
   }
   .initiatorType:not(.noArrow)::after {
@@ -164,6 +210,9 @@
     margin: 10px;
     border: 3px solid #141a27;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
   .initiatorType > span, .initiatorSelectOption > span {
     font-size: 20px;
