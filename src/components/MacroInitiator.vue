@@ -1,9 +1,10 @@
 <script setup>
   import { toRefs } from 'vue';
+
   import KeyCombination from './KeyCombination.vue';
   import SliderRange from './SliderRange.vue';
-
   import FileSelector from './FileSelector.vue';
+  import CodeArea from './CodeArea.vue';
 
   import { readTextFile } from '@tauri-apps/api/fs';
 
@@ -56,7 +57,7 @@
                     ]" 
                     class="initiatorSelectOption" 
                     :class="{selected: initiator.type === activateTime.value }"
-                    :key="activateTime" 
+                    :key="activateTime"
                     @click="initiator.data.activateTime = activateTime.value">
                       <span>{{ activateTime.name }}</span>
                       <p>{{ activateTime.description }}</p>
@@ -101,6 +102,8 @@
           xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
             <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
         </svg>
+        <br />
+        <CodeArea :executes="initiator.executes" />
     </div>
 </template>
 
@@ -170,7 +173,7 @@
     display: none;
     flex-wrap: wrap;
     z-index: 200;
-  }
+  }call
   .initiatorSelect.right {
     right: -3px;
     left: auto;

@@ -1,5 +1,8 @@
 <script setup>
   import { toRefs } from 'vue';
+
+  import CodeArea from './CodeArea.vue';
+
   const props = defineProps(["function_", "deleteFunction"]);
 
   const { function_, deleteFunction } = toRefs(props);
@@ -7,13 +10,15 @@
 
 <template>
     <div class="function">
-        <input class="functionName" type="text" v-model="function_.name" placeholder="Name"/>
+      <input class="functionName" type="text" v-model="function_.name" placeholder="Name"/>
       <svg 
         class="deleteFunction"
         @click="deleteFunction(function_)"
         xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
           <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
       </svg>
+      <br />
+      <CodeArea :executes="function_.executes" />
     </div>
 </template>
 

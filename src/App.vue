@@ -12,6 +12,7 @@
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
+    user-select: none;
   }
   .relative {
     position: relative;
