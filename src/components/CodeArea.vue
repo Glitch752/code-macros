@@ -161,7 +161,7 @@
 
 <style scoped>
   .code {
-    background-color: #171b2777;
+    border: 3px solid #171b2777;
     margin: 5px;
     padding: 5px;
     position: relative;
@@ -186,7 +186,8 @@
   .codeArea {
     width: 100%;
     padding: 5px;
-    background-color: #1c1f2777;
+    border: 5px solid #1c1f2777;
+    margin-top: 5px;
   }
   .addCode {
     border: 3px solid #141a2766;
