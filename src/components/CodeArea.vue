@@ -3,7 +3,7 @@
 
   import CodeArea from './CodeArea.vue';
 
-  const props = defineProps(["executes"]);
+  const props = defineProps(["executes", "title"]);
 
   const { executes } = toRefs(props);
 
@@ -22,12 +22,12 @@
       {name: 'End', value: 'end', description: 'The ending number of the loop', type: 'number', defaultValue: 10},
       {name: 'Step', value: 'step', description: 'How much the loop changes by each iteration', type: 'number', defaultValue: 1}
     ], codeInside: [
-      {name: 'Loop', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
+      {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
     ]},
     {name: 'Repeat while loop', value: 'whileloop', description: 'Executes the code inside the loop while the condition is true.', parameters: [
       {name: 'Condition', value: 'condition', description: 'The condition to check.', type: 'condition'}
     ], codeInside: [
-      {name: 'Loop', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
+      {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
     ]},
     {name: 'Notification', value: 'notification', description: 'Displays a notification.', parameters: [
       {name: 'Title', value: 'title', description: 'The title of the notification.', type: 'string'},
@@ -112,6 +112,7 @@
 
 <template>
   <div class="codeArea">
+    <h2 v-if="props.title" class="codeAreaTitle">{{props.title}}</h2>
     <div>
       <span v-if="executes.length === 0">This doesn't execute anything. Hover over add code to add something for it to execute.</span>
       <template v-else>
@@ -132,7 +133,7 @@
             <div
               v-for="(executesIteration, key) in execute.codeInside"
               :key="key">
-              <CodeArea :executes="executesIteration.executes" />
+              <CodeArea :title="codeTypes.find(codeType => codeType.value === execute.type)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
             </div>
             <svg 
               class="deleteCode"
@@ -247,5 +248,10 @@
   }
   .addCode:hover .addCodeSelect {
     display: flex;
+  }
+  .codeAreaTitle {
+    margin: 0;
+    font-size: 25px;
+    font-weight: bold;
   }
 </style>
