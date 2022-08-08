@@ -1,24 +1,55 @@
 <script setup>
   import { toRefs, onUnmounted } from 'vue';
 
+  import CodeArea from './CodeArea.vue';
+
   const props = defineProps(["executes"]);
 
   const { executes } = toRefs(props);
 
   const codeTypes = [
-    {name: 'If', value: 'if', description: 'Executes the code inside if the condition is true.'},
-    {name: 'Function call', value: 'function', description: 'Executes the code inside the function it calls.'},
-    {name: 'Repeat N times loop', value: 'ntimesloop', description: 'Executes the code inside the loop a certain number of times.'},
-    {name: 'Repeat while loop', value: 'whileloop', description: 'Executes the code inside the loop while the condition is true.'},
-    {name: 'Notification', value: 'notification', description: 'Displays a notification.'},
-    {name: 'Wait', value: 'wait', description: 'Waits for a certain amount of time.'},
-    {name: 'Stop', value: 'stop', description: 'Stops the macro.'}
+    {name: 'If', value: 'if', description: 'Executes the code inside if the condition is true.', parameters: [
+      {name: 'Condition', value: 'condition', description: 'The condition to check.', type: 'condition'}
+    ], codeInside: [
+      {name: 'Then', value: 'then', description: 'The code to execute if the condition is true.', type: 'code'},
+      {name: 'Else', value: 'else', description: 'The code to execute if the condition is false.', type: 'code'}
+    ]},
+    {name: 'Function call', value: 'function', description: 'Executes the code inside the function it calls.', parameters: [
+      {name: 'Function', value: 'function', type: 'function', description: 'The function to call.'}
+    ]},
+    {name: 'Repeat from to loop', value: 'fromtoloop', description: 'Executes the code inside the loop for each number between 2 numbers', parameters: [
+      {name: 'Start', value: 'start', description: 'The starting number of the loop', type: 'number', defaultValue: 0},
+      {name: 'End', value: 'end', description: 'The ending number of the loop', type: 'number', defaultValue: 10},
+      {name: 'Step', value: 'step', description: 'How much the loop changes by each iteration', type: 'number', defaultValue: 1}
+    ], codeInside: [
+      {name: 'Loop', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
+    ]},
+    {name: 'Repeat while loop', value: 'whileloop', description: 'Executes the code inside the loop while the condition is true.', parameters: [
+      {name: 'Condition', value: 'condition', description: 'The condition to check.', type: 'condition'}
+    ], codeInside: [
+      {name: 'Loop', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
+    ]},
+    {name: 'Notification', value: 'notification', description: 'Displays a notification.', parameters: [
+      {name: 'Title', value: 'title', description: 'The title of the notification.', type: 'string'},
+      {name: 'Message', value: 'message', description: 'The message of the notification.', type: 'string'},
+    ]},
+    {name: 'Wait', value: 'wait', description: 'Waits for a certain amount of time.', parameters: [
+      {name: 'Time', value: 'time', description: 'The amount of time to wait, in miliseconds', type: 'number', defaultValue: 10}
+    ]},
+    {name: 'Stop', value: 'stop', description: 'Stops the macro.', parameters: []}
   ];
 
   function addCode(codeType) {
+    let codeInside = {};
+    for(let i = 0; i < codeType?.codeInside?.length; i++) {
+      codeInside[codeType.codeInside[i].value] = {
+        executes: []
+      };
+    }
     executes.value.push({
       type: codeType.value,
-      data: {}
+      data: {},
+      codeInside: codeInside
     });
   }
 
@@ -96,7 +127,12 @@
                 <path fill="currentColor" d="M21 11H3V9h18v2m0 2H3v2h18v-2Z"/>
             </svg>
             <div class="codeType" :class="execute.type">
-              <span>{{codeTypes.find(codeType => codeType.value === execute.type).name}}</span>
+              <span>{{codeTypes.find(codeType => codeType.value === execute.type)?.name || "Unknown"}}</span>
+            </div>
+            <div
+              v-for="(executesIteration, key) in execute.codeInside"
+              :key="key">
+              <CodeArea :executes="executesIteration.executes" />
             </div>
             <svg 
               class="deleteCode"
