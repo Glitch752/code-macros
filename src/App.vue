@@ -12,6 +12,8 @@
 <style>
   *, *::before, *::after {
     box-sizing: border-box;
+  }
+  *:not(input, textarea) {
     user-select: none;
   }
   .relative {

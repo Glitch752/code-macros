@@ -11,8 +11,8 @@
     {name: 'If', value: 'if', description: 'Executes the code inside if the condition is true.', parameters: [
       {name: 'Condition', value: 'condition', description: 'The condition to check.', type: 'condition'}
     ], codeInside: [
-      {name: 'Then', value: 'then', description: 'The code to execute if the condition is true.', type: 'code'},
-      {name: 'Else', value: 'else', description: 'The code to execute if the condition is false.', type: 'code'}
+      {name: 'Then', value: 'then', description: 'The code to execute if the condition is true.'},
+      {name: 'Else', value: 'else', description: 'The code to execute if the condition is false.'}
     ]},
     {name: 'Function call', value: 'function', description: 'Executes the code inside the function it calls.', parameters: [
       {name: 'Function', value: 'function', type: 'function', description: 'The function to call.'}
@@ -22,12 +22,12 @@
       {name: 'End', value: 'end', description: 'The ending number of the loop', type: 'number', defaultValue: 10},
       {name: 'Step', value: 'step', description: 'How much the loop changes by each iteration', type: 'number', defaultValue: 1}
     ], codeInside: [
-      {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
+      {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration'}
     ]},
     {name: 'Repeat while loop', value: 'whileloop', description: 'Executes the code inside the loop while the condition is true.', parameters: [
       {name: 'Condition', value: 'condition', description: 'The condition to check.', type: 'condition'}
     ], codeInside: [
-      {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration', type: 'code'}
+      {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration'}
     ]},
     {name: 'Notification', value: 'notification', description: 'Displays a notification.', parameters: [
       {name: 'Title', value: 'title', description: 'The title of the notification.', type: 'string'},
@@ -46,9 +46,23 @@
         executes: []
       };
     }
+    let data = {};
+    let defaultTypeValues = {
+      string: 'String',
+      number: 0, 
+      condition: { type: 'boolean', value: true }, 
+      function: 'Function'
+    }
+    for(let i = 0; i < codeType.parameters.length; i++) {
+      let value = codeType.parameters[i].defaultValue;
+      if(value === undefined) {
+        value = defaultTypeValues[codeType.parameters[i].type];
+      }
+      data[codeType.parameters[i].value] = value;
+    }
     executes.value.push({
       type: codeType.value,
-      data: {},
+      data: data,
       codeInside: codeInside
     });
   }
@@ -108,6 +122,9 @@
     window.removeEventListener('mouseup', stopDrag);
     window.removeEventListener('mousemove', drag);
   });
+
+  const getCodeType = (execute) => codeTypes.find(codeType => codeType.value === execute?.type);
+  const getParameter = (execute, argumentType) => getCodeType(execute)?.parameters?.find(parameter => parameter.value === argumentType);
 </script>
 
 <template>
@@ -128,12 +145,39 @@
                 <path fill="currentColor" d="M21 11H3V9h18v2m0 2H3v2h18v-2Z"/>
             </svg>
             <div class="codeType" :class="execute.type">
-              <span>{{codeTypes.find(codeType => codeType.value === execute.type)?.name || "Unknown"}}</span>
+              <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
+            </div>
+            <div class="codeArguments">
+              <div v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" class="codeArgument">
+                <input 
+                  v-if="getParameter(execute, argumentType)?.type === 'string'" 
+                  v-model="argumentValue.value" 
+                  type="text" 
+                  class="codeArgumentInput"
+                  :placeholder="getParameter(execute, argumentType)?.name"/>
+                <input
+                  v-if="getParameter(execute, argumentType)?.type === 'number'" 
+                  v-model="argumentValue.value"
+                  type="number"
+                  class="codeArgumentInput"
+                  :placeholder="getParameter(execute, argumentType)?.name"/>
+                <!-- TODO: make this a dropdown of all possible functions -->
+                <input 
+                  v-if="getParameter(execute, argumentType)?.type === 'function'" 
+                  v-model="argumentValue.value" 
+                  type="text" 
+                  class="codeArgumentInput"
+                  :placeholder="getParameter(execute, argumentType)?.name"/>
+                <span
+                  v-if="getParameter(execute, argumentType)?.type === 'condition'"
+                  class="condition"> </span>
+                <span>{{getParameter(execute, argumentType)?.name || "Unknown"}}</span>
+              </div>
             </div>
             <div
               v-for="(executesIteration, key) in execute.codeInside"
               :key="key">
-              <CodeArea :title="codeTypes.find(codeType => codeType.value === execute.type)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
+              <CodeArea :title="getCodeType(execute)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
             </div>
             <svg 
               class="deleteCode"
@@ -166,6 +210,34 @@
     margin: 5px;
     padding: 5px;
     position: relative;
+    font-size: 18px;
+  }
+  .codeArgumentInput {
+    border: none;
+    outline: none;
+    font-size: 18px;
+    padding: 0 5px;
+    margin: 2px 5px;
+    background: transparent;
+    color: white;
+    /* Make it fill the rest of the flexbox */
+    flex: 1;
+    width: 0;
+  }
+  .codeArgumentInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  .codeArgument {
+    width: 230px;
+    display: inline-flex;
+    flex-direction: row;
+    border: 3px solid #141a2766;
+    margin: 5px;
+  }
+  .codeArgument span {
+    font-size: 18px;
+    color: white;
+    padding: 5px;
   }
   .deleteCode {
     position: absolute;
@@ -176,6 +248,8 @@
     margin-right: 5px;
     color: gray;
     cursor: grab;
+    width: 20px;
+    height: 20px;
   }
   .codeType {
     display: inline-block;

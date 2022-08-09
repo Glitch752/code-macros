@@ -4,6 +4,7 @@
 )]
 
 fn main() {
+  println!("Main ran");
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![my_custom_command])
     .run(tauri::generate_context!())
