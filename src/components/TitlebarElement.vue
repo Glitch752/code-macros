@@ -4,7 +4,7 @@
   onMounted(() => {
     document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
     document.getElementById('titlebar-maximize-unmaximize').addEventListener('click', () => appWindow.toggleMaximize());
-    document.getElementById('titlebar-close').addEventListener('click', () => appWindow.close());
+    document.getElementById('titlebar-close').addEventListener('click', () => appWindow.hide());
     window.addEventListener('resize', updateWindow)
     updateWindow();
   });
