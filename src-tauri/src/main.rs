@@ -15,9 +15,12 @@ fn main() {
       SystemTray::new().with_menu(
         SystemTrayMenu::new()
           .add_item(
-            CustomMenuItem::new("quit".to_string(), "Quit")
+            CustomMenuItem::new("open".to_string(), "Open")
           )
           .add_native_item(SystemTrayMenuItem::Separator)
+          .add_item(
+            CustomMenuItem::new("quit".to_string(), "Quit")
+          )
       )
     )
     .on_system_tray_event(|app, event| match event {
@@ -28,10 +31,18 @@ fn main() {
             let window = app.get_window("main").unwrap();
             window.close().unwrap();
           }
+          "open" => {
+            let window = app.get_window("main").unwrap();
+            window.show().unwrap();
+          }
           _ => {}
         }
       }
       _ => {}
+    })
+    .setup(|_| {
+      initialize_macro_listeners();
+      Ok(())
     })
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
@@ -40,4 +51,8 @@ fn main() {
 #[tauri::command]
 fn my_custom_command() {
   println!("I was invoked from JS!");
+}
+
+fn initialize_macro_listeners() {
+  println!("Todo: Initialize macro listeners");
 }
