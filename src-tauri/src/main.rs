@@ -10,6 +10,11 @@ fn main() {
   println!("Main ran");
 
   tauri::Builder::default()
+    .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+      println!("{}, {argv:?}, {cwd}", app.package_info().name);
+      let window = app.get_window("main").unwrap();
+      window.show();
+    }))
     .invoke_handler(tauri::generate_handler![my_custom_command])
     .system_tray(
       SystemTray::new().with_menu(
