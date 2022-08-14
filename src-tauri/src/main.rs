@@ -6,11 +6,13 @@
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent};
 use tauri::Manager;
 
+use std::collections::HashMap;
+
 fn main() {
   println!("Main ran");
 
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![my_custom_command])
+    .invoke_handler(tauri::generate_handler![update_macros])
     .system_tray(
       SystemTray::new().with_menu(
         SystemTrayMenu::new()
@@ -37,7 +39,8 @@ fn main() {
     .expect("error while running tauri application");
 }
 
+
 #[tauri::command]
-fn my_custom_command() {
-  println!("I was invoked from JS!");
+fn update_macros(macros: String) {
+  println!("{}", macros);
 }

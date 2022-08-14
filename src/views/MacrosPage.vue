@@ -2,6 +2,7 @@
   import * as store from '@/store';
   import { ref } from 'vue';
   import MacroCreator from '@/components/MacroCreator.vue';
+  import { invoke } from '@tauri-apps/api/tauri';
 
   let macrosLoaded = ref(false);
   let macros = ref([]);
@@ -34,9 +35,22 @@
   }
 
   function setMacro(macro) {
-    const currentMacros = [...macros.value];
-    currentMacros[macro.index] = {...macro, index: undefined};
-    store.set('macros', currentMacros);
+    throttle(() => {
+      const currentMacros = [...macros.value];
+      currentMacros[macro.index] = {...macro, index: undefined};
+      store.set('macros', currentMacros);
+
+      invoke('update_macros', { macros: JSON.stringify(macro) });
+    }, 1000);
+  }
+
+  let timeout = null;
+  function throttle(func, wait) {
+    if(timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func();
+      timeout = null;
+    }, wait);
   }
 </script>
 
