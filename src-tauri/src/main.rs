@@ -12,14 +12,22 @@ fn main() {
   println!("Main ran");
 
   tauri::Builder::default()
+    .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+      println!("{}, {argv:?}, {cwd}", app.package_info().name);
+      let window = app.get_window("main").unwrap();
+      window.show();
+    }))
     .invoke_handler(tauri::generate_handler![update_macros])
     .system_tray(
       SystemTray::new().with_menu(
         SystemTrayMenu::new()
           .add_item(
-            CustomMenuItem::new("quit".to_string(), "Quit")
+            CustomMenuItem::new("open".to_string(), "Open")
           )
           .add_native_item(SystemTrayMenuItem::Separator)
+          .add_item(
+            CustomMenuItem::new("quit".to_string(), "Quit")
+          )
       )
     )
     .on_system_tray_event(|app, event| match event {
@@ -30,15 +38,22 @@ fn main() {
             let window = app.get_window("main").unwrap();
             window.close().unwrap();
           }
+          "open" => {
+            let window = app.get_window("main").unwrap();
+            window.show().unwrap();
+          }
           _ => {}
         }
       }
       _ => {}
     })
+    .setup(|_| {
+      initialize_macro_listeners();
+      Ok(())
+    })
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
-
 
 #[tauri::command]
 fn update_macros(macros: String) {
