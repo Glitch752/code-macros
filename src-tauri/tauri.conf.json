@@ -7,7 +7,7 @@
     "distDir": "Set automatically by Vue CLI plugin"
   },
   "package": {
-    "productName": "code-macros",
+    "productName": "codemacros",
     "version": "0.1.0"
   },
   "tauri": {
