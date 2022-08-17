@@ -19,6 +19,7 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.0.5", features = ["api-all", "system-tray"] }
 tauri-plugin-single-instance = { git = "https://github.com/amrbashir/tauri-plugin-single-instance/" }
+inputbot = { git = "https://github.com/obv-mikhail/InputBot", branch = "develop" }
 
 [features]
 # by default Tauri runs in production mode

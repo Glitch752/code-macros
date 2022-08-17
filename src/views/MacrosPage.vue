@@ -2,7 +2,7 @@
   import * as store from '@/store';
   import { ref } from 'vue';
   import MacroCreator from '@/components/MacroCreator.vue';
-  import { invoke } from '@tauri-apps/api/tauri';
+  import updateMacros from '../utils';
 
   let macrosLoaded = ref(false);
   let macros = ref([]);
@@ -40,7 +40,7 @@
       currentMacros[macro.index] = {...macro, index: undefined};
       store.set('macros', currentMacros);
 
-      invoke('update_macros', { macros: JSON.stringify(macro) });
+      updateMacros();
     }, 1000);
   }
 

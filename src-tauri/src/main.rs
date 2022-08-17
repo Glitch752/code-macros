@@ -8,8 +8,12 @@ use tauri::Manager;
 
 // use std::collections::HashMap;
 
+use std::thread;
+
 fn main() {
-  println!("Main ran");
+  thread::spawn(|| {
+    listen_macro_actions();
+  });
 
   tauri::Builder::default()
     .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -50,6 +54,17 @@ fn main() {
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
+
+fn listen_macro_actions() {
+  KeybdKey::bind_all(|event| {
+    let key = format!("{:?}", event);
+    println!("{}", key);
+  });
+
+  // Call this to start listening for bound inputs.
+  inputbot::handle_input_events();
+}
+
 use serde::{Deserialize, Serialize};
 use serde_json::value::Value;
 
@@ -95,6 +110,8 @@ struct Parameter {
   type_: String,
   default_value: String,
 }
+
+use inputbot::{KeybdKey};
 
 #[tauri::command]
 fn update_macros(macros: Macros) {
