@@ -38,9 +38,9 @@
     throttle(() => {
       const currentMacros = [...macros.value];
       currentMacros[macro.index] = {...macro, index: undefined};
-      store.set('macros', currentMacros);
-
-      updateMacros();
+      store.set('macros', currentMacros).then(() => {
+        updateMacros();
+      });
     }, 1000);
   }
 

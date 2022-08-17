@@ -10,8 +10,10 @@ use tauri::Manager;
 
 use std::thread;
 
+use std::sync::{Arc, Mutex};
+
 fn main() {
-  thread::spawn(|| {
+  thread::spawn(move || {
     listen_macro_actions();
   });
 
@@ -21,7 +23,9 @@ fn main() {
       let window = app.get_window("main").unwrap();
       window.show().unwrap();
     }))
-    .invoke_handler(tauri::generate_handler![update_macros])
+    .invoke_handler(tauri::generate_handler![
+      update_macros
+    ])
     .system_tray(
       SystemTray::new().with_menu(
         SystemTrayMenu::new()
@@ -55,10 +59,30 @@ fn main() {
     .expect("error while running tauri application");
 }
 
+use inputbot::{KeybdKey};
+
+use std::collections::HashMap;
+
 fn listen_macro_actions() {
-  KeybdKey::bind_all(|event| {
-    let key = format!("{:?}", event);
-    println!("{}", key);
+  let keys_pressed: Arc<Mutex<HashMap<KeybdKey, bool>>> = Arc::new(Mutex::new(HashMap::new()));
+  
+  KeybdKey::bind_all(move |event| {
+    let mut keys_pressed = keys_pressed.lock().unwrap();
+
+    keys_pressed.insert(event, true);
+
+    // Loop through all keys and check if they are pressed. If not, remove them from the map.
+    let mut remove = Vec::new();
+    for key in keys_pressed.keys() {
+      if !KeybdKey::is_pressed(*key) {
+        remove.push(*key);
+      }
+    }
+    for key in remove {
+      keys_pressed.remove(&key);
+    }
+
+    println!("{:?}", keys_pressed);
   });
 
   // Call this to start listening for bound inputs.
@@ -70,53 +94,48 @@ use serde_json::value::Value;
 
 type Macros = Vec<Macro>;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Macro {
   name: String,
   description: String,
   macro_: MacroMacro,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct MacroMacro {
-  initiators: Vec<Initiator>,
-  functions: Vec<Function>,
+  initiators: Option<Vec<Initiator>>,
+  functions: Option<Vec<Function>>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Initiator {
   type_: String,
   data: Value,
   executes: Vec<Execution>
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Execution {
   type_: String,
   data: Value,
   code_inside: Value
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Function {
   name: String,
   parameters: Vec<Parameter>,
   executes: Vec<Execution>
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Parameter {
   name: String,
   type_: String,
   default_value: String,
 }
 
-use inputbot::{KeybdKey};
-
 #[tauri::command]
 fn update_macros(macros: Macros) {
-  println!("Macros updated");
-  for macro_ in macros {
-    println!("{}", macro_.name);
-  }
+  println!("Updated Macros");
 }
