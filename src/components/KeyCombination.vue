@@ -31,8 +31,51 @@
 
   const keysWithValue = (object, value) => Object.keys(object).filter(key => object[key] === value);
 
+  function shiftToLower(key) {
+    let lowercaseKey = key.toLowerCase();
+    if(lowercaseKey === key) {
+      const specialCharacters = {
+        "\"": "'",
+        "~": "`",
+        "!": "1",
+        "@": "2",
+        "#": "3",
+        "$": "4",
+        "%": "5",
+        "^": "6",
+        "&": "7",
+        "*": "8",
+        "(": "9",
+        ")": "0",
+        "?": "/",
+        "<": ",",
+        ">": ".",
+        ":": ";",
+        "|": "\\",
+        " ": "space",
+        "{": "[",
+        "}": "]",
+        "+": "=",
+        "_": "-"
+      }
+      lowercaseKey = specialCharacters[key] || lowercaseKey;
+      return lowercaseKey;
+    } else {
+      return lowercaseKey;
+    }
+  }
+
+  function keyAllowed(key) {
+    const keysAllowed = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+                         "shift", "control", "enter", "space", "escape", "tab", "capslock", "backspace", ";", "'", ",", ".", "/", "[", "]", "`", "-", "=",
+                         "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10"];
+    
+    return keysAllowed.includes(key);
+  }
+
   function keyDown(e) {
-    let key = e.key.toLowerCase();
+    let key = shiftToLower(e.key);
+    if(!keyAllowed(key)) return;
     keysHeld[key] = true;
     if(!listeningForKeyCombination) return;
     debounce(() => {
@@ -44,7 +87,8 @@
     }, 150);
   }
   function keyUp(e) {
-    let key = e.key.toLowerCase();
+    let key = shiftToLower(e.key);
+    if(!keyAllowed(key)) return;
     setTimeout(() => {
       keysHeld[key] = false;
     }, 150);
