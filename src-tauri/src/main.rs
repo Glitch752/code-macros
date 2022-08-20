@@ -1,6 +1,7 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]
 
 use tauri::{ CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent };
+use tauri::api::notification::Notification;
 use tauri::Manager;
 
 // use std::collections::HashMap;
@@ -109,7 +110,7 @@ fn listen_macro_actions() {
                                 continue 'macros;
                             }
                         }
-                        println!("{} initiator ran", macro_.name);
+                        run_macro_initiator(&initiator, &macro_);
                     }
                 }
             }
@@ -118,6 +119,31 @@ fn listen_macro_actions() {
 
     // Call this to start listening for bound inputs.
     inputbot::handle_input_events();
+}
+
+fn run_macro_initiator(initiator: &Initiator, macro_: &Macro) {
+    println!("Running macro initiator from macro \"{}\"", macro_.name);
+    execute_macro_code(&initiator.executes);
+}
+
+fn execute_macro_code(code: &Vec<Execution>) {
+    for execution in code {
+        match execution.type_.as_str() {
+            "wait" => {
+                let time = execution.data.time.as_ref().unwrap();
+                thread::sleep(std::time::Duration::from_millis((time * 1000.0) as u64));
+            }
+            "notification" => {
+                let title = execution.data.title.as_ref().unwrap();
+                let message = execution.data.message.as_ref().unwrap();
+                let _ = Notification::new("code-macros")
+                    .title(title)
+                    .body(message)
+                    .show();
+            }
+            _ => todo!()
+        }
+    }
 }
 
 use serde::{ Deserialize, Serialize };
@@ -213,7 +239,7 @@ impl std::fmt::Debug for InitiatorKeypressTime {
 #[derive(Serialize, Deserialize, Clone)]
 struct Execution {
     type_: String,
-    data: Value,
+    data: ExecutionData,
     code_inside: Value,
 }
 
@@ -225,6 +251,25 @@ impl std::fmt::Debug for Execution {
             self.type_,
             self.data,
             self.code_inside
+        )
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct ExecutionData {
+    time: Option<f64>,
+    title: Option<String>,
+    message: Option<String>
+}
+
+impl std::fmt::Debug for ExecutionData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "\n Time: {:?} \n Title: {:?} \n Message: {:?}",
+            self.time,
+            self.title,
+            self.message
         )
     }
 }

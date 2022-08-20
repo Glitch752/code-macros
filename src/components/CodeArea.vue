@@ -1,11 +1,11 @@
 <script setup>
-  import { toRefs, onUnmounted } from 'vue';
+  import { reactive, toRefs, onUnmounted } from 'vue';
 
   import CodeArea from './CodeArea.vue';
 
   const props = defineProps(["executes", "title"]);
 
-  const { executes } = toRefs(props);
+  const executes = reactive(props.executes);
 
   const codeTypes = [
     {name: 'If', value: 'if', description: 'Executes the code inside if the condition is true.', parameters: [
@@ -60,7 +60,7 @@
       }
       data[codeType.parameters[i].value] = value;
     }
-    executes.value.push({
+    executes.push({
       type: codeType.value,
       data: data,
       codeInside: codeInside
@@ -68,17 +68,19 @@
   }
 
   function deleteCode(index) {
-    executes.value.splice(index, 1);
+    executes.splice(index, 1);
   }
 
   let currentlyDragging = null;
-  function startDrag(e) {
+  function startDrag(e, index) {
     let target = e.target;
     while(target !== null) {
       if(target.classList.contains('code')) {
         currentlyDragging = {
           elem: target,
-          top: target.getBoundingClientRect().top
+          top: target.getBoundingClientRect().top,
+          index: index,
+          tempExecutes: JSON.parse(JSON.stringify(executes))
         }
         return;
       }
@@ -95,6 +97,9 @@
     if(currentlyDragging === null) return;
     currentlyDragging.elem.style.opacity = 1;
     currentlyDragging.elem.style.top = "";
+    for(let i = 0; i < currentlyDragging.tempExecutes.length; i++) {
+      executes[i] = currentlyDragging.tempExecutes[i];
+    }
     currentlyDragging = null;
   }
 
@@ -107,11 +112,19 @@
         if(siblings[i].getBoundingClientRect().top > e.clientY) {
           siblings[i].before(currentlyDragging.elem);
           currentlyDragging.top = siblings[i].getBoundingClientRect().top - currentlyDragging.elem.getBoundingClientRect().height;
+          let element = executes[currentlyDragging.index];
+          currentlyDragging.tempExecutes.splice(currentlyDragging.index, 1);
+          currentlyDragging.tempExecutes.splice(i - 1, 0, element);
+          currentlyDragging.index = i - 1;
           break;
         }
         if(i === siblings.length - 1) {
           siblings[i].after(currentlyDragging.elem);
           currentlyDragging.top = siblings[i].getBoundingClientRect().top - siblings[i].getBoundingClientRect().height;
+          let element = executes[currentlyDragging.index];
+          currentlyDragging.tempExecutes.splice(currentlyDragging.index, 1);
+          currentlyDragging.tempExecutes.splice(i, 0, element);
+          currentlyDragging.index = i;
         }
       }
       currentlyDragging.elem.style.top = e.clientY - currentlyDragging.top + 'px';
@@ -138,7 +151,7 @@
           :key="execute" 
           class="code">
             <svg
-              @mousedown="startDrag"
+              @mousedown="(e) => startDrag(e, index)"
               class="dragCode"
               xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" style="vertical-align: -0.125em;" 
               width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
