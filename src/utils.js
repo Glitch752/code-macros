@@ -10,6 +10,8 @@ export default function updateMacros() {
                     [
                         { from: 'macro', to: 'macro_' },
                         { from: 'type', to: 'type_' },
+                        { from: 'loop', to: 'loop_' },
+                        { from: 'else', to: 'else_' },
                         { from: 'codeInside', to: 'code_inside' },
                         { from: 'activateTime', to: 'activate_time' },
                         { from: 'appPath', to: 'app_path' },

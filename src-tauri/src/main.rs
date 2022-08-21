@@ -14,6 +14,8 @@ use once_cell::sync::Lazy;
 
 static MACROS: Lazy<Mutex<Macros>> = Lazy::new(|| Mutex::new(Macros::new()));
 
+static MAX_LOOP_ITERATIONS: u64 = 100;
+
 fn get_macros() -> Macros {
     MACROS.lock().unwrap().clone()
 }
@@ -75,6 +77,7 @@ use std::collections::HashMap;
 fn listen_macro_actions() {
     let keys_pressed: Arc<Mutex<HashMap<KeybdKey, bool>>> = Arc::new(Mutex::new(HashMap::new()));
     KeybdKey::bind_all(move |event| {
+
         let mut keys_pressed = keys_pressed.lock().unwrap();
 
         keys_pressed.insert(event, true);
@@ -89,6 +92,7 @@ fn listen_macro_actions() {
         for key in remove {
             keys_pressed.remove(&key);
         }
+
 
         let mut keys_pressed_js: Vec<String> = vec![];
         for (key, value) in keys_pressed.iter() {
@@ -141,13 +145,39 @@ fn execute_macro_code(code: &Vec<Execution>) {
                     .body(message)
                     .show();
             }
+            "fromtoloop" => {
+                let from: f64 = *execution.data.from.as_ref().unwrap_or(&f64::from(0));
+                let to: f64 = *execution.data.to.as_ref().unwrap_or(&f64::from(4));
+                let step: f64 = *execution.data.step.as_ref().unwrap_or(&f64::from(1));
+                let mut i: f64 = from;
+                let mut iterations: u64 = 0;
+                if to > from {
+                    while i <= to {
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes);
+                        i += step;
+                        iterations += 1;
+                        if iterations > MAX_LOOP_ITERATIONS {
+                            break;
+                        }
+                    }
+                } else {
+                    while i >= to {
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes);
+                        i += step;
+                        iterations += 1;
+                        if iterations > MAX_LOOP_ITERATIONS {
+                            break;
+                        }
+                    }
+                }
+            }
             _ => todo!()
         }
     }
 }
 
 use serde::{ Deserialize, Serialize };
-use serde_json::value::Value;
+// use serde_json::value::Value;
 
 type Macros = Vec<Macro>;
 
@@ -240,7 +270,7 @@ impl std::fmt::Debug for InitiatorKeypressTime {
 struct Execution {
     type_: String,
     data: ExecutionData,
-    code_inside: Value,
+    code_inside: ExecutionCodeInside,
 }
 
 impl std::fmt::Debug for Execution {
@@ -259,7 +289,10 @@ impl std::fmt::Debug for Execution {
 struct ExecutionData {
     time: Option<f64>,
     title: Option<String>,
-    message: Option<String>
+    message: Option<String>,
+    from: Option<f64>,
+    to: Option<f64>,
+    step: Option<f64>
 }
 
 impl std::fmt::Debug for ExecutionData {
@@ -271,6 +304,39 @@ impl std::fmt::Debug for ExecutionData {
             self.title,
             self.message
         )
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct ExecutionCodeInside {
+    loop_: Option<ExecutionWrapper>,
+    then: Option<ExecutionWrapper>,
+    else_: Option<ExecutionWrapper>
+}
+
+impl std::fmt::Debug for ExecutionCodeInside {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "\n Loop: {:?}", self.loop_)
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct ExecutionWrapper {
+    executes: Vec<Execution>
+}
+
+impl<'a> Default for &'a ExecutionWrapper {
+    fn default() -> &'a ExecutionWrapper {
+        static DEFAULT: ExecutionWrapper = ExecutionWrapper {
+            executes: Vec::new()
+        };
+        &DEFAULT
+    }
+}
+
+impl std::fmt::Debug for ExecutionWrapper {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "\n Executes: {:?}", self.executes)
     }
 }
 
@@ -317,11 +383,11 @@ fn update_macros(macros: Macros) {
     set_macros(macros);
 }
 
-fn print_macros(macros: Macros) {
-    for macro_ in macros {
-        println!("{}", macro_.name);
-    }
-}
+// fn print_macros(macros: Macros) {
+//     for macro_ in macros {
+//         println!("{}", macro_.name);
+//     }
+// }
 
 // Turn the key enum into the same format as comes from the macro config
 fn js_key(key: KeybdKey) -> String {
