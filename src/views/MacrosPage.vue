@@ -52,6 +52,17 @@
       timeout = null;
     }, wait);
   }
+
+  function deleteMacro(index) {
+    const currentMacros = [...macros.value];
+    currentMacros.splice(index, 1);
+    store.set('macros', currentMacros).then(() => {
+      updateMacros();
+    });
+    macros.value = currentMacros;
+    selectedMacro.value = null;
+    selectedMacroIndex.value = null;
+  }
 </script>
 
 <template>
@@ -77,7 +88,7 @@
     </div>
   </div>
   <div class="rightPane">
-    <MacroCreator v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :key="selectedMacroIndex"/>
+    <MacroCreator v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :deleteMacro="() => deleteMacro(selectedMacroIndex)" :key="selectedMacroIndex"/>
   </div>
 </template>
 

@@ -3,7 +3,7 @@
   import MacroInitiator from '@/components/MacroInitiator.vue';
   import MacroFunction from '@/components/MacroFunction.vue';
 
-  const props = defineProps(["selectedMacro", "setMacro"]);
+  const props = defineProps(["selectedMacro", "setMacro", "deleteMacro"]);
 
   const selectedMacro = ref(props.selectedMacro);
 
@@ -60,6 +60,12 @@
     Select a macro to get started!
   </div>
   <div class="background" v-else>
+    <svg 
+      class="deleteMacro"
+      @click="props.deleteMacro()"
+      xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+        <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
+    </svg>
     <input class="macroName" type="text" v-model="selectedMacro.name" placeholder="Name"/>
     <input class="macroDescription" type="text" v-model="selectedMacro.description" placeholder="Description"/>
     <h2>Initiators</h2>
@@ -76,6 +82,17 @@
 </template>
 
 <style scoped>
+  .deleteMacro {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+  }
+  .deleteMacro:hover path {
+    cursor: pointer;
+    fill: #b62d2d;
+  }
   .background {
     width: 100%;
     height: 100%;
