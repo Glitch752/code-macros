@@ -23,11 +23,15 @@
       {name: 'Step', value: 'step', description: 'How much the loop changes by each iteration', type: 'number', defaultValue: 1}
     ], codeInside: [
       {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration'}
+    ], variables: [
+      {name: 'Value', value: 'value', description: 'The current value the loop is on'}
     ]},
     {name: 'Repeat while loop', value: 'whileloop', description: 'Executes the code inside the loop while the condition is true.', parameters: [
       {name: 'Condition', value: 'condition', description: 'The condition to check.', type: 'condition'}
     ], codeInside: [
       {name: 'Loop iteration', value: 'loop', description: 'The code to execute for each iteration'}
+    ], variables: [
+      {name: 'Iteration', value: 'iteration', description: 'The current iteration the loop is on'}
     ]},
     {name: 'Notification', value: 'notification', description: 'Displays a notification.', parameters: [
       {name: 'Title', value: 'title', description: 'The title of the notification.', type: 'string'},
@@ -46,6 +50,13 @@
         executes: []
       };
     }
+    let variables = [];
+    for(let i = 0; i < codeType?.variables?.length; i++) {
+      variables.push({
+        type: codeType.variables[i].value,
+        name: codeType.variables[i].name
+      })
+    }
     let data = {};
     let defaultTypeValues = {
       string: 'String',
@@ -63,6 +74,7 @@
     executes.push({
       type: codeType.value,
       data: data,
+      variables: variables,
       codeInside: codeInside
     });
   }
@@ -112,16 +124,17 @@
         if(siblings[i].getBoundingClientRect().top > e.clientY) {
           siblings[i].before(currentlyDragging.elem);
           currentlyDragging.top = siblings[i].getBoundingClientRect().top - currentlyDragging.elem.getBoundingClientRect().height;
-          let element = executes[currentlyDragging.index];
+          let element = currentlyDragging.tempExecutes[currentlyDragging.index];
+          let index = i - 1 >= 0 ? i - 1 : 0;
           currentlyDragging.tempExecutes.splice(currentlyDragging.index, 1);
-          currentlyDragging.tempExecutes.splice(i - 1, 0, element);
-          currentlyDragging.index = i - 1;
+          currentlyDragging.tempExecutes.splice(index, 0, element);
+          currentlyDragging.index = index;
           break;
         }
         if(i === siblings.length - 1) {
           siblings[i].after(currentlyDragging.elem);
           currentlyDragging.top = siblings[i].getBoundingClientRect().top - siblings[i].getBoundingClientRect().height;
-          let element = executes[currentlyDragging.index];
+          let element = currentlyDragging.tempExecutes[currentlyDragging.index];
           currentlyDragging.tempExecutes.splice(currentlyDragging.index, 1);
           currentlyDragging.tempExecutes.splice(i, 0, element);
           currentlyDragging.index = i;
@@ -138,6 +151,7 @@
 
   const getCodeType = (execute) => codeTypes.find(codeType => codeType.value === execute?.type);
   const getParameter = (execute, argumentType) => getCodeType(execute)?.parameters?.find(parameter => parameter.value === argumentType);
+  const getVariable = (execute, variableType) => getCodeType(execute)?.variables?.find(variable => variable.value === variableType);
 </script>
 
 <template>
@@ -167,24 +181,34 @@
                   v-model="argumentValue.value" 
                   type="text" 
                   class="codeArgumentInput"
-                  :placeholder="getParameter(execute, argumentType)?.name"/>
+                  :placeholder="getParameter(execute, argumentType)?.name" />
                 <input
                   v-if="getParameter(execute, argumentType)?.type === 'number'" 
                   v-model="argumentValue.value"
                   type="number"
                   class="codeArgumentInput"
-                  :placeholder="getParameter(execute, argumentType)?.name"/>
+                  :placeholder="getParameter(execute, argumentType)?.name" />
                 <!-- TODO: make this a dropdown of all possible functions -->
                 <input 
                   v-if="getParameter(execute, argumentType)?.type === 'function'" 
                   v-model="argumentValue.value" 
                   type="text" 
                   class="codeArgumentInput"
-                  :placeholder="getParameter(execute, argumentType)?.name"/>
+                  :placeholder="getParameter(execute, argumentType)?.name" />
                 <span
                   v-if="getParameter(execute, argumentType)?.type === 'condition'"
                   class="condition"> </span>
                 <span>{{getParameter(execute, argumentType)?.name || "Unknown"}}</span>
+              </div>
+              <br />
+              <span v-if="execute.variables.length > 0" style="display: block; margin-left: 5px;">Variables: </span>
+              <div v-for="(variableValue, index) in toRefs(execute.variables)" :key="index" class="codeArgument">
+                <input 
+                  v-model="variableValue.value.name" 
+                  type="text" 
+                  class="codeArgumentInput"
+                  :placeholder="getVariable(execute, variableValue.value.type)?.name" />
+                <span>{{getVariable(execute, variableValue.value.type)?.name || "Unknown"}}</span>
               </div>
             </div>
             <div

@@ -127,10 +127,60 @@ fn listen_macro_actions() {
 
 fn run_macro_initiator(initiator: &Initiator, macro_: &Macro) {
     println!("Running macro initiator from macro \"{}\"", macro_.name);
-    execute_macro_code(&initiator.executes);
+    let mut new_variables: Variables = Variables::new();
+    execute_macro_code(&initiator.executes, &mut new_variables);
 }
 
-fn execute_macro_code(code: &Vec<Execution>) {
+type Variables = HashMap<String, Variable>;
+
+struct Variable {
+    value: VariableValue,
+}
+
+impl std::fmt::Debug for Variable {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "\nValue: {:?}",
+            self.value
+        )
+    }
+}
+
+impl Variable {
+    fn new(value: VariableValue) -> Variable<> {
+        Variable { value: value }
+    }
+}
+
+#[derive(Clone)]
+enum VariableValue {
+    String(String),
+    Number(f64),
+}
+
+impl std::fmt::Debug for VariableValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{:?}",
+            get_value(self.clone())
+        )
+    }
+}
+
+fn get_value(variable_value: VariableValue) -> String {
+    match variable_value {
+        VariableValue::String(value) => {
+            return value;
+        },
+        VariableValue::Number(value) => {
+            return value.to_string();
+        }
+    }
+}
+
+fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables) {
     for execution in code {
         match execution.type_.as_str() {
             "wait" => {
@@ -141,8 +191,8 @@ fn execute_macro_code(code: &Vec<Execution>) {
                 let title = execution.data.title.as_ref().unwrap();
                 let message = execution.data.message.as_ref().unwrap();
                 let _ = Notification::new("code-macros")
-                    .title(title)
-                    .body(message)
+                    .title(parse_string(title, variables))
+                    .body(parse_string(message, variables))
                     .show();
             }
             "fromtoloop" => {
@@ -151,9 +201,18 @@ fn execute_macro_code(code: &Vec<Execution>) {
                 let step: f64 = *execution.data.step.as_ref().unwrap_or(&f64::from(1));
                 let mut i: f64 = from;
                 let mut iterations: u64 = 0;
+                let mut value_variable: Option<&String> = None;
+                for variable in &execution.variables {
+                    if variable.type_ == "value".to_string() {
+                        println!("{}", variable.type_);
+                        value_variable = Some(&variable.name)
+                    }
+                }
                 if to > from {
                     while i <= to {
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes);
+                        let variable_name = value_variable.unwrap();
+                        set_variable(variables, (*variable_name).to_string().clone(), VariableValue::Number(i));
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables);
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -162,7 +221,7 @@ fn execute_macro_code(code: &Vec<Execution>) {
                     }
                 } else {
                     while i >= to {
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes);
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables);
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -170,10 +229,69 @@ fn execute_macro_code(code: &Vec<Execution>) {
                         }
                     }
                 }
+            },
+            "whileloop" => {
+                // TODO: Properly implement variables so this loop can be used.
+                let condition: &Condition = &execution.data.condition.as_ref().unwrap();
+                while evaluate_condition(condition, variables) {
+                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables);
+                }
+            },
+            "if" => {
+                // TODO: Properly implement variables so 'if' can be used
+                let condition: &Condition = &execution.data.condition.as_ref().unwrap();
+                if evaluate_condition(condition, variables) {
+                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables);
+                } else {
+                    execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables);
+                }
             }
             _ => todo!()
         }
     }
+}
+
+fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> bool {
+    match condition.type_.as_str() {
+        "value" => {
+            let value: bool = *condition.value.as_ref().unwrap_or(&false);
+            return value;
+        }
+        _ => todo!()
+    }
+}
+
+fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String {
+    let mut variable_split: Vec<&str> = string.split("{{").collect();
+    let mut result = String::from(variable_split[0]);
+    let mut index: u64 = 0;
+    for split in variable_split {
+        index += 1;
+        if index == 1 {
+            continue;
+        }
+        let mut halves: Vec<&str> = split.split("}}").collect();
+        let variable_name: String = halves[0].to_string();
+        let variable_value = get_variable(variables, variable_name);
+        result.push_str(&get_value(
+            variable_value.unwrap_or(
+                &Variable::new(VariableValue::String("undefined".to_string()))
+            ).value.clone()
+        ));
+        if halves.len() > 1 {
+            result.push_str(&halves[1].to_string());
+        }
+    }
+
+    return result;
+}
+
+fn set_variable(variables: &mut Variables, variable: String, value: VariableValue) {
+    *variables.entry(variable).or_insert(Variable::new(value.clone())) = Variable::new(value.clone());
+}
+
+fn get_variable(variables: &mut Variables, variable: String) -> Option<&Variable> {
+    return variables.get(&variable);
 }
 
 use serde::{ Deserialize, Serialize };
@@ -270,7 +388,8 @@ impl std::fmt::Debug for InitiatorKeypressTime {
 struct Execution {
     type_: String,
     data: ExecutionData,
-    code_inside: ExecutionCodeInside,
+    variables: Vec<VariableType>,
+    code_inside: ExecutionCodeInside
 }
 
 impl std::fmt::Debug for Execution {
@@ -292,7 +411,8 @@ struct ExecutionData {
     message: Option<String>,
     from: Option<f64>,
     to: Option<f64>,
-    step: Option<f64>
+    step: Option<f64>,
+    condition: Option<Condition>
 }
 
 impl std::fmt::Debug for ExecutionData {
@@ -304,6 +424,35 @@ impl std::fmt::Debug for ExecutionData {
             self.title,
             self.message
         )
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct VariableType {
+    type_: String,
+    name: String
+}
+
+impl std::fmt::Debug for VariableType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "\n Type: {:?} \n Name: {:?}",
+            self.type_,
+            self.name
+        )
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct Condition {
+    type_: String,
+    value: Option<bool>
+}
+
+impl std::fmt::Debug for Condition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "\n Type: {:?} \n Value: {:?}", self.type_, self.value)
     }
 }
 
