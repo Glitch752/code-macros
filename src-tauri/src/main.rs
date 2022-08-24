@@ -204,7 +204,6 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables) {
                 let mut value_variable: Option<&String> = None;
                 for variable in &execution.variables {
                     if variable.type_ == "value".to_string() {
-                        println!("{}", variable.type_);
                         value_variable = Some(&variable.name)
                     }
                 }
@@ -262,7 +261,7 @@ fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> bool 
 }
 
 fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String {
-    let mut variable_split: Vec<&str> = string.split("{{").collect();
+    let variable_split: Vec<&str> = string.split("{{").collect();
     let mut result = String::from(variable_split[0]);
     let mut index: u64 = 0;
     for split in variable_split {
@@ -270,7 +269,7 @@ fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String 
         if index == 1 {
             continue;
         }
-        let mut halves: Vec<&str> = split.split("}}").collect();
+        let halves: Vec<&str> = split.split("}}").collect();
         let variable_name: String = halves[0].to_string();
         let variable_value = get_variable(variables, variable_name);
         result.push_str(&get_value(
@@ -282,6 +281,26 @@ fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String 
             result.push_str(&halves[1].to_string());
         }
     }
+
+    let characters: std::str::Chars = result.chars();
+
+    let mut skip: bool = false;
+
+    let mut index: usize= 0;
+    let mut characters_copy: Vec<char> = characters.clone().collect();
+    for character in characters {
+        if skip {
+            skip = false;
+            continue;
+        }
+        if character == '\\' {
+            characters_copy.remove(index);
+            skip = true;
+        }
+        index += 1;
+    }
+
+    result = characters_copy.into_iter().collect();
 
     return result;
 }
