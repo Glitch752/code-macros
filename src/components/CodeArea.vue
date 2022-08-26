@@ -2,6 +2,7 @@
   import { reactive, toRefs, onUnmounted } from 'vue';
 
   import CodeArea from './CodeArea.vue';
+  import ConditionCreator from './ConditionCreator.vue';
 
   const props = defineProps(["executes", "title"]);
 
@@ -175,7 +176,9 @@
               <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
             </div>
             <div class="codeArguments">
-              <div v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" class="codeArgument">
+              <div v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" 
+                :class="{codeArgument: getParameter(execute, argumentType)?.type !== 'condition'}"
+              >
                 <input 
                   v-if="getParameter(execute, argumentType)?.type === 'string'" 
                   v-model="argumentValue.value" 
@@ -196,8 +199,9 @@
                   class="codeArgumentInput"
                   :placeholder="getParameter(execute, argumentType)?.name" />
                 <span
-                  v-if="getParameter(execute, argumentType)?.type === 'condition'"
-                  class="condition"> </span>
+                  v-if="getParameter(execute, argumentType)?.type === 'condition'">
+                  <ConditionCreator :condition="argumentValue" />  
+                </span>
                 <span>{{getParameter(execute, argumentType)?.name || "Unknown"}}</span>
               </div>
               <br />
