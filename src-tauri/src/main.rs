@@ -114,7 +114,7 @@ fn listen_macro_actions() {
                                 continue 'macros;
                             }
                         }
-                        run_macro_initiator(&initiator, &macro_);
+                        run_macro_initiator(initiator.clone(), macro_.clone());
                     }
                 }
             }
@@ -125,10 +125,12 @@ fn listen_macro_actions() {
     inputbot::handle_input_events();
 }
 
-fn run_macro_initiator(initiator: &Initiator, macro_: &Macro) {
+fn run_macro_initiator(initiator: Initiator, macro_: Macro) {
     println!("Running macro initiator from macro \"{}\"", macro_.name);
-    let mut new_variables: Variables = Variables::new();
-    execute_macro_code(&initiator.executes, &mut new_variables);
+    thread::spawn(move || {
+        let mut new_variables: Variables = Variables::new();
+        execute_macro_code(&initiator.executes, &mut new_variables, &mut false);
+    });
 }
 
 type Variables = HashMap<String, Variable>;
@@ -180,8 +182,12 @@ fn get_value(variable_value: VariableValue) -> String {
     }
 }
 
-fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables) {
+fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_execution: &mut bool) {
     for execution in code {
+        if *stop_execution {
+            return;
+        }
+
         match execution.type_.as_str() {
             "wait" => {
                 let time = execution.data.time.as_ref().unwrap();
@@ -211,7 +217,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables) {
                     while i <= to {
                         let variable_name = value_variable.unwrap();
                         set_variable(variables, (*variable_name).to_string().clone(), VariableValue::Number(i));
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables);
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution);
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -220,7 +226,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables) {
                     }
                 } else {
                     while i >= to {
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables);
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution);
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -233,17 +239,20 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables) {
                 // TODO: Properly implement variables so this loop can be used.
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
                 while evaluate_condition(condition, variables) {
-                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables);
+                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 }
             },
             "if" => {
                 // TODO: Properly implement variables so 'if' can be used
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
                 if evaluate_condition(condition, variables) {
-                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables);
+                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 } else {
-                    execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables);
+                    execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 }
+            },
+            "stop" => {
+                *stop_execution = true;
             }
             _ => todo!()
         }
