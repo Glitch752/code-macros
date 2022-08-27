@@ -238,14 +238,14 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             "whileloop" => {
                 // TODO: Properly implement variables so this loop can be used.
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
-                while evaluate_condition(condition, variables) {
+                while get_bool(evaluate_condition(condition, variables)) {
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 }
             },
             "if" => {
                 // TODO: Properly implement variables so 'if' can be used
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
-                if evaluate_condition(condition, variables) {
+                if get_bool(evaluate_condition(condition, variables)) {
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 } else {
                     execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution);
@@ -259,13 +259,30 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
     }
 }
 
-fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> bool {
-    match condition.type_.as_str() {
-        "value" => {
-            let value: bool = *condition.value.as_ref().unwrap_or(&false);
-            return value;
+fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> Condition {
+    match *condition {
+        Condition::Boolean { value: _ } => {
+            return condition.clone();
         }
         _ => todo!()
+    }
+}
+
+fn get_bool(value: Condition) -> bool {
+    match value {
+        Condition::Boolean { value } => {
+            return value;
+        },
+        Condition::Number { value } => {
+            if value == 0.0 {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        _ => {
+            return false;
+        }
     }
 }
 
@@ -326,6 +343,8 @@ use serde::{ Deserialize, Serialize };
 // use serde_json::value::Value;
 
 type Macros = Vec<Macro>;
+
+// TODO: Refactor types to use #[serde(tag = "type")]
 
 #[derive(Serialize, Deserialize, Clone)]
 struct Macro {
@@ -472,16 +491,23 @@ impl std::fmt::Debug for VariableType {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
-struct Condition {
-    type_: String,
-    value: Option<bool>
-}
-
-impl std::fmt::Debug for Condition {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "\n Type: {:?} \n Value: {:?}", self.type_, self.value)
-    }
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(tag = "type_")]
+#[serde(rename_all = "lowercase")]
+enum Condition {
+    Boolean { value: bool },
+    Comparison { 
+        left: Box<Condition>, 
+        comparison: String, 
+        right: Box<Condition> 
+    },
+    Logical { 
+        left: Box<Condition>, 
+        kind: String, 
+        right: Box<Condition> 
+    },
+    Number { value: f64 },
+    Variable { variable: String }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
