@@ -184,7 +184,7 @@ fn get_variable_string(variable_value: VariableValue) -> String {
 
 fn get_variable_number(variable_value: VariableValue) -> f64 {
     match variable_value {
-        VariableValue::String(value) => {
+        VariableValue::String(_value) => {
             return 0.0;
         },
         VariableValue::Number(value) => {
@@ -218,16 +218,17 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let step: f64 = *execution.data.step.as_ref().unwrap_or(&f64::from(1));
                 let mut i: f64 = from;
                 let mut iterations: u64 = 0;
-                let mut value_variable: Option<&String> = None;
+                let mut value_variable: Option<String> = None;
                 for variable in &execution.variables {
                     if variable.type_ == "value".to_string() {
-                        value_variable = Some(&variable.name)
+                        value_variable = Some(variable.name.clone());
                     }
                 }
+                let variable_name: String = value_variable.unwrap_or("".to_string());
+
                 if to > from {
                     while i <= to {
-                        let variable_name = value_variable.unwrap();
-                        set_variable(variables, (*variable_name).to_string().clone(), VariableValue::Number(i));
+                        set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i));
                         execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution);
                         i += step;
                         iterations += 1;
@@ -237,6 +238,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     }
                 } else {
                     while i >= to {
+                        set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i));
                         execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution);
                         i += step;
                         iterations += 1;
@@ -249,7 +251,20 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             "whileloop" => {
                 // TODO: Properly implement variables so this loop can be used.
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
+
+                let mut value_variable: Option<String> = None;
+                for variable in &execution.variables {
+                    if variable.type_ == "iteration".to_string() {
+                        value_variable = Some(variable.name.clone());
+                    }
+                }
+                let variable_name: String = value_variable.unwrap_or("".to_string());
+
+                let mut i: u64 = 0;
+
                 while get_condition_bool(evaluate_condition(condition, variables)) {
+                    set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i as f64));
+                    i += 1;
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 }
             },
@@ -323,8 +338,7 @@ fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> Condi
             return Condition::Number{ value: get_variable_number(
                 get_variable(variables, variable.to_string()).unwrap_or( &Variable::new(VariableValue::Number(0.0)) ).value.clone()
             ) };
-        },
-        _ => todo!()
+        }
     }
 }
 
