@@ -3,7 +3,7 @@ A program that allows you to visually create macros to be run on your computer.
   
 This is a work in progress!  
   
-This program works cross-platform (Windows, Mac, and Linux).
+This program works cross-platform (Windows and Linux currently, but I'm looking for a solution for MacOS).
 
 ## Contributing
 Contributions are always welcome! Feel free to open an issue or PR if you find anything wrong.
