@@ -166,18 +166,29 @@ impl std::fmt::Debug for VariableValue {
         write!(
             f,
             "{:?}",
-            get_value(self.clone())
+            get_variable_string(self.clone())
         )
     }
 }
 
-fn get_value(variable_value: VariableValue) -> String {
+fn get_variable_string(variable_value: VariableValue) -> String {
     match variable_value {
         VariableValue::String(value) => {
             return value;
         },
         VariableValue::Number(value) => {
             return value.to_string();
+        }
+    }
+}
+
+fn get_variable_number(variable_value: VariableValue) -> f64 {
+    match variable_value {
+        VariableValue::String(value) => {
+            return 0.0;
+        },
+        VariableValue::Number(value) => {
+            return value;
         }
     }
 }
@@ -238,14 +249,14 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             "whileloop" => {
                 // TODO: Properly implement variables so this loop can be used.
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
-                while get_bool(evaluate_condition(condition, variables)) {
+                while get_condition_bool(evaluate_condition(condition, variables)) {
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 }
             },
             "if" => {
                 // TODO: Properly implement variables so 'if' can be used
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
-                if get_bool(evaluate_condition(condition, variables)) {
+                if get_condition_bool(evaluate_condition(condition, variables)) {
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
                 } else {
                     execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution);
@@ -260,15 +271,64 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
 }
 
 fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> Condition {
-    match *condition {
+    match condition {
         Condition::Boolean { value: _ } => {
             return condition.clone();
-        }
+        },
+        Condition::Number { value: _ } => {
+            return condition.clone();
+        },
+        Condition::Comparison { left, comparison, right } => {
+            let left_result: f64 = get_condition_number(evaluate_condition(left, variables));
+            let right_result: f64 = get_condition_number(evaluate_condition(right, variables));
+            match comparison.as_str() {
+                ">" => {
+                    return Condition::Boolean{ value: left_result > right_result };
+                },
+                "<" => {
+                    return Condition::Boolean{ value: left_result < right_result };
+                },
+                ">=" => {
+                    return Condition::Boolean{ value: left_result >= right_result };
+                },
+                "<=" => {
+                    return Condition::Boolean{ value: left_result <= right_result };
+                },
+                "==" => {
+                    return Condition::Boolean{ value: left_result == right_result };
+                },
+                "!==" => {
+                    return Condition::Boolean{ value: left_result != right_result };
+                },
+                _ => todo!()
+            }
+        },
+        Condition::Logical { left, kind, right } => {
+            let left_result: bool = get_condition_bool(evaluate_condition(left, variables));
+            let right_result: bool = get_condition_bool(evaluate_condition(right, variables));
+            match kind.as_str() {
+                "and" => {
+                    return Condition::Boolean{ value: left_result && right_result };
+                },
+                "or" => {
+                    return Condition::Boolean{ value: left_result || right_result };
+                },
+                "not" => {
+                    return Condition::Boolean{ value: !right_result };
+                },
+                _ => todo!()
+            }
+        },
+        Condition::Variable { variable } => {
+            return Condition::Number{ value: get_variable_number(
+                get_variable(variables, variable.to_string()).unwrap_or( &Variable::new(VariableValue::Number(0.0)) ).value.clone()
+            ) };
+        },
         _ => todo!()
     }
 }
 
-fn get_bool(value: Condition) -> bool {
+fn get_condition_bool(value: Condition) -> bool {
     match value {
         Condition::Boolean { value } => {
             return value;
@@ -286,6 +346,20 @@ fn get_bool(value: Condition) -> bool {
     }
 }
 
+fn get_condition_number(value: Condition) -> f64 {
+    match value {
+        Condition::Boolean { value } => {
+            return if value {1.0} else {0.0};
+        },
+        Condition::Number { value } => {
+            return value;
+        },
+        _ => {
+            return 0.0;
+        }
+    }
+}
+
 fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String {
     let variable_split: Vec<&str> = string.split("{{").collect();
     let mut result = String::from(variable_split[0]);
@@ -298,7 +372,7 @@ fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String 
         let halves: Vec<&str> = split.split("}}").collect();
         let variable_name: String = halves[0].to_string();
         let variable_value = get_variable(variables, variable_name);
-        result.push_str(&get_value(
+        result.push_str(&get_variable_string(
             variable_value.unwrap_or(
                 &Variable::new(VariableValue::String("undefined".to_string()))
             ).value.clone()
