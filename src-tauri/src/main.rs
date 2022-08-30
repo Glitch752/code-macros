@@ -135,18 +135,9 @@ fn run_macro_initiator(initiator: Initiator, macro_: Macro) {
 
 type Variables = HashMap<String, Variable>;
 
+#[derive(Debug)]
 struct Variable {
     value: VariableValue,
-}
-
-impl std::fmt::Debug for Variable {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\nValue: {:?}",
-            self.value
-        )
-    }
 }
 
 impl Variable {
@@ -155,20 +146,10 @@ impl Variable {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum VariableValue {
     String(String),
     Number(f64),
-}
-
-impl std::fmt::Debug for VariableValue {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{:?}",
-            get_variable_string(self.clone())
-        )
-    }
 }
 
 fn get_variable_string(variable_value: VariableValue) -> String {
@@ -434,57 +415,27 @@ type Macros = Vec<Macro>;
 
 // TODO: Refactor types to use #[serde(tag = "type")]
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct Macro {
     name: String,
     description: String,
     macro_: MacroMacro,
 }
 
-impl std::fmt::Debug for Macro {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\nName: {:?}\nDescription: {:?}\nMacro:{:?}\n",
-            self.name,
-            self.description,
-            self.macro_
-        )
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct MacroMacro {
     initiators: Option<Vec<Initiator>>,
     functions: Option<Vec<Function>>,
 }
 
-impl std::fmt::Debug for MacroMacro {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "\n Initiators: {:?} \n Functions: {:?}\n", self.initiators, self.functions)
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct Initiator {
     type_: String,
     data: InitiatorData,
     executes: Vec<Execution>,
 }
 
-impl std::fmt::Debug for Initiator {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Type: {:?} \n Data: {:?} \n Executes: {:?}",
-            self.type_,
-            self.data,
-            self.executes
-        )
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct InitiatorData {
     keys: Option<Vec<String>>,
     activate_time: Option<String>,
@@ -493,33 +444,13 @@ struct InitiatorData {
     app_path: Option<String>,
 }
 
-impl std::fmt::Debug for InitiatorData {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Keys: {:?} \n Activate Time: {:?} \n Time: {:?} \n Cron: {:?} \n App Path: {:?}",
-            self.keys,
-            self.activate_time,
-            self.time,
-            self.cron,
-            self.app_path
-        )
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct InitiatorKeypressTime {
     min: f64,
     max: f64,
 }
 
-impl std::fmt::Debug for InitiatorKeypressTime {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "\n Min: {:?} \n Max: {:?}", self.min, self.max)
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct Execution {
     type_: String,
     data: ExecutionData,
@@ -527,19 +458,7 @@ struct Execution {
     code_inside: ExecutionCodeInside
 }
 
-impl std::fmt::Debug for Execution {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Type: {:?} \n Data: {:?} \n Code inside: {:?}",
-            self.type_,
-            self.data,
-            self.code_inside
-        )
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct ExecutionData {
     time: Option<f64>,
     title: Option<String>,
@@ -550,33 +469,10 @@ struct ExecutionData {
     condition: Option<Condition>
 }
 
-impl std::fmt::Debug for ExecutionData {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Time: {:?} \n Title: {:?} \n Message: {:?}",
-            self.time,
-            self.title,
-            self.message
-        )
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct VariableType {
     type_: String,
     name: String
-}
-
-impl std::fmt::Debug for VariableType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Type: {:?} \n Name: {:?}",
-            self.type_,
-            self.name
-        )
-    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -598,20 +494,14 @@ enum Condition {
     Variable { variable: String }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct ExecutionCodeInside {
     loop_: Option<ExecutionWrapper>,
     then: Option<ExecutionWrapper>,
     else_: Option<ExecutionWrapper>
 }
 
-impl std::fmt::Debug for ExecutionCodeInside {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "\n Loop: {:?}", self.loop_)
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct ExecutionWrapper {
     executes: Vec<Execution>
 }
@@ -625,48 +515,18 @@ impl<'a> Default for &'a ExecutionWrapper {
     }
 }
 
-impl std::fmt::Debug for ExecutionWrapper {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "\n Executes: {:?}", self.executes)
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct Function {
     name: String,
     parameters: Vec<Parameter>,
     executes: Vec<Execution>,
 }
 
-impl std::fmt::Debug for Function {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Name: {:?} \n Parameters: {:?} \n Executes: {:?}",
-            self.name,
-            self.parameters,
-            self.executes
-        )
-    }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct Parameter {
     name: String,
     type_: String,
     default_value: String,
-}
-
-impl std::fmt::Debug for Parameter {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "\n Name: {:?} \n Type: {:?} \n Default value: {:?}",
-            self.name,
-            self.type_,
-            self.default_value
-        )
-    }
 }
 
 #[tauri::command]
