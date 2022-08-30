@@ -1,0 +1,35 @@
+[
+    {"name": "If", "value": "if", "description": "Executes the code inside if the condition is true.", "parameters": [
+        {"name": "Condition", "value": "condition", "description": "The condition to check.", "type": "condition"}
+    ], "codeInside": [
+        {"name": "Then", "value": "then", "description": "The code to execute if the condition is true."},
+        {"name": "Else", "value": "else", "description": "The code to execute if the condition is false."}
+    ]},
+    {"name": "Function call", "value": "function", "description": "Executes the code inside the function it calls.", "parameters": [
+        {"name": "Function", "value": "function", "type": "function", "description": "The function to call."}
+    ]},
+    {"name": "Repeat from to loop", "value": "fromtoloop", "description": "Executes the code inside the loop for each number between 2 numbers", "parameters": [
+        {"name": "Start", "value": "start", "description": "The starting number of the loop", "type": "number", "defaultValue": 0},
+        {"name": "End", "value": "end", "description": "The ending number of the loop", "type": "number", "defaultValue": 10},
+        {"name": "Step", "value": "step", "description": "How much the loop changes by each iteration", "type": "number", "defaultValue": 1}
+    ], "codeInside": [
+        {"name": "Loop iteration", "value": "loop", "description": "The code to execute for each iteration"}
+    ], "variables": [
+        {"name": "Value", "value": "value", "description": "The current value the loop is on"}
+    ]},
+    {"name": "Repeat while loop", "value": "whileloop", "description": "Executes the code inside the loop while the condition is true.", "parameters": [
+        {"name": "Condition", "value": "condition", "description": "The condition to check.", "type": "condition"}
+    ], "codeInside": [
+        {"name": "Loop iteration", "value": "loop", "description": "The code to execute for each iteration"}
+    ], "variables": [
+        {"name": "Iteration", "value": "iteration", "description": "The current iteration the loop is on"}
+    ]},
+    {"name": "Notification", "value": "notification", "description": "Displays a notification.", "parameters": [
+        {"name": "Title", "value": "title", "description": "The title of the notification.", "type": "string"},
+        {"name": "Message", "value": "message", "description": "The message of the notification.", "type": "string"}
+    ]},
+    {"name": "Wait", "value": "wait", "description": "Waits for a certain amount of time.", "parameters": [
+        {"name": "Time", "value": "time", "description": "The amount of time to wait, in miliseconds", "type": "number", "defaultValue": 10}
+    ]},
+    {"name": "Stop", "value": "stop", "description": "Stops the macro.", "parameters": []}
+]

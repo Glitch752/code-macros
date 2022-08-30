@@ -8,15 +8,11 @@
 
   import { readTextFile } from '@tauri-apps/api/fs';
 
+  import initiatorTypes from '../data/initiatorTypes.json';
+
   const props = defineProps(["initiator", "deleteInitiator"]);
 
   const { initiator, deleteInitiator } = toRefs(props);
-
-  const initiatorTypes = [
-    {name: "Keypress", description: "Do something when a certain key combination is used.", value: "keypress", defaultData: { keys: ["a"], activateTime: "press", time: { min: 0, max: 1 } }},
-    {name: "Application Launched", description: "Do something when a certain application is launched.", value: "appLaunched", defaultData: { appPath: "/" }},
-    {name: "Time", description: "Do something when a certain cron expression is met.", value: "time", defaultData: { cron: "* * * * *" }},
-  ];
 
   function setInitiator(initiatorType) {
     initiator.value.type = initiatorType.value;

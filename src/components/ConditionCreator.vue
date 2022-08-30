@@ -3,25 +3,11 @@
 
   import ConditionCreator from './ConditionCreator.vue';
 
+  import conditionTypes from '../data/conditionTypes.json';
+
   const props = defineProps(["condition"]);
 
   const { condition } = toRefs(props);
-
-  const conditionTypes = [
-    { value: "boolean", name: "Boolean", description: "A simple true or false value", defaultData: { value: false }},
-    { value: "comparison", name: "Comparison", description: "A comparison between two values", defaultData: {
-        left: { type: "number", value: 0 },
-        comparison: ">",
-        right: { type: "number", value: 0 }
-    }},
-    { value: "logical", name: "Logical", description: "A logical comparison using booleans", defaultData: {
-        left: { type: "boolean", value: false },
-        kind: "and",
-        right: { type: "boolean", value: false }
-    }},
-    { value: "number", name: "Number", description: "A number", defaultData: { value: 0 }},
-    { value: "variable", name: "Variable", description: "Any variable currently set. Defaults to -1 if the variable doesn't exist.", defaultData: { variable: "" }},
-  ];
 
   function setCondition(e) {
     let conditionType = conditionTypes.find(type => type.value === e.target.value);
