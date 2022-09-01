@@ -28,7 +28,9 @@ pub struct ExecutionData {
     pub from: Option<f64>,
     pub to: Option<f64>,
     pub step: Option<f64>,
-    pub condition: Option<Condition>
+    pub condition: Option<Condition>,
+    pub variable: Option<String>,
+    pub value: Option<f64>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -212,6 +214,11 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             },
             "stop" => {
                 *stop_execution = true;
+            },
+            "setvariable" => {
+                let variable: &String = &execution.data.variable.as_ref().unwrap();
+                let value: f64 = *execution.data.value.as_ref().unwrap();
+                set_variable(variables, variable.to_string().clone(), VariableValue::Number(value));
             }
             _ => todo!()
         }
