@@ -1,6 +1,11 @@
 [
     {"name": "If", "value": "if", "description": "Executes the code inside if the condition is true.", "parameters": [
-        {"name": "Condition", "value": "condition", "description": "The condition to check.", "type": "condition"}
+        {"name": "Condition", "value": "condition", "description": "The condition to check.", "type": "condition", "defaultValue": {
+            "condition": {
+                "type": "boolean",
+                "value": true
+            }
+        }}
     ], "codeInside": [
         {"name": "Then", "value": "then", "description": "The code to execute if the condition is true."},
         {"name": "Else", "value": "else", "description": "The code to execute if the condition is false."}
@@ -18,7 +23,12 @@
         {"name": "Value", "value": "value", "description": "The current value the loop is on."}
     ]},
     {"name": "Repeat while loop", "value": "whileloop", "description": "Executes the code inside the loop while the condition is true.", "parameters": [
-        {"name": "Condition", "value": "condition", "description": "The condition to check.", "type": "condition"}
+        {"name": "Condition", "value": "condition", "description": "The condition to check.", "type": "condition", "defaultValue": {
+            "condition": {
+                "type": "boolean",
+                "value": true
+            }
+        }}
     ], "codeInside": [
         {"name": "Loop iteration", "value": "loop", "description": "The code to execute for each iteration."}
     ], "variables": [
@@ -33,7 +43,14 @@
     ]},
     {"name": "Set variable", "value": "setvariable", "description": "Sets a specified variable to a value.", "parameters": [
         {"name": "Variable", "value": "variable", "description": "The variable you want to set.", "type": "string", "defaultValue": ""},
-        {"name": "Value", "value": "value", "description": "The value you want to set the variable to.", "type": "number", "defaultValue": 0}
+        {"name": "Value", "value": "value", "description": "The value you want to set the variable to.", "type": "expression", "defaultValue": {
+            "expression": {
+                "type": "arithmetic",
+                "left": {"type": "number", "value": 0},
+                "kind": "addition",
+                "right": {"type": "number", "value": 0}
+            }
+        }}
     ]},
     {"name": "Stop", "value": "stop", "description": "Stops the macro.", "parameters": []}
 ]

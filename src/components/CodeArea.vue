@@ -5,6 +5,7 @@
   import ConditionCreator from './ConditionCreator.vue';
 
   import codeTypes from '../data/codeTypes.json';
+import ExpressionCreator from './ExpressionCreator.vue';
 
   const props = defineProps(["executes", "title"]);
 
@@ -143,7 +144,7 @@
             </div>
             <div class="codeArguments">
               <div v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" 
-                :class="{codeArgument: getParameter(execute, argumentType)?.type !== 'condition'}"
+                :class="{codeArgument: ['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1}"
               >
                 <input 
                   v-if="getParameter(execute, argumentType)?.type === 'string'" 
@@ -167,6 +168,10 @@
                 <span
                   v-if="getParameter(execute, argumentType)?.type === 'condition'">
                   <ConditionCreator :condition="argumentValue" />  
+                </span>
+                <span
+                  v-if="getParameter(execute, argumentType)?.type === 'expression'">
+                  <ExpressionCreator :expression="argumentValue" />  
                 </span>
                 <span>{{getParameter(execute, argumentType)?.name || "Unknown"}}</span>
               </div>

@@ -10,6 +10,12 @@
         "kind": "and",
         "right": {"type": "boolean", "value": false }
     }},
+    {"value": "expression", "name": "Expression", "description": "An expression, which can be arithmetic and bitwise operations.", "defaultData": {"expression": {
+        "type": "arithmetic",
+        "left": {"type": "number", "value": 0},
+        "kind": "addition",
+        "right": {"type": "number", "value": 0}
+    }}},
     {"value": "number", "name": "Number", "description": "A number", "defaultData": {"value": 0 }},
     {"value": "variable", "name": "Variable", "description": "Any variable currently set. Defaults to -1 if the variable doesn't exist.", "defaultData": {"variable": "" }}
 ]

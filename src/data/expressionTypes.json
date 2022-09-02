@@ -1,0 +1,14 @@
+[
+    {"name": "Bitwise", "value": "bitwise", "description": "Operations that are applied per bit on the numbers provided", "defaultData": {
+        "left": {"type": "number", "value": 0},
+        "kind": "and",
+        "right": {"type": "number", "value": 0}
+    }},
+    {"name": "Arithmetic", "value": "arithmetic", "description": "Arithmetic operators like +, -, *, /, etc.", "defaultData": {
+        "left": {"type": "number", "value": 0},
+        "kind": "addition",
+        "right": {"type": "number", "value": 0}
+    }},
+    {"value": "number", "name": "Number", "description": "A number", "defaultData": {"value": 0 }},
+    {"value": "variable", "name": "Variable", "description": "Any variable currently set. Defaults to -1 if the variable doesn't exist.", "defaultData": {"variable": "" }}
+]

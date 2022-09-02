@@ -1,24 +1,24 @@
 <script setup>
-  import { toRefs } from 'vue';
+    import { toRefs } from 'vue';
 
-  import ConditionCreator from './ConditionCreator.vue';
+    import ConditionCreator from './ConditionCreator.vue';
+    import ExpressionCreator from './ExpressionCreator.vue';
 
-  import conditionTypes from '../data/conditionTypes.json';
+    import conditionTypes from '../data/conditionTypes.json';
 
-  const props = defineProps(["condition"]);
+    const props = defineProps(["condition"]);
 
-  const { condition } = toRefs(props);
+    const { condition } = toRefs(props);
 
-  function setCondition(e) {
-    let conditionType = conditionTypes.find(type => type.value === e.target.value);
-    condition.value = {};
-    condition.value.type = conditionType.value;
-    for(let key in conditionType.defaultData) {
-        let value = conditionType.defaultData[key];
-        condition.value[key] = value;
+    function setCondition(e) {
+        let conditionType = conditionTypes.find(type => type.value === e.target.value);
+        condition.value = {};
+        condition.value.type = conditionType.value;
+        for(let key in conditionType.defaultData) {
+            let value = conditionType.defaultData[key];
+            condition.value[key] = value;
+        }
     }
-    console.log(condition.value);
-  }
 </script>
 
 <template>
@@ -72,6 +72,9 @@
         </span>
         <span class="conditionBoolean" v-if="condition.type === 'variable'">
             <input class="conditionInput" v-model="condition.variable" placeholder="Variable" type="text" />
+        </span>
+        <span class="conditionBoolean" v-if="condition.type === 'expression'">
+            <ExpressionCreator :expression="condition.expression" />
         </span>
     </div>
 </template>
