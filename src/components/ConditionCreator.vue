@@ -74,7 +74,7 @@
             <input class="conditionInput" v-model="condition.variable" placeholder="Variable" type="text" />
         </span>
         <span class="conditionBoolean" v-if="condition.type === 'expression'">
-            <ExpressionCreator :expression="condition.expression" />
+            <ExpressionCreator :expression="condition" />
         </span>
     </div>
 </template>

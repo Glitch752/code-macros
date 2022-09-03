@@ -61,11 +61,10 @@
                     <option value="xor">Xor</option>
                     <option value="not">Not</option>
                     <option value="leftshift">Left shift</option>
-                    <option value="signrightshift">Sign propagating right shift</option>
-                    <option value="zerorightshift">Zero fill right shift</option>
+                    <option value="signrightshift">Right shift</option>
                 </select>
             </span>
-            <ExpressionCreator :expression="expression.right" />
+            <ExpressionCreator :expression="expression.right" v-if="expression.kind !== 'not'" />
         </span>
     </div>
 </template>

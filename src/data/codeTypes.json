@@ -43,7 +43,7 @@
     ]},
     {"name": "Set variable", "value": "setvariable", "description": "Sets a specified variable to a value.", "parameters": [
         {"name": "Variable", "value": "variable", "description": "The variable you want to set.", "type": "string", "defaultValue": ""},
-        {"name": "Value", "value": "value", "description": "The value you want to set the variable to.", "type": "expression", "defaultValue": {
+        {"name": "Value", "value": "content", "description": "The value you want to set the variable to.", "type": "expression", "defaultValue": {
             "expression": {
                 "type": "arithmetic",
                 "left": {"type": "number", "value": 0},

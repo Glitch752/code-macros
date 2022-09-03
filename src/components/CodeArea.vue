@@ -173,7 +173,10 @@ import ExpressionCreator from './ExpressionCreator.vue';
                   v-if="getParameter(execute, argumentType)?.type === 'expression'">
                   <ExpressionCreator :expression="argumentValue" />  
                 </span>
-                <span>{{getParameter(execute, argumentType)?.name || "Unknown"}}</span>
+                <span
+                  v-if="['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1">
+                    {{getParameter(execute, argumentType)?.name || "Unknown"}}
+                </span>
               </div>
               <br />
               <span v-if="execute.variables.length > 0" style="display: block; margin-left: 5px;">Variables: </span>
@@ -183,7 +186,10 @@ import ExpressionCreator from './ExpressionCreator.vue';
                   type="text" 
                   class="codeArgumentInput"
                   :placeholder="getVariable(execute, variableValue.value.type)?.name" />
-                <span>{{getVariable(execute, variableValue.value.type)?.name || "Unknown"}}</span>
+                <span 
+                  v-if="['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1">
+                    {{getVariable(execute, variableValue.value.type)?.name || "Unknown"}}
+                </span>
               </div>
             </div>
             <div

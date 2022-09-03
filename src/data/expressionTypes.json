@@ -1,5 +1,5 @@
 [
-    {"name": "Bitwise", "value": "bitwise", "description": "Operations that are applied per bit on the numbers provided", "defaultData": {
+    {"name": "Bitwise", "value": "bitwise", "description": "Operations that are applied per bit on the numbers provided (converts numbers to integers)", "defaultData": {
         "left": {"type": "number", "value": 0},
         "kind": "and",
         "right": {"type": "number", "value": 0}

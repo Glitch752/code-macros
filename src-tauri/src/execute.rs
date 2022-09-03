@@ -30,7 +30,8 @@ pub struct ExecutionData {
     pub step: Option<f64>,
     pub condition: Option<Condition>,
     pub variable: Option<String>,
-    pub value: Option<f64>
+    pub value: Option<f64>,
+    pub content: Option<Expression>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -44,18 +45,38 @@ pub struct VariableType {
 #[serde(rename_all = "lowercase")]
 pub enum Condition {
     Boolean { value: bool },
-    Comparison { 
+    Comparison {
         left: Box<Condition>, 
         comparison: String, 
         right: Box<Condition> 
     },
-    Logical { 
+    Logical {
         left: Box<Condition>, 
         kind: String, 
         right: Box<Condition> 
     },
     Number { value: f64 },
-    Variable { variable: String }
+    Variable { variable: String },
+    Expression { expression: Expression }
+}
+
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(tag = "type_")]
+#[serde(rename_all = "lowercase")]
+pub enum Expression {
+    Number { value: f64 },
+    Variable { variable: String },
+    Arithmetic {
+        left: Box<Expression>, 
+        kind: String, 
+        right: Box<Expression> 
+    },
+    Bitwise {
+        left: Box<Expression>, 
+        kind: String, 
+        right: Box<Expression> 
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -87,9 +108,10 @@ pub fn run_macro_initiator(initiator: Initiator, macro_: Macro) {
     });
 }
 
+
 type Variables = HashMap<String, Variable>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Variable {
     value: VariableValue,
 }
@@ -217,8 +239,10 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             },
             "setvariable" => {
                 let variable: &String = &execution.data.variable.as_ref().unwrap();
-                let value: f64 = *execution.data.value.as_ref().unwrap();
-                set_variable(variables, variable.to_string().clone(), VariableValue::Number(value));
+                let content: &Expression = execution.data.content.as_ref().unwrap();
+                set_variable(variables, variable.to_string().clone(), VariableValue::Number(
+                    get_expression_number(evaluate_expression(content, &mut variables.clone()))
+                ));
             }
             _ => todo!()
         }
@@ -278,6 +302,85 @@ fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> Condi
             return Condition::Number{ value: get_variable_number(
                 get_variable(variables, variable.to_string()).unwrap_or( &Variable::new(VariableValue::Number(0.0)) ).value.clone()
             ) };
+        },
+        Condition::Expression { expression } => {
+            return Condition::Number{ value: get_expression_number(
+                evaluate_expression(expression, variables)
+            ) }
+        }
+    }
+}
+
+fn evaluate_expression(expression: &Expression, variables: &mut Variables) -> Expression {
+    match expression {
+        Expression::Number { value: _ } => {
+            return expression.clone();
+        },
+        Expression::Variable { variable } => {
+            return Expression::Number{ value: get_variable_number(
+                get_variable(variables, variable.to_string()).unwrap_or( &Variable::new(VariableValue::Number(0.0)) ).value.clone()
+            ) };
+        },
+        Expression::Arithmetic { left, kind, right } => {
+            let left_result: f64 = get_expression_number(evaluate_expression(left, variables));
+            let right_result: f64 = get_expression_number(evaluate_expression(right, variables));
+            match kind.as_str() {
+                "addition" => {
+                    return Expression::Number{ value: left_result + right_result };
+                },
+                "subtraction" => {
+                    return Expression::Number{ value: left_result - right_result };
+                },
+                "division" => {
+                    return Expression::Number{ value: left_result / right_result };
+                },
+                "multiplication" => {
+                    return Expression::Number{ value: left_result * right_result };
+                },
+                "modulo" => {
+                    return Expression::Number{ value: left_result % right_result };
+                },
+                "exponent" => {
+                    return Expression::Number{ value: left_result.powf(right_result) };
+                },
+                _ => todo!()
+            }
+        },
+        Expression::Bitwise { left, kind, right } => {
+            let left_result: i64 = get_expression_number(evaluate_expression(left, variables)).round() as i64;
+            let right_result: i64 = if kind == "not" { 0 } else { get_expression_number(evaluate_expression(right, variables)).round() as i64 };
+            match kind.as_str() {
+                "and" => {
+                    return Expression::Number{ value: (left_result & right_result) as f64 };
+                },
+                "or" => {
+                    return Expression::Number{ value: (left_result | right_result) as f64 };
+                },
+                "xor" => {
+                    return Expression::Number{ value: (left_result ^ right_result) as f64 };
+                },
+                "not" => {
+                    return Expression::Number{ value: (!right_result) as f64 };
+                },
+                "leftshift" => {
+                    return Expression::Number{ value: (left_result << right_result) as f64 };
+                },
+                "signrightshift" => {
+                    return Expression::Number{ value: (left_result >> right_result) as f64 };
+                },
+                _ => todo!()
+            }
+        }
+    }
+}
+
+fn get_expression_number(value: Expression) -> f64 {
+    match value {
+        Expression::Number { value } => {
+            return value;
+        },
+        _ => {
+            return 0.0;
         }
     }
 }
