@@ -91,20 +91,6 @@ pub struct MacroMacro {
     pub functions: Option<Vec<Function>>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Function {
-    pub name: String,
-    pub parameters: Vec<Parameter>,
-    pub executes: Vec<Execution>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Parameter {
-    pub name: String,
-    pub type_: String,
-    pub default_value: String,
-}
-
 #[tauri::command]
 fn update_macros(macros: Macros) {
     set_macros(macros);

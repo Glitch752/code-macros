@@ -31,7 +31,8 @@ pub struct ExecutionData {
     pub condition: Option<Condition>,
     pub variable: Option<String>,
     pub value: Option<f64>,
-    pub content: Option<Expression>
+    pub content: Option<Expression>,
+    pub function: Option<String>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -100,20 +101,39 @@ impl<'a> Default for &'a ExecutionWrapper {
     }
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Function {
+    pub name: String,
+    pub parameters: Vec<Parameter>,
+    pub executes: Vec<Execution>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Parameter {
+    pub name: String,
+    pub type_: String,
+    pub default_value: String,
+}
+
 pub fn run_macro_initiator(initiator: Initiator, macro_: Macro) {
     println!("Running macro initiator from macro \"{}\"", macro_.name);
     thread::spawn(move || {
         let mut new_variables: Variables = Variables::new();
-        execute_macro_code(&initiator.executes, &mut new_variables, &mut false);
+        execute_macro_code(&initiator.executes, &mut new_variables, &mut false, macro_);
     });
+}
+
+pub fn run_macro_function(function: Function, macro_: Macro, variables: &mut Variables) {
+    println!("Running macro function from macro \"{}\"", macro_.name);
+    execute_macro_code(&function.executes, variables, &mut false, macro_);
 }
 
 
 type Variables = HashMap<String, Variable>;
 
 #[derive(Debug, Clone)]
-struct Variable {
-    value: VariableValue,
+pub struct Variable {
+    pub value: VariableValue,
 }
 
 impl Variable {
@@ -123,7 +143,7 @@ impl Variable {
 }
 
 #[derive(Clone, Debug)]
-enum VariableValue {
+pub enum VariableValue {
     String(String),
     Number(f64),
 }
@@ -150,7 +170,7 @@ fn get_variable_number(variable_value: VariableValue) -> f64 {
     }
 }
 
-fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_execution: &mut bool) {
+fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_execution: &mut bool, macro_: Macro) {
     for execution in code {
         if *stop_execution {
             return;
@@ -186,7 +206,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 if to > from {
                     while i <= to {
                         set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i));
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution);
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -196,7 +216,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 } else {
                     while i >= to {
                         set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i));
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution);
+                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -222,16 +242,16 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 while get_condition_bool(evaluate_condition(condition, variables)) {
                     set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i as f64));
                     i += 1;
-                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
+                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 }
             },
             "if" => {
                 // TODO: Properly implement variables so 'if' can be used
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
                 if get_condition_bool(evaluate_condition(condition, variables)) {
-                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution);
+                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 } else {
-                    execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution);
+                    execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 }
             },
             "stop" => {
@@ -243,6 +263,15 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 set_variable(variables, variable.to_string().clone(), VariableValue::Number(
                     get_expression_number(evaluate_expression(content, &mut variables.clone()))
                 ));
+            },
+            "function" => {
+                let function_name: &String = &execution.data.function.as_ref().unwrap();
+                for function in &macro_.clone().macro_.functions.unwrap() {
+                    if function.name == *function_name {
+                        run_macro_function(function.clone(), macro_.clone(), variables);
+                        break;
+                    }
+                }
             }
             _ => todo!()
         }
