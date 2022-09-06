@@ -15,6 +15,7 @@ mod execute;
 
 use initiators::*;
 use initiators::keypress::*;
+use initiators::cron::*;
 
 use execute::*;
 
@@ -94,4 +95,5 @@ pub struct MacroMacro {
 #[tauri::command]
 fn update_macros(macros: Macros) {
     set_macros(macros);
+    listen_initiator_cron();
 }
