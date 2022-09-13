@@ -22,6 +22,7 @@ tauri-plugin-single-instance = { git = "https://github.com/amrbashir/tauri-plugi
 inputbot = { git = "https://github.com/obv-mikhail/InputBot", branch = "develop" }
 once_cell = { version = "1.13.1" }
 crony = "0.3.0"
+derive-new = "0.5"
 
 [features]
 # by default Tauri runs in production mode
