@@ -1,7 +1,7 @@
-// use super::super::get_macros;
+use super::super::get_macros;
 // use super::super::execute::run_macro_initiator;
-// use super::Initiator;
-// use super::super::Macro;
+use super::Initiator;
+use super::super::Macro;
 
 use crony::{Job, Runner, Schedule};
 // use std::thread;
@@ -21,11 +21,42 @@ impl Job for ExampleJob {
     }
 }
 
+static mut RUNNER: Option<Runner> = None;
+
 pub fn listen_initiator_cron() {
-    // let macros: Vec<Macro> = get_macros();
+    println!("updating");
+    unsafe {
+        match &RUNNER {
+            Some(runner) => {
+                RUNNER.take().unwrap().stop();
+            }
+            None => {}
+        }
+    };
+
+    let macros: Vec<Macro> = get_macros();
+
+    let mut cron_initiators: Vec<Initiator> = vec![];
+    for macro_ in macros {
+        let initiators: Vec<Initiator> =  macro_.macro_.initiators.unwrap_or(vec![]);
+        for initiator in initiators {
+            if initiator.type_ == "time" {
+                cron_initiators.push(initiator);
+            }
+        }
+    }
+
     let mut runner: Runner = Runner::new();
 
-    runner = runner.add(Box::new(ExampleJob::new("* * * * * *".to_string())));
+    for cron_initiator in cron_initiators {
+        runner = runner.add(Box::new(ExampleJob::new(
+            cron_initiator.data.cron.unwrap().to_string()
+        )));
+    }
 
-    runner.run();
+    runner = runner.run();
+
+    unsafe {
+        RUNNER = Some(runner);
+    }
 }
