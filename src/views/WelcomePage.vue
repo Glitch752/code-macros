@@ -5,7 +5,7 @@
     <p>You <s>can</s> will eventually be able to create macros that do things like:</p>
     <ul>
       <li>Send a notification after a certain key combination</li>
-      <li>Open another application a random amount of seconds after you open a different one</li>
+      <li>Press a set of keys every half second</li>
       <li>And more</li>
     </ul>
     <p>This is very much a work in progress!</p>

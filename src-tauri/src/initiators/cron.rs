@@ -25,7 +25,6 @@ impl Job for ExampleJob {
 static mut RUNNER: Option<Runner> = None;
 
 pub fn listen_initiator_cron() {
-    println!("updating");
     unsafe {
         match &RUNNER {
             Some(runner) => {
