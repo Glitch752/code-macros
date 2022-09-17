@@ -27,7 +27,7 @@ static mut RUNNER: Option<Runner> = None;
 pub fn listen_initiator_cron() {
     unsafe {
         match &RUNNER {
-            Some(runner) => {
+            Some(_) => {
                 RUNNER.take().unwrap().stop();
             }
             None => {}

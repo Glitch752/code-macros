@@ -13,25 +13,29 @@ pub fn listen_initiator_keypress() {
 
         let mut keys_pressed = keys_pressed.lock().unwrap();
 
-        keys_pressed.insert(event, true);
+        // Turning the value from true to false is a hacky workaround for windows
+        if !keys_pressed.contains_key(&event) {
+            keys_pressed.insert(event, true);
+        }
 
         // Loop through all keys and check if they are pressed. If not, remove them from the map.
         let mut remove = Vec::new();
-        for key in keys_pressed.keys() {
+        for key in keys_pressed.clone().keys() {
             if !KeybdKey::is_pressed(*key) {
-                remove.push(*key);
+                if keys_pressed[key] == false {
+                    remove.push(*key);
+                } else {
+                    *keys_pressed.get_mut(&event).unwrap() = false;
+                }
             }
         }
         for key in remove {
             keys_pressed.remove(&key);
         }
 
-
         let mut keys_pressed_js: Vec<String> = vec![];
-        for (key, value) in keys_pressed.iter() {
-            if *value {
-                keys_pressed_js.push(js_key(*key));
-            }
+        for key in keys_pressed.keys() {
+            keys_pressed_js.push(js_key(*key));
         }
 
         'macros: for macro_ in get_macros() {
@@ -138,6 +142,11 @@ fn js_key(key: KeybdKey) -> String {
     enum_to_key.insert("RShiftKey".to_string(),    "shift".to_string()    );
     enum_to_key.insert("LControlKey".to_string(),  "control".to_string()  );
     enum_to_key.insert("RControlKey".to_string(),  "control".to_string()  );
+    // Does not work on linux
+    enum_to_key.insert("RightKey".to_string(),     "right".to_string()    );
+    enum_to_key.insert("LeftKey".to_string(),      "left".to_string()     );
+    enum_to_key.insert("UpKey".to_string(),        "up".to_string()       );
+    enum_to_key.insert("DownKey".to_string(),      "down".to_string()     );
 
     let key_string = format!("{:?}", key);
 

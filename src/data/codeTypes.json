@@ -52,5 +52,8 @@
             }
         }}
     ]},
+    {"name": "Type string", "value": "typestring", "description": "Type a string", "parameters": [
+        {"name": "String", "value": "string", "description": "The string you want to type.", "type": "string", "defaultValue": ""}
+    ]},
     {"name": "Stop", "value": "stop", "description": "Stops the macro.", "parameters": []}
 ]

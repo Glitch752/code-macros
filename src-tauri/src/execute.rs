@@ -12,6 +12,8 @@ use super::Macro;
 
 use super::initiators::Initiator;
 
+use inputbot::{KeySequence};
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Execution {
     pub type_: String,
@@ -32,7 +34,8 @@ pub struct ExecutionData {
     pub variable: Option<String>,
     pub value: Option<f64>,
     pub content: Option<Expression>,
-    pub function: Option<String>
+    pub function: Option<String>,
+    pub string: Option<String>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -224,7 +227,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         }
                     }
                 }
-            },
+            }
             "whileloop" => {
                 // TODO: Properly implement variables so this loop can be used.
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
@@ -244,7 +247,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     i += 1;
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 }
-            },
+            }
             "if" => {
                 // TODO: Properly implement variables so 'if' can be used
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
@@ -253,17 +256,17 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 } else {
                     execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 }
-            },
+            }
             "stop" => {
                 *stop_execution = true;
-            },
+            }
             "setvariable" => {
                 let variable: &String = &execution.data.variable.as_ref().unwrap();
                 let content: &Expression = execution.data.content.as_ref().unwrap();
                 set_variable(variables, variable.to_string().clone(), VariableValue::Number(
                     get_expression_number(evaluate_expression(content, &mut variables.clone()))
                 ));
-            },
+            }
             "function" => {
                 let function_name: &String = &execution.data.function.as_ref().unwrap();
                 for function in &macro_.clone().macro_.functions.unwrap() {
@@ -272,6 +275,14 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         break;
                     }
                 }
+            }
+            "typestring" => {
+                let string: &String = &execution.data.string.as_ref().unwrap();
+
+                // FIXME: Yes, this is really, really bad code. It is intentionally creating a memory leak.
+                let string_static = Box::leak(parse_string(&string.clone(), &mut variables.clone()).into_boxed_str());
+
+                KeySequence(string_static).send();
             }
             _ => todo!()
         }
