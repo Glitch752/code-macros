@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import RedirectPage from "@/views/RedirectPage.vue";
-import MacrosPage from "@/views/MacrosPage.vue";
+import MacroEditor from "@/views/MacroEditor.vue";
+import MacrosList from "@/views/MacrosList.vue";
 import WelcomePage from "@/views/WelcomePage.vue";
 
 const routes = [
@@ -12,7 +13,12 @@ const routes = [
   {
     path: "/macros",
     name: "Macros",
-    component: MacrosPage,
+    component: MacrosList,
+  },
+  {
+    path: "/macro/:macroIndex",
+    name: "Macro",
+    component: MacroEditor,
   },
   {
     path: "/welcome",

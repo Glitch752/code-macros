@@ -50,7 +50,7 @@
 <style scoped>
   .titlebar {
     height: 24px;
-    background: #30467777;
+    background: var(--dark-background);
     user-select: none;
     display: flex;
     justify-content: flex-end;

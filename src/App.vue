@@ -10,6 +10,11 @@
 </template>
 
 <style>
+  :root {
+    --primary-background: #1e1f29;
+    --dark-background: #171820;
+    --primary-text: #ffffff;
+  }
   *, *::before, *::after {
     box-sizing: border-box;
   }
@@ -25,10 +30,9 @@
     --inset: 0;
     position: absolute;
     inset: var(--inset);
-    background-color: #1c2433dd;
+    background-color: var(--primary-background);
     color: white;
     font-family: 'Source Sans Pro';
-    border: 3px solid #30467777;
   }
   #app.maximized {
     border: none;
