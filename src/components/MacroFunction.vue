@@ -36,8 +36,7 @@
     fill: #b62d2d;
   }
   .functionName {
-    outline: 2px solid transparent;
-    background: none;
+    background-color: var(--primary-background);
     border: none;
     width: 500px;
     max-width: 40%;
@@ -51,9 +50,9 @@
     outline: 2px solid #223547;
   }
   .function {
-    padding: 10px;
+    padding: 10px 0 10px 10px;
     margin: 10px;
-    border: 3px solid #141a27;
+    background-color: var(--dark-background);
     position: relative;
   }
   .function span {

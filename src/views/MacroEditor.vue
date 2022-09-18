@@ -74,13 +74,13 @@
     position: relative;
     display: inline-block;
     width: 300px;
-    height: 100%;
+    height: calc(100% - 24px);
   }
   .rightPane {
     position: absolute;
     display: inline-block;
     width: calc(100% - 300px);
-    height: 100%;
+    height: calc(100% - 24px);
   }
   h1 {
     text-align: center;

@@ -71,15 +71,15 @@
 
 <style scoped>
     .expression {
-        border: 3px solid #141a2766;
+        background-color: var(--primary-background);
         margin: 5px;
         padding: 5px;
     }
     .expressionSelect {
         appearance: none;
-        background-color: transparent;
+        background-color: var(--dark-background);
         outline: none;
-        border: 3px solid #141a2766;
+        border: none;
         border-radius: 0;
         padding: 5px 25px 5px 10px;
         color: #fff;
@@ -101,9 +101,9 @@
         position: relative;
     }
     .expressionInput {
-        background-color: transparent;
+        background-color: var(--dark-background);
         outline: none;
-        border: 3px solid #141a2766;
+        border: none;
         padding: 5px;
         color: #fff;
     }

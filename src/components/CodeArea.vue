@@ -127,7 +127,7 @@ import ExpressionCreator from './ExpressionCreator.vue';
     <h2 v-if="props.title" class="codeAreaTitle">{{props.title}}</h2>
     <div>
       <span v-if="executes.length === 0">This doesn't execute anything. Hover over add code to add something for it to execute.</span>
-      <template v-else>
+      <div v-else>
         <div 
           v-for="(execute, index) in executes" 
           :key="execute" 
@@ -204,7 +204,7 @@ import ExpressionCreator from './ExpressionCreator.vue';
                 <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
             </svg>
         </div>
-      </template>
+      </div>
     </div>
     <span class="addCode">
       <span>Add code</span>
@@ -224,11 +224,12 @@ import ExpressionCreator from './ExpressionCreator.vue';
 
 <style scoped>
   .code {
-    border: 3px solid #171b2777;
+    background-color: var(--dark-background);
     margin: 5px;
     padding: 5px;
     position: relative;
     font-size: 18px;
+    margin-right: 10px;
   }
   .codeArgumentInput {
     border: none;
@@ -249,7 +250,7 @@ import ExpressionCreator from './ExpressionCreator.vue';
     width: 230px;
     display: inline-flex;
     flex-direction: row;
-    border: 3px solid #141a2766;
+    background-color: var(--primary-background);
     margin: 5px;
   }
   .codeArgument span {
@@ -278,9 +279,9 @@ import ExpressionCreator from './ExpressionCreator.vue';
   }
   .codeArea {
     width: 100%;
-    padding: 5px;
-    border: 5px solid #1c1f2777;
+    padding: 5px 0 5px 5px;
     margin-top: 5px;
+    background-color: var(--primary-background);
   }
   .addCode {
     border: 3px solid #141a2766;

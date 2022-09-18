@@ -139,7 +139,7 @@
     outline: 3px solid #141a2766;
   }
   .initiatorType {
-    border: 3px solid #141a2766;
+    background-color: var(--primary-background);
     margin: 5px;
     padding: 0 25px 0 10px;
     position: relative;
@@ -169,7 +169,7 @@
     display: none;
     flex-wrap: wrap;
     z-index: 200;
-  }call
+  }
   .initiatorSelect.right {
     right: -3px;
     left: auto;
@@ -181,7 +181,7 @@
     margin: 5px;
     padding: 5px;
     width: 300px;
-    background-color: #191b1f99;
+    background-color: #1f191999;
     cursor: pointer;
   }
   .initiatorSelectOption:hover {
@@ -205,9 +205,9 @@
     display: flex;
   }
   .initiator {
-    padding: 10px;
+    padding: 10px 0 10px 10px;
     margin: 10px;
-    border: 3px solid #141a27;
+    background-color: var(--dark-background);
     position: relative;
     display: flex;
     flex-direction: row;
