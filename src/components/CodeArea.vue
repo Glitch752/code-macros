@@ -1,13 +1,11 @@
 <script setup>
-  import { reactive, toRefs, onUnmounted } from 'vue';
+  import { reactive, onUnmounted } from 'vue';
 
   import CodeArea from './CodeArea.vue';
-  import ConditionCreator from './ConditionCreator.vue';
 
   import codeTypes from '../data/codeTypes.json';
-import ExpressionCreator from './ExpressionCreator.vue';
 
-  const props = defineProps(["executes", "title"]);
+  const props = defineProps(["executes", "title", "openArgumentsPopup"]);
 
   const executes = reactive(props.executes);
 
@@ -118,8 +116,6 @@ import ExpressionCreator from './ExpressionCreator.vue';
   });
 
   const getCodeType = (execute) => codeTypes.find(codeType => codeType.value === execute?.type);
-  const getParameter = (execute, argumentType) => getCodeType(execute)?.parameters?.find(parameter => parameter.value === argumentType);
-  const getVariable = (execute, variableType) => getCodeType(execute)?.variables?.find(variable => variable.value === variableType);
 </script>
 
 <template>
@@ -142,61 +138,22 @@ import ExpressionCreator from './ExpressionCreator.vue';
             <div class="codeType" :class="execute.type">
               <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
             </div>
-            <div class="codeArguments">
-              <div v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" 
-                :class="{codeArgument: ['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1}"
-              >
-                <input 
-                  v-if="getParameter(execute, argumentType)?.type === 'string'" 
-                  v-model="argumentValue.value" 
-                  type="text" 
-                  class="codeArgumentInput"
-                  :placeholder="getParameter(execute, argumentType)?.name" />
-                <input
-                  v-if="getParameter(execute, argumentType)?.type === 'number'" 
-                  v-model="argumentValue.value"
-                  type="number"
-                  class="codeArgumentInput"
-                  :placeholder="getParameter(execute, argumentType)?.name" />
-                <!-- TODO: make this a dropdown of all possible functions -->
-                <input 
-                  v-if="getParameter(execute, argumentType)?.type === 'function'" 
-                  v-model="argumentValue.value" 
-                  type="text" 
-                  class="codeArgumentInput"
-                  :placeholder="getParameter(execute, argumentType)?.name" />
-                <span
-                  v-if="getParameter(execute, argumentType)?.type === 'condition'">
-                  <ConditionCreator :condition="argumentValue" />  
-                </span>
-                <span
-                  v-if="getParameter(execute, argumentType)?.type === 'expression'">
-                  <ExpressionCreator :expression="argumentValue" />  
-                </span>
-                <span
-                  v-if="['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1">
-                    {{getParameter(execute, argumentType)?.name || "Unknown"}}
-                </span>
-              </div>
-              <br />
-              <span v-if="execute.variables.length > 0" style="display: block; margin-left: 5px;">Variables: </span>
-              <div v-for="(variableValue, index) in toRefs(execute.variables)" :key="index" class="codeArgument">
-                <input 
-                  v-model="variableValue.value.name" 
-                  type="text" 
-                  class="codeArgumentInput"
-                  :placeholder="getVariable(execute, variableValue.value.type)?.name" />
-                <span 
-                  v-if="['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1">
-                    {{getVariable(execute, variableValue.value.type)?.name || "Unknown"}}
-                </span>
-              </div>
-            </div>
             <div
               v-for="(executesIteration, key) in execute.codeInside"
               :key="key">
-              <CodeArea :title="getCodeType(execute)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
+              <CodeArea :openArgumentsPopup="props.openArgumentsPopup" :title="getCodeType(execute)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
             </div>
+            <svg 
+              class="settings"
+              @click="props.openArgumentsPopup(execute)"
+              xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+              <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+                <path d="M3 5h4m14 0H11m-8 7h12m6 0h-2M3 19h2m16 0H9"/>
+                <circle cx="9" cy="5" r="2"/>
+                <circle cx="17" cy="12" r="2"/>
+                <circle cx="7" cy="19" r="2"/>
+              </g>
+            </svg>
             <svg 
               class="deleteCode"
               @click="deleteCode(index)"
@@ -231,36 +188,14 @@ import ExpressionCreator from './ExpressionCreator.vue';
     font-size: 18px;
     margin-right: 10px;
   }
-  .codeArgumentInput {
-    border: none;
-    outline: none;
-    font-size: 18px;
-    padding: 0 5px;
-    margin: 2px 5px;
-    background: transparent;
-    color: white;
-    /* Make it fill the rest of the flexbox */
-    flex: 1;
-    width: 0;
-  }
-  .codeArgumentInput::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-  .codeArgument {
-    width: 230px;
-    display: inline-flex;
-    flex-direction: row;
-    background-color: var(--primary-background);
-    margin: 5px;
-  }
-  .codeArgument span {
-    font-size: 18px;
-    color: white;
-    padding: 5px;
-  }
   .deleteCode {
     position: absolute;
     right: 5px;
+    top: 5px;
+  }
+  .settings {
+    position: absolute;
+    right: 25px;
     top: 5px;
   }
   .dragCode {

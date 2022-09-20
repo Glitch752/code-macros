@@ -3,14 +3,11 @@
 
   import KeyCombination from './KeyCombination.vue';
   import SliderRange from './SliderRange.vue';
-  import FileSelector from './FileSelector.vue';
   import CodeArea from './CodeArea.vue';
-
-  import { readTextFile } from '@tauri-apps/api/fs';
 
   import initiatorTypes from '../data/initiatorTypes.json';
 
-  const props = defineProps(["initiator", "deleteInitiator"]);
+  const props = defineProps(["initiator", "deleteInitiator", "openArgumentsPopup"]);
 
   const { initiator, deleteInitiator } = toRefs(props);
 
@@ -99,7 +96,7 @@
             <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
         </svg>
         <br />
-        <CodeArea :executes="initiator.executes" />
+        <CodeArea :openArgumentsPopup="props.openArgumentsPopup" :executes="initiator.executes" />
     </div>
 </template>
 

@@ -3,7 +3,7 @@
   import MacroInitiator from '@/components/MacroInitiator.vue';
   import MacroFunction from '@/components/MacroFunction.vue';
 
-  const props = defineProps(["selectedMacro", "setMacro", "deleteMacro"]);
+  const props = defineProps(["selectedMacro", "setMacro", "deleteMacro", "openArgumentsPopup"]);
 
   const selectedMacro = ref(props.selectedMacro);
 
@@ -70,12 +70,12 @@
     <input class="macroDescription" type="text" v-model="selectedMacro.description" placeholder="Description"/>
     <h2>Initiators</h2>
     <div v-for="initiator in getData(selectedMacro).initiators" :key="initiator">
-      <MacroInitiator :initiator="initiator" :deleteInitiator="deleteInitiator"/>
+      <MacroInitiator :openArgumentsPopup="props.openArgumentsPopup" :initiator="initiator" :deleteInitiator="deleteInitiator"/>
     </div>
     <button class="addInitiator" @click="addInitiator">Add initiator</button>
     <h2>Functions</h2>
     <div v-for="function_ in getData(selectedMacro).functions" :key="function_">
-      <MacroFunction :function_="function_" :deleteFunction="deleteFunction"/>
+      <MacroFunction :openArgumentsPopup="props.openArgumentsPopup" :function_="function_" :deleteFunction="deleteFunction"/>
     </div>
     <button class="addFunction" @click="addFunction">Add function</button>
   </div>

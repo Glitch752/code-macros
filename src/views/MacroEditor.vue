@@ -4,7 +4,11 @@
   import MacroCreator from '@/components/MacroCreator.vue';
   import updateMacros from '../utils';
 
+  import CodeArgumentsPopup from '@/components/CodeArgumentsPopup.vue';
+
   import { useRoute, useRouter } from 'vue-router';
+
+  let showPopup = ref(false);
 
   let macrosLoaded = ref(false);
   let macros = ref([]);
@@ -56,6 +60,14 @@
   function goBack() {
     router.push("/macros");
   }
+
+  function openArgumentsPopup(execute) {
+    showPopup.value = execute;
+  }
+  
+  function closePopup() {
+    showPopup.value = false;
+  }
 </script>
 
 <template>
@@ -64,9 +76,10 @@
     <h1>Code</h1>
   </div>
   <div class="rightPane">
-    <MacroCreator v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :deleteMacro="() => deleteMacro(selectedMacroIndex)" :key="selectedMacroIndex"/>
+    <MacroCreator :openArgumentsPopup="openArgumentsPopup" v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :deleteMacro="() => deleteMacro(selectedMacroIndex)" :key="selectedMacroIndex"/>
   </div>
   <span class="backButton" @click="goBack">&lt;</span>
+  <CodeArgumentsPopup v-if="showPopup !== false" :execute="showPopup" :close="closePopup"/>
 </template>
 
 <style scoped>
