@@ -1,7 +1,7 @@
 <script setup>
     import { reactive, toRefs } from 'vue';
 
-    import codeTypes from '../data/codeTypes.json';
+    import codeTypes from '../data/codeTypes';
 
     import ConditionCreator from '@/components/ConditionCreator.vue';
     import ExpressionCreator from '@/components/ExpressionCreator.vue'

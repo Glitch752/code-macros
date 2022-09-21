@@ -3,7 +3,7 @@
 
   import CodeArea from './CodeArea.vue';
 
-  import codeTypes from '../data/codeTypes.json';
+  import codeTypes from '../data/codeTypes';
 
   const props = defineProps(["executes", "title", "openArgumentsPopup"]);
 
