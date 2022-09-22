@@ -14,6 +14,7 @@
     --primary-background: #1e1f29;
     --dark-background: #171820;
     --primary-text: #ffffff;
+    --secondary-text: #dddddd;
   }
   *, *::before, *::after {
     box-sizing: border-box;

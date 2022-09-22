@@ -50,7 +50,7 @@
     outline: 2px solid #223547;
   }
   .function {
-    padding: 10px 0 10px 10px;
+    padding: 10px;
     margin: 10px;
     background-color: var(--dark-background);
     position: relative;
