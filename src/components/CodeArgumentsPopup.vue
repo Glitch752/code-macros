@@ -31,7 +31,7 @@
         <div class="popup">
             <div class="codeArguments">
                 <div 
-                    v-for="(argumentValue, argumentType, index) in execute.data" :key="index" 
+                    v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" 
                     :class="{codeArgument: ['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1}"
                 >
                     <input 
