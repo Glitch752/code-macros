@@ -5,6 +5,7 @@
   import updateMacros from '../utils';
 
   import CodeArgumentsPopup from '@/components/CodeArgumentsPopup.vue';
+  import CodeList from '@/components/CodeList.vue'
 
   import { useRoute, useRouter } from 'vue-router';
 
@@ -74,6 +75,7 @@
   <div class="leftPane">
     <!-- TODO: Make this a list of code -->
     <h1>Code</h1>
+    <CodeList />
   </div>
   <div class="rightPane">
     <MacroCreator :openArgumentsPopup="openArgumentsPopup" v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :deleteMacro="() => deleteMacro(selectedMacroIndex)" :key="selectedMacroIndex"/>
