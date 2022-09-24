@@ -97,7 +97,7 @@
     width: 100%;
     height: 100%;
     background-color: #24293577;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
   h2 {
     margin: 0;

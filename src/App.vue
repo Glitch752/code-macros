@@ -67,4 +67,17 @@
     transform: translate(1px, 1px);
     box-shadow: 2px 2px var(--activeBoxBG);
   }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--dark-background); 
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary-background); 
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #252733; 
+  }
 </style>
