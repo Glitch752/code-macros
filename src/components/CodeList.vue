@@ -1,28 +1,13 @@
 <script setup>
-    import codeTypes from '../data/codeTypes';
+    import codeGroups from '../data/codeGroups.json';
+    import CodeGroup from '@/components/CodeGroup.vue';
 </script>
 
 <template>
-    <div class="codeType" v-for="codeType in codeTypes" :key="codeType.value">
-        <span class="name">{{codeType.name}}</span>
-        <span class="description">{{codeType.description}}</span>
-    </div>
+    <!-- TODO: This is a bit of an unnecessary component, so it could be combined in the future with something else -->
+    <CodeGroup v-for="codeGroupData in codeGroups" :codeGroupData="codeGroupData" :key="codeGroupData.value" />
 </template>
 
 <style scoped>
-    .codeType {
-        width: calc(100% - 10px);
-        background-color: var(--dark-background);
-        margin: 5px;
-        padding: 10px;
-    }
-    .name {
-        color: var(--primary-text);
-        font-size: 20px;
-        display: block;
-    }
-    .description {
-        color: var(--secondary-text);
-        font-size: 16px;
-    }
+    
 </style>
