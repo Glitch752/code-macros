@@ -1,7 +1,8 @@
 <script setup>
   import * as store from '@/store';
-  import { ref } from 'vue';
+  import { ref, onUnmounted } from 'vue';
   import MacroCreator from '@/components/MacroCreator.vue';
+  import DraggingCode from '@/components/DraggingCode.vue'
   import updateMacros from '../utils';
 
   import CodeArgumentsPopup from '@/components/CodeArgumentsPopup.vue';
@@ -14,6 +15,8 @@
   let macrosLoaded = ref(false);
   let macros = ref([]);
   let selectedMacro = ref(null);
+
+  let draggingCodeContainer = ref(null);
 
   const route = useRoute();
   let router = useRouter();
@@ -69,22 +72,57 @@
   function closePopup() {
     showPopup.value = false;
   }
+
+  let draggingCode = ref(false);
+
+  function dragCode(codeType) {
+    draggingCode.value = codeType;
+  }
+
+  document.addEventListener("mousemove", mouseMove);
+  document.addEventListener("mouseup",   mouseUp  );
+
+  onUnmounted(() => {
+    document.removeEventListener("mousemove", mouseMove);
+    document.removeEventListener("mouseup",   mouseUp  );
+  });
+
+  function mouseMove(e) {
+    if(draggingCodeContainer.value) {
+      draggingCodeContainer.value.style.top  = e.clientY + "px";
+      draggingCodeContainer.value.style.left = e.clientX + "px";
+    }
+  }
+
+  function mouseUp() {
+    console.log("Ran");
+    draggingCode.value = false;
+  }
 </script>
 
 <template>
   <div class="leftPane">
     <!-- TODO: Make this a list of code -->
     <h1>Code</h1>
-    <CodeList />
+    <CodeList :dragCode="dragCode" />
   </div>
   <div class="rightPane">
     <MacroCreator :openArgumentsPopup="openArgumentsPopup" v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :deleteMacro="() => deleteMacro(selectedMacroIndex)" :key="selectedMacroIndex"/>
   </div>
   <span class="backButton" @click="goBack">&lt;</span>
   <CodeArgumentsPopup v-if="showPopup !== false" :execute="showPopup" :close="closePopup"/>
+  <div ref="draggingCodeContainer" class="draggingCodeContainer">
+    <DraggingCode v-if="draggingCode" :code="draggingCode" />
+  </div>
 </template>
 
 <style scoped>
+  .draggingCodeContainer {
+    position: absolute;
+    z-index: 2000;
+
+    transform: translate(-50%, -50%)
+  }
   .leftPane {
     position: relative;
     display: inline-block;

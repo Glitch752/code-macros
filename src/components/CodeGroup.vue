@@ -2,7 +2,7 @@
     import codeTypes from '../data/codeTypes';
     import { toRefs, ref } from 'vue';
 
-    let props = defineProps(["codeGroupData"]);
+    let props = defineProps(["codeGroupData", "dragCode"]);
     let { codeGroupData } = toRefs(props);
 
     function codeTypeValue(value) {
@@ -24,7 +24,7 @@
             <path fill="currentColor" d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"/>
         </svg>
         <template v-if="expanded">
-            <div class="codeType" v-for="codeType in codeGroupData.code" :key="codeType.value">
+            <div class="codeType" v-for="codeType in codeGroupData.code" @mousedown="props.dragCode(codeType)" :key="codeType.value">
                 <span class="name">{{codeTypeValue(codeType).name}}</span>
                 <span class="description">{{codeTypeValue(codeType).description}}</span>
             </div>
