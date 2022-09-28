@@ -5,7 +5,7 @@
 
   import codeTypes from '../data/codeTypes';
 
-  const props = defineProps(["executes", "title", "openArgumentsPopup"]);
+  const props = defineProps(["executes", "title", "openArgumentsPopup", "depth"]);
 
   const executes = reactive(props.executes);
 
@@ -131,11 +131,11 @@
 </script>
 
 <template>
-  <div class="codeArea">
+  <div class="codeArea" :data-code-area="props.depth || 1" :data-no-code="executes.length === 0">
     <h2 v-if="props.title" class="codeAreaTitle">{{props.title}}</h2>
     <div>
-      <span v-if="executes.length === 0">This doesn't execute anything. Hover over add code to add something for it to execute.</span>
-      <div v-else>
+      <span v-if="executes.length === 0" data-code>This doesn't execute anything. Hover over add code to add something for it to execute.</span>
+      <div v-else data-code>
         <div 
           v-for="(execute, index) in executes" 
           :key="execute" 
@@ -154,7 +154,7 @@
             <div
               v-for="(executesIteration, key) in execute.codeInside"
               :key="key">
-              <CodeArea :openArgumentsPopup="props.openArgumentsPopup" :title="getCodeType(execute)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
+              <CodeArea :depth="props.depth + 1 || 2" :openArgumentsPopup="props.openArgumentsPopup" :title="getCodeType(execute)?.codeInside?.find(codeInside => codeInside.value === key)?.name" :executes="executesIteration.executes" />
             </div>
             <svg 
               class="settings"

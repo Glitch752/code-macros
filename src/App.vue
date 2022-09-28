@@ -80,4 +80,11 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #252733; 
   }
+
+  .insertPlaceholder {
+    margin: 0 10px 0 10px;
+    height: 5px;
+    background-color: #4276b1;
+    border-radius: 100vw;
+  }
 </style>

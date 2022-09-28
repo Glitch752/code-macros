@@ -88,15 +88,99 @@
   });
 
   function mouseMove(e) {
-    if(draggingCodeContainer.value) {
-      draggingCodeContainer.value.style.top  = e.clientY + "px";
-      draggingCodeContainer.value.style.left = e.clientX + "px";
+    if(draggingCode.value !== false) {
+      if(draggingCodeContainer.value) {
+        draggingCodeContainer.value.style.top  = e.clientY + "px";
+        draggingCodeContainer.value.style.left = e.clientX + "px";
+      }
+      
+      let codeAreas = document.querySelectorAll("[data-code-area]");
+
+      let codeAreasSorted = Array.from(codeAreas).sort((a, b) => b.dataset.codeArea - a.dataset.codeArea);
+
+      // Find the topmost codearea the mouse is hovering over
+      for(let i = 0; i < codeAreasSorted.length; i++) {
+        let codeArea = codeAreasSorted[i];
+
+        let boundingBox = codeArea.getBoundingClientRect();
+
+        if(boundingBox.left < e.clientX && boundingBox.top < e.clientY && boundingBox.left + boundingBox.width > e.clientX && boundingBox.top + boundingBox.height > e.clientY) {
+          // Loop over the elements and find the gap between elements we are closest to
+
+          // FIXME: Is there a more VueJS-based solution to this?
+          if(codeArea.dataset.noCode === "true") {
+              let placeholder = createPlaceholder(0);
+              if(placeholder) {
+                codeArea.querySelector("[data-code]").appendChild(placeholder);
+              }
+          } else {
+            let children = codeArea.querySelector("[data-code]").children;
+            for(let j = 0; j < children.length; j++) {
+              let child = children[j];
+
+              // If the element is the placeholder, continue to the next element.
+              if(child.dataset.insertPlaceholder) continue
+
+              let childBoundingBox = child.getBoundingClientRect();
+
+              if(childBoundingBox.top > e.clientY) {
+                // Create a placeholder element
+                let placeholder = createPlaceholder(j);
+
+                if(!placeholder) break;
+
+                child.before(placeholder)
+
+                break;
+              } else if(j === children.length - 1) {
+                // Create a placeholder element
+                let placeholder = createPlaceholder(j + 1);
+                if(!placeholder) break;
+
+                child.after(placeholder)
+
+                break;
+              }
+            }
+          }
+
+          break;
+        }
+      }
     }
+  }
+
+  function createPlaceholder(j) {
+    let currentPlaceholder = document.querySelector("[data-insert-placeholder]");
+
+    let placeholderPosition = j;
+
+    if(currentPlaceholder) {
+      if(placeholderPosition == currentPlaceholder.dataset.placeholderPosition) {
+        return;
+      } else {
+        currentPlaceholder.remove();
+      }
+    }
+
+    return elementFromHTMLString(`<div class="insertPlaceholder" data-insert-placeholder data-placeholder-position="${placeholderPosition}"></div>`)
+  }
+
+  function elementFromHTMLString(string) {
+    var temp = document.createElement('template');
+    string = string.trim();
+    temp.innerHTML = string;
+    return temp.content.firstChild;
   }
 
   function mouseUp() {
     console.log("Ran");
     draggingCode.value = false;
+
+    let currentPlaceholder = document.querySelector("[data-insert-placeholder]");
+    if(currentPlaceholder) {
+      currentPlaceholder.remove();
+    }
   }
 </script>
 

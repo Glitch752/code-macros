@@ -9,8 +9,6 @@
     const getCodeType = (execute) => codeTypes.find(codeType => codeType.value === execute);
 
     const name = getCodeType(code.value)?.name;
-
-    console.log(getCodeType(code.value));
 </script>
 
 <template>
