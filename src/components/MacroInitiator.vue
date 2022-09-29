@@ -7,9 +7,9 @@
 
   import initiatorTypes from '../data/initiatorTypes.json';
 
-  const props = defineProps(["initiator", "deleteInitiator", "openArgumentsPopup"]);
+  const props = defineProps(["initiator", "deleteInitiator", "openArgumentsPopup", "index"]);
 
-  const { initiator, deleteInitiator } = toRefs(props);
+  const { initiator, deleteInitiator, index } = toRefs(props);
 
   function setInitiator(initiatorType) {
     initiator.value.type = initiatorType.value;
@@ -96,7 +96,7 @@
             <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
         </svg>
         <br />
-        <CodeArea :openArgumentsPopup="props.openArgumentsPopup" :executes="initiator.executes" />
+        <CodeArea :position="{ type: 'Initiator', treePosition: [index] }" :openArgumentsPopup="props.openArgumentsPopup" :executes="initiator.executes" />
     </div>
 </template>
 

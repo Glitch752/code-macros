@@ -69,13 +69,13 @@
     <input class="macroName" type="text" v-model="selectedMacro.name" placeholder="Name"/>
     <input class="macroDescription" type="text" v-model="selectedMacro.description" placeholder="Description"/>
     <h2>Initiators</h2>
-    <div v-for="initiator in getData(selectedMacro).initiators" :key="initiator">
-      <MacroInitiator :openArgumentsPopup="props.openArgumentsPopup" :initiator="initiator" :deleteInitiator="deleteInitiator"/>
+    <div v-for="(initiator, index) in getData(selectedMacro).initiators" :key="initiator">
+      <MacroInitiator :index="index" :openArgumentsPopup="props.openArgumentsPopup" :initiator="initiator" :deleteInitiator="deleteInitiator"/>
     </div>
     <button class="addInitiator" @click="addInitiator">Add initiator</button>
     <h2>Functions</h2>
-    <div v-for="function_ in getData(selectedMacro).functions" :key="function_">
-      <MacroFunction :openArgumentsPopup="props.openArgumentsPopup" :function_="function_" :deleteFunction="deleteFunction"/>
+    <div v-for="(function_, index) in getData(selectedMacro).functions" :key="function_">
+      <MacroFunction :index="index" :openArgumentsPopup="props.openArgumentsPopup" :function_="function_" :deleteFunction="deleteFunction"/>
     </div>
     <button class="addFunction" @click="addFunction">Add function</button>
   </div>

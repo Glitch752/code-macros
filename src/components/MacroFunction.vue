@@ -3,9 +3,9 @@
 
   import CodeArea from './CodeArea.vue';
 
-  const props = defineProps(["function_", "deleteFunction", "openArgumentsPopup"]);
+  const props = defineProps(["function_", "deleteFunction", "openArgumentsPopup", "index"]);
 
-  const { function_, deleteFunction } = toRefs(props);
+  const { function_, deleteFunction, index } = toRefs(props);
 </script>
 
 <template>
@@ -18,7 +18,7 @@
           <path fill="#9b3434" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/>
       </svg>
       <br />
-      <CodeArea :openArgumentsPopup="props.openArgumentsPopup" :executes="function_.executes" />
+      <CodeArea :position="{ type: 'Function', treePosition: [index] }" :openArgumentsPopup="props.openArgumentsPopup" :executes="function_.executes" />
     </div>
 </template>
 

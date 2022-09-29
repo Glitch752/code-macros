@@ -8,6 +8,8 @@
   import CodeArgumentsPopup from '@/components/CodeArgumentsPopup.vue';
   import CodeList from '@/components/CodeList.vue'
 
+  import codeTypes from '@/data/codeTypes';
+
   import { useRoute, useRouter } from 'vue-router';
 
   let showPopup = ref(false);
@@ -106,10 +108,13 @@
 
         if(boundingBox.left < e.clientX && boundingBox.top < e.clientY && boundingBox.left + boundingBox.width > e.clientX && boundingBox.top + boundingBox.height > e.clientY) {
           // Loop over the elements and find the gap between elements we are closest to
+          let position = JSON.parse(codeArea.dataset.position);
 
           // FIXME: Is there a more VueJS-based solution to this?
           if(codeArea.dataset.noCode === "true") {
-              let placeholder = createPlaceholder(0);
+              let newPosition = {...position, treePosition: position.treePosition.concat(0)};
+              
+              let placeholder = createPlaceholder(0, newPosition);
               if(placeholder) {
                 codeArea.querySelector("[data-code]").appendChild(placeholder);
               }
@@ -124,8 +129,9 @@
               let childBoundingBox = child.getBoundingClientRect();
 
               if(childBoundingBox.top > e.clientY) {
+                let newPosition = {...position, treePosition: position.treePosition.concat(j)};
                 // Create a placeholder element
-                let placeholder = createPlaceholder(j);
+                let placeholder = createPlaceholder(j, newPosition);
 
                 if(!placeholder) break;
 
@@ -133,8 +139,9 @@
 
                 break;
               } else if(j === children.length - 1) {
+                let newPosition = {...position, treePosition: position.treePosition.concat(j + 1)};
                 // Create a placeholder element
-                let placeholder = createPlaceholder(j + 1);
+                let placeholder = createPlaceholder(j + 1, newPosition);
                 if(!placeholder) break;
 
                 child.after(placeholder)
@@ -150,7 +157,7 @@
     }
   }
 
-  function createPlaceholder(j) {
+  function createPlaceholder(j, position) {
     let currentPlaceholder = document.querySelector("[data-insert-placeholder]");
 
     let placeholderPosition = j;
@@ -162,8 +169,8 @@
         currentPlaceholder.remove();
       }
     }
-
-    return elementFromHTMLString(`<div class="insertPlaceholder" data-insert-placeholder data-placeholder-position="${placeholderPosition}"></div>`)
+    
+    return elementFromHTMLString(`<div class="insertPlaceholder" data-insert-placeholder data-position='${JSON.stringify(position)}' data-placeholder-code="${draggingCode.value}" data-placeholder-position="${placeholderPosition}"></div>`)
   }
 
   function elementFromHTMLString(string) {
@@ -174,13 +181,77 @@
   }
 
   function mouseUp() {
-    console.log("Ran");
     draggingCode.value = false;
 
     let currentPlaceholder = document.querySelector("[data-insert-placeholder]");
+
     if(currentPlaceholder) {
+      let executePosition = JSON.parse(currentPlaceholder.dataset.position);
+
+      let execution = selectedMacro.value.macro;
+
+      if(executePosition.type === "Initiator") {
+        execution = execution.initiators;
+      } else {
+        execution = execution.functions;
+      }
+
+      execution = execution[executePosition.treePosition.shift()].executes;
+
+      while(executePosition.treePosition.length > 1) {
+        let treePosition = executePosition.treePosition.shift();
+
+        if(execution instanceof Array) {
+          execution = execution[treePosition];
+        } else {
+          execution = execution.codeInside[treePosition].executes;
+        }
+      }
+
+      addCode(execution, codeTypes.find(codeType => codeType.value == currentPlaceholder.dataset.placeholderCode), executePosition.treePosition.shift());
+
       currentPlaceholder.remove();
     }
+  }
+
+  function addCode(executes, codeType, index) {
+    let codeInside = {};
+    for(let i = 0; i < codeType?.codeInside?.length; i++) {
+      codeInside[codeType.codeInside[i].value] = {
+        executes: []
+      };
+    }
+    
+    let variables = [];
+    for(let i = 0; i < codeType?.variables?.length; i++) {
+      variables.push({
+        type: codeType.variables[i].value,
+        name: codeType.variables[i].name
+      })
+    }
+
+    let data = {};
+    let defaultTypeValues = {
+      string: 'String',
+      number: 0, 
+      condition: { type: 'boolean', value: true }, 
+      function: 'Function'
+    }
+
+    for(let i = 0; i < codeType.parameters.length; i++) {
+      let value = codeType.parameters[i].defaultValue;
+      if(value === undefined) {
+        value = defaultTypeValues[codeType.parameters[i].type];
+      }
+      data[codeType.parameters[i].value] = value;
+    }
+
+    executes.splice(index, 0, {
+      type: codeType.value,
+      data: data,
+      variables: variables,
+      codeInside: codeInside
+    });
   }
 </script>
 
