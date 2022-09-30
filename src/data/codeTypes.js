@@ -3,7 +3,8 @@ export default [
     name: "If", value: "if", description: "Executes the code inside if the condition is true.", parameters: [
       {
         name: "Condition", value: "condition", description: "The condition to check.", type: "condition", defaultValue: {
-          condition: { type: "boolean", value: true, },
+          type: "boolean",
+          value: true,
         },
       },
     ],
@@ -40,7 +41,8 @@ export default [
     name: "Repeat while loop", value: "whileloop", description: "Executes the code inside the loop while the condition is true.", parameters: [
       { 
         name: "Condition", value: "condition", description: "The condition to check.", type: "condition", defaultValue: {
-          condition: { type: "boolean", value: true }, 
+          type: "boolean",
+          value: true, 
         },
       },
     ],
@@ -65,7 +67,7 @@ export default [
     name: "Wait", value: "wait", description: "Waits for a certain amount of time.", parameters: [
       { name: "Time", value: "time", description: "The amount of time to wait, in miliseconds.", type: "number", defaultValue: 10, },
     ], contentText: (parameters) => {
-      return `Wait for "${parameters.time}" milliseconds`;
+      return `Wait for "${parameters.time}" second${parameters.time === 1 ? "" : "s"}`;
     },
   },
   {

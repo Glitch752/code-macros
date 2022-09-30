@@ -68,7 +68,7 @@
                 </div>
                 <br />
                 <span v-if="execute.variables.length > 0" style="display: block; margin-left: 5px;">Variables: </span>
-                <div v-for="(variableValue, index) in toRefs(execute.variables)" :key="index" class="codeArgument"> -->
+                <div v-for="(variableValue, index) in toRefs(execute.variables)" :key="index" class="codeArgument">
                     <input 
                         v-model="variableValue.value.name" 
                         type="text" 

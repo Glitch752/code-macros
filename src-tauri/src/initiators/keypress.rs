@@ -152,5 +152,5 @@ fn js_key(key: KeybdKey) -> String {
 
     let key_string = format!("{:?}", key);
 
-    return enum_to_key.get(&key_string).unwrap().to_string();
+    return enum_to_key.get(&key_string).unwrap_or(&"Unknown".to_string()).to_string();
 }
