@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use tauri::api::notification::Notification;
 
-static MAX_LOOP_ITERATIONS: u64 = 100;
+static MAX_LOOP_ITERATIONS: u64 = 100000;
 
 use std::thread;
 
@@ -12,7 +12,7 @@ use super::Macro;
 
 use super::initiators::Initiator;
 
-use inputbot::{KeySequence};
+use inputbot::{KeySequence, MouseCursor};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Execution {
@@ -27,15 +27,17 @@ pub struct ExecutionData {
     pub time: Option<f64>,
     pub title: Option<String>,
     pub message: Option<String>,
-    pub from: Option<f64>,
-    pub to: Option<f64>,
+    pub start: Option<f64>,
+    pub end: Option<f64>,
     pub step: Option<f64>,
     pub condition: Option<Condition>,
     pub variable: Option<String>,
     pub value: Option<f64>,
     pub content: Option<Expression>,
     pub function: Option<String>,
-    pub string: Option<String>
+    pub string: Option<String>,
+    pub x: Option<f64>,
+    pub y: Option<f64>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -193,8 +195,8 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     .show();
             }
             "fromtoloop" => {
-                let from: f64 = *execution.data.from.as_ref().unwrap_or(&f64::from(0));
-                let to: f64 = *execution.data.to.as_ref().unwrap_or(&f64::from(4));
+                let from: f64 = *execution.data.start.as_ref().unwrap_or(&f64::from(0));
+                let to: f64 = *execution.data.end.as_ref().unwrap_or(&f64::from(4));
                 let step: f64 = *execution.data.step.as_ref().unwrap_or(&f64::from(1));
                 let mut i: f64 = from;
                 let mut iterations: u64 = 0;
@@ -245,7 +247,11 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 while get_condition_bool(evaluate_condition(condition, variables)) {
                     set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i as f64));
                     i += 1;
-                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                    execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                    
+                    if i > MAX_LOOP_ITERATIONS {
+                        break;
+                    }
                 }
             }
             "if" => {
@@ -263,6 +269,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             "setvariable" => {
                 let variable: &String = &execution.data.variable.as_ref().unwrap();
                 let content: &Expression = execution.data.content.as_ref().unwrap();
+
                 set_variable(variables, variable.to_string().clone(), VariableValue::Number(
                     get_expression_number(evaluate_expression(content, &mut variables.clone()))
                 ));
@@ -285,10 +292,16 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 KeySequence(string_static).send();
             }
             "movemouserelative" => {
-                todo!()
+                let x: f64 = *execution.data.x.as_ref().unwrap();
+                let y: f64 = *execution.data.y.as_ref().unwrap();
+
+                MouseCursor::move_rel(x.round() as i32, y.round() as i32);
             }
             "movemouseabsolute" => {
-                todo!()
+                let x: f64 = *execution.data.x.as_ref().unwrap();
+                let y: f64 = *execution.data.y.as_ref().unwrap();
+
+                MouseCursor::move_abs(x.round() as i32, y.round() as i32);
             }
             _ => todo!()
         }

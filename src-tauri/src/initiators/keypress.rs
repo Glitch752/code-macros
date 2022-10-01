@@ -38,6 +38,8 @@ pub fn listen_initiator_keypress() {
             keys_pressed_js.push(js_key(*key));
         }
 
+        println!("{:?}", keys_pressed_js);
+
         'macros: for macro_ in get_macros() {
             // Check if macro_.macro_.initiators is Some
             if macro_.macro_.initiators.is_some() {
