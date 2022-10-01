@@ -92,4 +92,16 @@ export default [
       return ``;
     },
   },
+  { name: "Move mouse relative", value: "movemouserelative", description: "Move the mouse relative to it's current position.", parameters: [
+    { name: "X", value: "x", description: "How much to move the mouse horizontally", type: "number", defaultValue: 0, },
+    { name: "Y", value: "y", description: "How much to move the mouse vertically", type: "number", defaultValue: 0, },
+  ], contentText: (parameters) => {
+    return `Move the mouse by (${parameters["x"]}, ${parameters["y"]})`;
+  }},
+  { name: "Move mouse absolute", value: "movemouseabsolute", description: "Move the mouse to a position on the screen.", parameters: [
+    { name: "X", value: "x", description: "The horizontal position of the mouse", type: "number", defaultValue: 0, },
+    { name: "Y", value: "y", description: "The vertical position of the mouse", type: "number", defaultValue: 0, },
+  ], contentText: (parameters) => {
+    return `Move the mouse to (${parameters["x"]}, ${parameters["y"]})`;
+  }}
 ];

@@ -284,6 +284,12 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
 
                 KeySequence(string_static).send();
             }
+            "movemouserelative" => {
+                todo!()
+            }
+            "movemouseabsolute" => {
+                todo!()
+            }
             _ => todo!()
         }
     }
