@@ -291,8 +291,10 @@
     height: calc(100% - 24px);
   }
   h1 {
-    text-align: center;
+    font-size: 30px;
     margin: 0;
+    font-weight: 500;
+    text-align: center;
   }
   .backButton {
     position: absolute;
@@ -300,10 +302,10 @@
     left: 10px;
     font-size: 50px;
     font-weight: 800;
-    color: #ccc;
+    color: var(--secondary-text);
     cursor: pointer;
   }
   .backButton:hover {
-    color: #fff;
+    color: var(--primary-text);
   }
 </style>

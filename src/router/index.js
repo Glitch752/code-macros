@@ -3,6 +3,7 @@ import RedirectPage from "@/views/RedirectPage.vue";
 import MacroEditor from "@/views/MacroEditor.vue";
 import MacrosList from "@/views/MacrosList.vue";
 import WelcomePage from "@/views/WelcomePage.vue";
+import SettingsPage from "@/views/SettingsPage.vue";
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: "/welcome",
     name: "Welcome",
     component: WelcomePage,
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: SettingsPage,
   }
 ];
 

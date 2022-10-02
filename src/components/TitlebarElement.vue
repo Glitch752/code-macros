@@ -1,6 +1,10 @@
 <script setup>
   import { appWindow } from '@tauri-apps/api/window';
   import { onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+
+  let router = useRouter();
+
   onMounted(() => {
     document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
     document.getElementById('titlebar-maximize-unmaximize').addEventListener('click', () => appWindow.toggleMaximize());
@@ -14,6 +18,10 @@
       app.classList.toggle('maximized', maximized);
     });
   }
+
+  function openSettings() {
+    router.push("/settings");
+  }
 </script>
 
 <template>
@@ -21,28 +29,31 @@
     <div class="titlebar-name">
       Macro Creator
     </div>
+    <div class="titlebar-button" @click="openSettings">
+      <img src="https://api.iconify.design/mdi:cog.svg?color=white" alt="settings" />
+    </div>
     <div class="titlebar-button" id="titlebar-minimize">
       <img
-      src="https://api.iconify.design/mdi:window-minimize.svg"
+      src="https://api.iconify.design/mdi:window-minimize.svg?color=white"
       alt="minimize"
       />
     </div>
     <div class="titlebar-button" id="titlebar-maximize-unmaximize">
       <div id="titlebar-maximize">
         <img
-        src="https://api.iconify.design/mdi:window-maximize.svg"
+        src="https://api.iconify.design/mdi:window-maximize.svg?color=white"
         alt="maximize"
         />
       </div>
       <div id="titlebar-unmaximize">
         <img
-        src="https://api.iconify.design/mdi:window-restore.svg"
+        src="https://api.iconify.design/mdi:window-restore.svg?color=white"
         alt="unmaximize"
         />
       </div>
     </div>
     <div class="titlebar-button" id="titlebar-close">
-      <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+      <img src="https://api.iconify.design/mdi:close.svg?color=white" alt="close" />
     </div>
   </div>
 </template>

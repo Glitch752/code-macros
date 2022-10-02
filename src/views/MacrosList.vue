@@ -83,8 +83,10 @@
     color: #8e959c;
   }
   h1 {
-    text-align: center;
+    font-size: 30px;
     margin: 0;
+    font-weight: 500;
+    text-align: center;
   }
   .noMacros {
     display: flex;
