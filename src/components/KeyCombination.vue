@@ -96,7 +96,7 @@
 </script>
 
 <template>
-    <div class="selectInner">
+    <div class="selectOuter">
         <div class="selectInner" @click="setKeyCombination()">
             <span ref="keyCombinationElement" class="keyCombination">{{ initiator.data.keys.join(" + ") }}</span>
         </div>
@@ -105,13 +105,18 @@
 </template>
 
 <style scoped>
-  .selectInner {
+  .selectOuter {
     margin: 5px;
     padding: 5px;
     width: 100%;
-    background-color: #1f212799;
+    background-color: var(--primary-background);
   }
-  .selectInner span {
+  .selectInner {
+    padding: 5px;
+    width: 100%;
+    background-color: var(--secondary-background);
+  }
+  .selectOuter span {
     font-size: 16px;
     text-align: center;
     display: inline-block;

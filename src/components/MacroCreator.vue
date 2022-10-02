@@ -96,7 +96,7 @@
   .background {
     width: 100%;
     height: 100%;
-    background-color: #24293577;
+    background-color: var(--secondary-background);
     overflow-y: auto;
   }
   h2 {

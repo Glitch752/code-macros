@@ -13,6 +13,7 @@
   :root {
     --primary-background: #1e1f29;
     --dark-background: #171820;
+    --secondary-background: #20242e;
     --primary-text: #ffffff;
     --secondary-text: #dddddd;
   }

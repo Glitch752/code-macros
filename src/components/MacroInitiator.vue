@@ -133,7 +133,7 @@
     color: white;
   }
   .initiatorTypeInput:hover, .initiatorTypeInput:focus {
-    outline: 3px solid #141a2766;
+    outline: 3px solid var(--secondary-background);
   }
   .initiatorType {
     background-color: var(--primary-background);
@@ -159,8 +159,8 @@
   }
   .initiatorSelect {
     position: absolute;
-    background-color: #222a3a99;
-    top: 28px;
+    background-color: var(--dark-background);
+    top: 30px;
     left: -3px;
     width: 620px;
     display: none;
@@ -178,14 +178,14 @@
     margin: 5px;
     padding: 5px;
     width: 300px;
-    background-color: #1f191999;
+    background-color: var(--primary-background);
     cursor: pointer;
   }
   .initiatorSelectOption:hover {
-    background-color: #191b1fcc;
+    background-color: var(--secondary-background);
   }
   .initiatorSelectOption.selected {
-    background-color: #1f2229cc;
+    background-color: var(--secondary-background);
   }
   .initiatorSelectOption span {
     font-size: 40px;
