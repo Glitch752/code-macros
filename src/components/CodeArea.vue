@@ -81,16 +81,45 @@
 
   const getCodeType = (execute) => codeTypes.find(codeType => codeType.value === execute?.type);
 
-  function parseKeys(object) {
-    for(let key in object) {
-      if (object.hasOwnProperty(key)) {
-        if(typeof object[key] === "object") {
-          object[key] = JSON.stringify(object[key]);
-        }
+  // function parseKeys(object) {
+  //   for(let key in object) {
+  //     if (object.hasOwnProperty(key)) {
+  //       if(typeof object[key] === "object") {
+  //         object[key] = JSON.stringify(object[key]);
+  //       }
+  //     }
+  //   }
+    
+  //   return object;
+  // }
+
+  const parsers = {
+    parseCondition
+  };
+
+  function parseCondition(condition) {
+    switch(condition.type) {
+      case "comparison": {
+        return [...parseExpression(condition.left), condition.comparison, ...parseExpression(condition.right)]
+      }
+      default: {
+        return [JSON.stringify(condition)];
       }
     }
-    
-    return object;
+  }
+
+  function parseExpression(expression) {
+    switch(expression.type) {
+      case "variable": {
+        return ["{{", expression.variable, "}}"];
+      }
+      case "number": {
+        return [expression.value];
+      }
+      default: {
+        return [JSON.stringify(expression)];
+      }
+    }
   }
 </script>
 
@@ -114,7 +143,7 @@
             <div class="codeType" :class="execute.type">
               <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
             </div>
-            <span class="codeInfo">{{getCodeType(execute).contentText(parseKeys(JSON.parse(JSON.stringify(execute.data)))) }}</span>
+            <span class="codeInfo">{{((info)=>{return typeof info === "string" ? info : info.join(" ")})(getCodeType(execute).contentText(JSON.parse(JSON.stringify(execute.data)), parsers))}}</span>
             <div
               v-for="(executesIteration, key) in execute.codeInside"
               :key="key">

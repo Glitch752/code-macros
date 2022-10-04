@@ -11,8 +11,8 @@ export default [
     codeInside: [
       { name: "Then", value: "then", description: "The code to execute if the condition is true.", },
       { name: "Else", value: "else", description: "The code to execute if the condition is false.", },
-    ], contentText: (parameters) => {
-      return `If ${parameters["condition"]}`;
+    ], contentText: (parameters, parsers) => {
+      return [`If `, ...parsers.parseCondition(parameters["condition"])];
     },
   },
   {
@@ -51,8 +51,8 @@ export default [
     ],
     variables: [
       { name: "Iteration", value: "iteration", description: "The current iteration the loop is on.", },
-    ], contentText: (parameters) => {
-      return `Repeat while ${parameters["condition"]}`;
+    ], contentText: (parameters, parsers) => {
+      return [`Repeat while `, ...parsers.parseCondition(parameters["condition"])];
     },
   },
   {
