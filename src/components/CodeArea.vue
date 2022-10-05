@@ -2,6 +2,7 @@
   import { reactive, onUnmounted } from 'vue';
 
   import CodeArea from './CodeArea.vue';
+  import CodeInfo from './CodeInfo.vue';
 
   import codeTypes from '../data/codeTypes';
 
@@ -94,7 +95,8 @@
   // }
 
   const parsers = {
-    parseCondition
+    parseCondition,
+    parseExpression
   };
 
   function parseCondition(condition) {
@@ -111,10 +113,21 @@
   function parseExpression(expression) {
     switch(expression.type) {
       case "variable": {
-        return ["{{", expression.variable, "}}"];
+        return [{ type: "variable", variable: expression.variable }];
       }
       case "number": {
         return [expression.value];
+      }
+      case "arithmetic": {
+        const nameToSymbol = {
+          "addition": "+",
+          "subtraction": "-",
+          "multiplication": "*",
+          "division": "/",
+          "modulo": "%",
+          "exponent": "^"
+        }
+        return [...parseExpression(expression.left), nameToSymbol[expression.kind], ...parseExpression(expression.right)]
       }
       default: {
         return [JSON.stringify(expression)];
@@ -143,7 +156,9 @@
             <div class="codeType" :class="execute.type">
               <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
             </div>
-            <span class="codeInfo">{{((info)=>{return typeof info === "string" ? info : info.join(" ")})(getCodeType(execute).contentText(JSON.parse(JSON.stringify(execute.data)), parsers))}}</span>
+            <span class="codeInfo">
+              <CodeInfo :info="getCodeType(execute).contentText(JSON.parse(JSON.stringify(execute.data)), parsers)" />
+            </span>
             <div
               v-for="(executesIteration, key) in execute.codeInside"
               :key="key">

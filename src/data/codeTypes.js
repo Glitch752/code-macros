@@ -12,7 +12,7 @@ export default [
       { name: "Then", value: "then", description: "The code to execute if the condition is true.", },
       { name: "Else", value: "else", description: "The code to execute if the condition is false.", },
     ], contentText: (parameters, parsers) => {
-      return [`If `, ...parsers.parseCondition(parameters["condition"])];
+      return [`If`, ...parsers.parseCondition(parameters["condition"])];
     },
   },
   {
@@ -52,7 +52,7 @@ export default [
     variables: [
       { name: "Iteration", value: "iteration", description: "The current iteration the loop is on.", },
     ], contentText: (parameters, parsers) => {
-      return [`Repeat while `, ...parsers.parseCondition(parameters["condition"])];
+      return [`Repeat while`, ...parsers.parseCondition(parameters["condition"])];
     },
   },
   {
@@ -66,8 +66,8 @@ export default [
   {
     name: "Wait", value: "wait", description: "Waits for a certain amount of time.", parameters: [
       { name: "Time", value: "time", description: "The amount of time to wait, in miliseconds.", type: "number", defaultValue: 10, },
-    ], contentText: (parameters) => {
-      return `Wait for "${parameters.time}" second${parameters.time === 1 ? "" : "s"}`;
+    ], contentText: (parameters, parsers) => {
+      return [`Wait for`, parameters.time, `second${parameters.time === 1 ? "" : "s"}`];
     },
   },
   {
@@ -77,8 +77,8 @@ export default [
           expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
         },
       },
-    ], contentText: (parameters) => {
-      return `Set the variable "${parameters.variable}" to "${parameters.content}"`;
+    ], contentText: (parameters, parsers) => {
+      return [`Set the variable`, ...parsers.parseExpression({ type: "variable", variable: parameters.variable }), `to`, ...parsers.parseExpression(parameters.content)];
     },
   },
   {
