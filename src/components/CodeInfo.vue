@@ -10,7 +10,8 @@
         <span class="section" v-for="infoItem in info" :key="infoItem">
             <span v-if="typeof infoItem === 'string'">{{ infoItem }}</span>
             <span v-else>
-                <span v-if="infoItem.type === 'variable'" class="variableChip">{{infoItem.variable}}</span>
+                <span v-if=     "infoItem.type === 'variable'" class="variable chip">{{infoItem.variable}}</span>
+                <span v-else-if="infoItem.type === 'string'"   class="string   chip">{{infoItem.string}}  </span>
                 <span v-else>{{infoItem}}</span>
             </span>
         </span>
@@ -19,10 +20,15 @@
 </template>
 
 <style scoped>
-    .variableChip {
-        background-color: #28569c;
+    .chip {
         border-radius: 100vw;
         padding: 0 5px;
+    }
+    .chip.variable {
+        background-color: #28569c;
+    }
+    .chip.string {
+        background-color: #575656;
     }
     .section {
         margin-right: 5px;
