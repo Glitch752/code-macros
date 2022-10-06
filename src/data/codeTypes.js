@@ -103,5 +103,31 @@ export default [
     { name: "Y", value: "y", description: "The vertical position of the mouse", type: "number", defaultValue: 0, },
   ], contentText: (parameters) => {
     return `Move the mouse to (${parameters["x"]}, ${parameters["y"]})`;
+  }},
+  { name: "Press key", value: "presskey", description: "Start pressing a key.", parameters: [
+    { name: "Key", value: "key", description: "The key to press", type: "string", defaultValue: 0, }
+  ], contentText: (parameters) => {
+    return [`Start pressing the key`, {type: "string", string: parameters.key}];
+  }},
+  { name: "Release key", value: "releasekey", description: "Release a currently pressed key.", parameters: [
+    { name: "Key", value: "key", description: "The key to press", type: "string", defaultValue: 0, }
+  ], contentText: (parameters) => {
+    return [`Release the key`, {type: "string", string: parameters.key}];
+  }},
+  { name: "Press mouse", value: "pressmouse", description: "Start pressing a mouse button.", parameters: [
+    { name: "Button", value: "button", description: "The mouse button to press", type: "multiSelect", defaultValue: "LMB", options: [
+      { name: "Left mouse button", value: "LMB", description: "The left mouse button"},
+      { name: "Right mouse button", value: "RMB", description: "The right mouse button"},
+    ] }
+  ], contentText: (parameters) => {
+    return [`Start pressing the mouse button`, {type: "string", string: parameters.button}];
+  }},
+  { name: "Release mouse", value: "releasemouse", description: "Release a currently pressed mouse button.", parameters: [
+    { name: "Button", value: "button", description: "The mouse button to press", type: "multiSelect", defaultValue: "LMB", options: [
+      { name: "Left mouse button", value: "LMB", description: "The left mouse button"},
+      { name: "Right mouse button", value: "RMB", description: "The right mouse button"},
+    ] }
+  ], contentText: (parameters) => {
+    return [`Release the mouse button`, {type: "string", string: parameters.button}];
   }}
 ];

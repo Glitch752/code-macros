@@ -9,6 +9,9 @@
         "movemouserelative", "movemouseabsolute"
     ]},
     {"name": "Miscellaneous", "value": "miscellaneous", "description": "Operations that change something on the user's computer", "code": [
-        "notification", "typestring"
+        "notification"
+    ]},
+    {"name": "Keyboard and mouse", "value": "keyboardmouse", "description": "Operations that interact with the computer how you would with a keyboard or mouse", "code": [
+        "typestring", "presskey", "releasekey", "pressmouse", "releasemouse"
     ]}
 ]

@@ -82,18 +82,6 @@
 
   const getCodeType = (execute) => codeTypes.find(codeType => codeType.value === execute?.type);
 
-  // function parseKeys(object) {
-  //   for(let key in object) {
-  //     if (object.hasOwnProperty(key)) {
-  //       if(typeof object[key] === "object") {
-  //         object[key] = JSON.stringify(object[key]);
-  //       }
-  //     }
-  //   }
-    
-  //   return object;
-  // }
-
   const parsers = {
     parseCondition,
     parseExpression
@@ -157,7 +145,7 @@
               <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
             </div>
             <span class="codeInfo">
-              <CodeInfo :info="getCodeType(execute).contentText(JSON.parse(JSON.stringify(execute.data)), parsers)" />
+              <CodeInfo :info="getCodeType(execute).contentText(execute.data, parsers)" />
             </span>
             <div
               v-for="(executesIteration, key) in execute.codeInside"

@@ -61,6 +61,11 @@
                         v-if="getParameter(execute, argumentType)?.type === 'expression'">
                         <ExpressionCreator :expression="argumentValue" />  
                     </span>
+                    <select 
+                        v-if="getParameter(execute, argumentType)?.type === 'multiSelect'"
+                        :value="argumentValue.value" @change="(e) => argumentValue.value = e.target.value">
+                            <option v-for="(option) in getParameter(execute, argumentType).options" :key="option.value" :value="option.value">{{ option.name }}</option>
+                    </select>
                     <span
                         v-if="['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1">
                         {{getParameter(execute, argumentType)?.name || "Unknown"}}

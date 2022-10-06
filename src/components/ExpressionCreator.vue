@@ -41,12 +41,12 @@
             <span class="expressionSelectContainer">
                 <span class="expressionSelectArrow"></span>
                 <select class="expressionSelect" :value="expression.kind" @change="(e) => expression.kind = e.target.value">
-                    <option value="addition">Addition</option>
-                    <option value="subtraction">Subtraction</option>
-                    <option value="division">Division</option>
-                    <option value="multiplication">Multiplication</option>
-                    <option value="modulo">Modulo</option>
-                    <option value="exponent">Exponent</option>
+                    <option value="addition"       >Addition       </option>
+                    <option value="subtraction"    >Subtraction    </option>
+                    <option value="division"       >Division       </option>
+                    <option value="multiplication" >Multiplication </option>
+                    <option value="modulo"         >Modulo         </option>
+                    <option value="exponent"       >Exponent       </option>
                 </select>
             </span>
             <ExpressionCreator :expression="expression.right" />
