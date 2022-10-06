@@ -60,7 +60,7 @@ export default [
       { name: "Title", value: "title", description: "The title of the notification.", type: "string", },
       { name: "Message", value: "message", description: "The message of the notification.", type: "string", },
     ], contentText: (parameters) => {
-      return `Send a notification with the title "${parameters.title}" and content "${parameters.message}"`;
+      return [`Send a notification with the title`, {type: "string", string: parameters.title}, `and content`, {type: "string", string: parameters.message}];
     },
   },
   {
@@ -85,7 +85,7 @@ export default [
     name: "Type string", value: "typestring", description: "Type a string", parameters: [
       { name: "String", value: "string", description: "The string you want to type.", type: "string", defaultValue: "", },
     ], contentText: (parameters) => {
-      return `Type the string "${parameters.string}"`;
+      return [`Type the string`, {type: "string", string: parameters.string}];
     },
   },
   { name: "Stop", value: "stop", description: "Stops the macro.", parameters: [], contentText: (parameters) => {
