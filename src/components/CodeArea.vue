@@ -145,7 +145,7 @@
               <span>{{getCodeType(execute)?.name || "Unknown"}}</span>
             </div>
             <span class="codeInfo">
-              <CodeInfo :info="getCodeType(execute).contentText(execute.data, parsers)" />
+              <CodeInfo :info="getCodeType(execute).contentText(execute.data, parsers)" :key="getCodeType(execute).contentText(execute.data, parsers)" />
             </span>
             <div
               v-for="(executesIteration, key) in execute.codeInside"
