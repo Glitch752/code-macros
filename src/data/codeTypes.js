@@ -18,8 +18,8 @@ export default [
   {
     name: "Function call", value: "function", description: "Executes the code inside the function it calls.", parameters: [
       { name: "Function", value: "function", type: "function", description: "The function to call.", },
-    ], contentText: (parameters) => {
-      return `Call the function "${parameters["function"]}"`;
+    ], contentText: (parameters, parsers) => {
+      return [`Call the function`, {type: "string", string: parameters["function"]}];
     },
   },
   {

@@ -12,7 +12,7 @@ use super::Macro;
 
 use super::initiators::Initiator;
 
-use inputbot::{KeySequence, MouseCursor};
+use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Execution {
@@ -36,6 +36,8 @@ pub struct ExecutionData {
     pub content: Option<Expression>,
     pub function: Option<String>,
     pub string: Option<String>,
+    pub key: Option<String>,
+    pub button: Option<String>,
     pub x: Option<f64>,
     pub y: Option<f64>
 }
@@ -302,6 +304,42 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let y: f64 = *execution.data.y.as_ref().unwrap();
 
                 MouseCursor::move_abs(x.round() as i32, y.round() as i32);
+            }
+            "presskey" => {
+                let key: &String = &execution.data.key.as_ref().unwrap();
+                
+                todo!();
+            }
+            "releasekey" => {
+                let key: &String = &execution.data.key.as_ref().unwrap();
+
+                todo!();
+            }
+            "pressmouse" => {
+                let button: &String = &execution.data.key.as_ref().unwrap();
+
+                match button.as_str() {
+                    "LMB" => {
+                        MouseButton::LeftButton.press();
+                    }
+                    "RMB" => {
+                        MouseButton::RightButton.press();
+                    }
+                    _ => todo!()
+                }
+            }
+            "releasemouse" => {
+                let button: &String = &execution.data.key.as_ref().unwrap();
+
+                match button.as_str() {
+                    "LMB" => {
+                        MouseButton::LeftButton.release();
+                    }
+                    "RMB" => {
+                        MouseButton::RightButton.release();
+                    }
+                    _ => todo!()
+                }
             }
             _ => todo!()
         }
