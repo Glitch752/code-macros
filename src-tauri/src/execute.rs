@@ -12,7 +12,7 @@ use super::Macro;
 
 use super::initiators::Initiator;
 
-use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton};
+use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Execution {
@@ -307,13 +307,41 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             }
             "presskey" => {
                 let key: &String = &execution.data.key.as_ref().unwrap();
+
+                let key_char: char = key.chars().nth(0).unwrap();
+
+                // Check if the key pressed requires shift to be held
+                if key_char.is_uppercase() || [ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?', '~' ].contains(&key_char) {
+                    KeybdKey::LShiftKey.press();
+                }
+
+                let keybd_key: Option<KeybdKey> = get_keybd_key(key_char);
                 
-                todo!();
+                match keybd_key {
+                    Some(press) => {
+                        press.press();
+                    }
+                    None => { unimplemented!() }
+                }
             }
             "releasekey" => {
                 let key: &String = &execution.data.key.as_ref().unwrap();
 
-                todo!();
+                let key_char: char = key.chars().nth(0).unwrap();
+
+                // Check if the key pressed requires shift to be held
+                if key_char.is_uppercase() || [ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?', '~' ].contains(&key_char) {
+                    KeybdKey::LShiftKey.release();
+                }
+
+                let keybd_key: Option<KeybdKey> = get_keybd_key(key_char);
+                
+                match keybd_key {
+                    Some(press) => {
+                        press.release();
+                    }
+                    None => { unimplemented!() }
+                }
             }
             "pressmouse" => {
                 let button: &String = &execution.data.button.as_ref().unwrap();
