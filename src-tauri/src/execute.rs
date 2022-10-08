@@ -316,7 +316,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 todo!();
             }
             "pressmouse" => {
-                let button: &String = &execution.data.key.as_ref().unwrap();
+                let button: &String = &execution.data.button.as_ref().unwrap();
 
                 match button.as_str() {
                     "LMB" => {
@@ -329,7 +329,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 }
             }
             "releasemouse" => {
-                let button: &String = &execution.data.key.as_ref().unwrap();
+                let button: &String = &execution.data.button.as_ref().unwrap();
 
                 match button.as_str() {
                     "LMB" => {
