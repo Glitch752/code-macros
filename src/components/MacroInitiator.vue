@@ -130,7 +130,7 @@
     outline: 3px solid transparent;
     background: transparent;
     transition: border-color 0.2s ease-in-out;
-    color: white;
+    color: var(--primary-text);
   }
   .initiatorTypeInput:hover, .initiatorTypeInput:focus {
     outline: 3px solid var(--secondary-background);
@@ -153,7 +153,7 @@
     --size: 6px;
     border-left: var(--size) solid transparent;
     border-right: var(--size) solid transparent;
-    border-top: var(--size) solid #fff;
+    border-top: var(--size) solid var(--primary-text);
     top: calc(50% - var(--size) / 2);
     right: 5px;
   }
@@ -190,7 +190,7 @@
   .initiatorSelectOption span {
     font-size: 40px;
     font-weight: bold;
-    color: #fff;
+    color: var(--primary-text);
     margin: 0;
   }
   .initiatorSelectOption p {

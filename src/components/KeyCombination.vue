@@ -126,6 +126,6 @@
   .keyCombination {
     font-size: 40px !important;
     font-weight: bold;
-    color: #fff;
+    color: var(--primary-text);
   }
 </style>

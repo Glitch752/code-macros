@@ -290,12 +290,6 @@
     width: calc(100% - 300px);
     height: calc(100% - 24px);
   }
-  h1 {
-    font-size: 30px;
-    margin: 0;
-    font-weight: 500;
-    text-align: center;
-  }
   .backButton {
     position: absolute;
     top: -10px;

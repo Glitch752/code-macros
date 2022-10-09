@@ -82,7 +82,7 @@
         border: none;
         border-radius: 0;
         padding: 5px 25px 5px 10px;
-        color: #fff;
+        color: var(--primary-text);
         font-size: 14px;
     }
     .expressionSelectArrow {
@@ -91,7 +91,7 @@
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         
-        border-top: 6px solid #fff;
+        border-top: 6px solid var(--primary-text);
 
         position: absolute;
         top: 10px;
@@ -105,7 +105,7 @@
         outline: none;
         border: none;
         padding: 5px;
-        color: #fff;
+        color: var(--primary-text);
     }
     .expressionInput::-webkit-inner-spin-button {
         appearance: none;

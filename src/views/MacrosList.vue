@@ -82,12 +82,6 @@
     font-size: 12px;
     color: #8e959c;
   }
-  h1 {
-    font-size: 30px;
-    margin: 0;
-    font-weight: 500;
-    text-align: center;
-  }
   .noMacros {
     display: flex;
     flex-direction: column;
@@ -111,6 +105,6 @@
     color: #bbb;
   }
   .addMacroButton:hover {
-    color: #fff;
+    color: var(--primary-text);
   }
 </style>

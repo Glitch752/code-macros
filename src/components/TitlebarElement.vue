@@ -22,6 +22,8 @@
   function openSettings() {
     router.push("/settings");
   }
+  
+  const color = getComputedStyle(document.documentElement).getPropertyValue("--primary-text")
 </script>
 
 <template>
@@ -30,30 +32,30 @@
       Macro Creator
     </div>
     <div class="titlebar-button" @click="openSettings">
-      <img src="https://api.iconify.design/mdi:cog.svg?color=white" alt="settings" />
+      <img :src="`https://api.iconify.design/mdi:cog.svg?color=${color}`" alt="settings" />
     </div>
     <div class="titlebar-button" id="titlebar-minimize">
       <img
-      src="https://api.iconify.design/mdi:window-minimize.svg?color=white"
+      :src="`https://api.iconify.design/mdi:window-minimize.svg?color=${color}`"
       alt="minimize"
       />
     </div>
     <div class="titlebar-button" id="titlebar-maximize-unmaximize">
       <div id="titlebar-maximize">
         <img
-        src="https://api.iconify.design/mdi:window-maximize.svg?color=white"
+        :src="`https://api.iconify.design/mdi:window-maximize.svg?color=${color}`"
         alt="maximize"
         />
       </div>
       <div id="titlebar-unmaximize">
         <img
-        src="https://api.iconify.design/mdi:window-restore.svg?color=white"
+        :src="`https://api.iconify.design/mdi:window-restore.svg?color=${color}`"
         alt="unmaximize"
         />
       </div>
     </div>
     <div class="titlebar-button" id="titlebar-close">
-      <img src="https://api.iconify.design/mdi:close.svg?color=white" alt="close" />
+      <img :src="`https://api.iconify.design/mdi:close.svg?color=${color}`" alt="close" />
     </div>
   </div>
 </template>
@@ -73,7 +75,7 @@
   }
   .titlebar-name {
     text-align: center;
-    color: white;
+    color: var(--primary-text);
     font-size: 16px;
     position: absolute;
     left: 5px;

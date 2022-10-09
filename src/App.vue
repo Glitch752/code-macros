@@ -11,11 +11,19 @@
 
 <style>
   :root {
+    /* Dark theme */
     --primary-background: #1e1f29;
     --dark-background: #171820;
     --secondary-background: #20242e;
     --primary-text: #ffffff;
     --secondary-text: #dddddd;
+
+    /* Light theme */
+    /* --primary-background: #e4e4e4;
+    --dark-background: #bebfc2;
+    --secondary-background: #f5f5f5;
+    --primary-text: #000000;
+    --secondary-text: #1d1d1d; */
   }
   *, *::before, *::after {
     box-sizing: border-box;
@@ -33,7 +41,7 @@
     position: absolute;
     inset: var(--inset);
     background-color: var(--primary-background);
-    color: white;
+    color: var(--primary-text);
     font-family: 'Source Sans Pro';
   }
   #app.maximized {
@@ -46,7 +54,7 @@
   .button {
     font-size: 1.5em;
     font-weight: 500;
-    color: white;
+    color: var(--primary-text);
     text-decoration: none;
     background-color: var(--defaultBG);
     padding: 5px 15px;
@@ -87,5 +95,13 @@
     height: 5px;
     background-color: #4276b1;
     border-radius: 100vw;
+  }
+  
+  h1 {
+    font-size: 30px;
+    margin: 0;
+    font-weight: 500;
+    text-align: center;
+    color: var(--primary-text);
   }
 </style>

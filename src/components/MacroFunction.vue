@@ -43,7 +43,7 @@
     padding: 5px 10px;
     margin: 2px;
     font-size: 20px;
-    color: #fff;
+    color: var(--primary-text);
     transition: outline 0.3s cubic-bezier(.19,.9,.52,.91);
   }
   .functionName:hover, .functionName:focus {

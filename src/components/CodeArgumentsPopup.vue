@@ -113,7 +113,7 @@
       padding: 0 5px;
       margin: 2px 5px;
       background: transparent;
-      color: white;
+      color: var(--primary-text);
       /* Make it fill the rest of the flexbox */
       flex: 1;
       width: 0;
@@ -131,7 +131,7 @@
     }
     .codeArgument span {
       font-size: 18px;
-      color: white;
+      color: var(--primary-text);
       padding: 5px;
     }
 </style>

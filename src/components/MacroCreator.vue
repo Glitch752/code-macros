@@ -104,14 +104,14 @@
     margin-top: 20px;
     padding: 0;
     text-align: center;
-    color: #fff;
+    color: var(--primary-text);
     font-size: 24px;
   }
   .macroName {
     border: none;
     outline: 2px solid transparent;
     background: transparent;
-    color: #fff;
+    color: var(--primary-text);
     font-size: 2rem;
     font-weight: 500;
     text-align: center;
@@ -136,7 +136,7 @@
   }
   .addInitiator, .addFunction {
     background-color: transparent;
-    color: #fff;
+    color: var(--primary-text);
     border: none;
     outline: 3px solid #292f3d;
     width: calc(100% - 20px);

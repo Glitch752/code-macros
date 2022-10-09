@@ -142,7 +142,7 @@
     top: -28px;
     z-index: 1;
     background-color: var(--accent);
-    color: #fff;
+    color: var(--primary-text);
     width: 30px;
     height: 20px;
     display: flex;
