@@ -10,13 +10,13 @@
 </template>
 
 <style>
-  :root {
+  /* :root { */
     /* Dark theme */
-    --primary-background: #1e1f29;
+    /* --primary-background: #1e1f29;
     --dark-background: #171820;
     --secondary-background: #20242e;
     --primary-text: #ffffff;
-    --secondary-text: #dddddd;
+    --secondary-text: #dddddd; */
 
     /* Light theme */
     /* --primary-background: #e4e4e4;
@@ -24,6 +24,23 @@
     --secondary-background: #f5f5f5;
     --primary-text: #000000;
     --secondary-text: #1d1d1d; */
+  /* } */
+  
+  /* Dark theme */
+  body.darkTheme {
+    --primary-background: #1e1f29;
+    --dark-background: #171820;
+    --secondary-background: #20242e;
+    --primary-text: #ffffff;
+    --secondary-text: #dddddd;
+  }
+  /* Light theme */
+  body.lightTheme {
+    --primary-background: #e4e4e4;
+    --dark-background: #bebfc2;
+    --secondary-background: #f5f5f5;
+    --primary-text: #000000;
+    --secondary-text: #1d1d1d;
   }
   *, *::before, *::after {
     box-sizing: border-box;
