@@ -53,3 +53,19 @@ function ensureKeys(object, keys) {
     }
     return result;
 }
+
+export function selectTheme(e) {
+    loadTheme(e.target.value);
+    store.set("theme", e.target.value);
+}
+
+export function loadTheme(theme = null) {
+    if(theme === null) {
+        store.get("theme", "darkTheme").then((theme) => {
+            loadTheme(theme);
+        });
+    } else {
+        document.body.className = "";
+        document.body.classList.add(theme);
+    }
+}

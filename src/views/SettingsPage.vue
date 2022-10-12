@@ -1,20 +1,19 @@
 <script setup>
+  import { ref } from 'vue';
   import { useRouter } from "vue-router";
+  import * as store from '@/store';
+  import { selectTheme } from "@/utils";
 
   let router = useRouter();
 
+  let theme = ref(null);
+
+  store.get("theme", "darkTheme").then((value) => {
+    theme.value = value;
+  });
+
   function goBack() {
     router.push("/macros");
-  }
-
-  function selectTheme(e) {
-    // TODO: Make this save in config.json
-    document.body.className = "";
-    const themeToClass = {
-      "dark": "darkTheme",
-      "light": "lightTheme"
-    }
-    document.body.classList.add(themeToClass[e.target.value]);
   }
 </script>
 
@@ -22,9 +21,9 @@
   <h1>Settings</h1>
 
   <span>Theme</span>
-  <select @change="selectTheme">
-    <option value="dark">Dark theme</option>
-    <option value="light">Light theme</option>
+  <select :value="theme" @change="selectTheme">
+    <option value="darkTheme">Dark theme</option>
+    <option value="lightTheme">Light theme</option>
   </select>
 
   <span class="backButton" @click="goBack">&lt;</span>
