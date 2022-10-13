@@ -6,10 +6,7 @@
   let router = useRouter();
 
   onMounted(() => {
-    document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
-    document.getElementById('titlebar-maximize-unmaximize').addEventListener('click', () => appWindow.toggleMaximize());
-    document.getElementById('titlebar-close').addEventListener('click', () => appWindow.hide());
-    window.addEventListener('resize', updateWindow)
+    window.addEventListener('resize', updateWindow);
     updateWindow();
   });
   function updateWindow() {
@@ -39,13 +36,13 @@
     <div class="titlebar-button" @click="openSettings">
       <img :src="`https://api.iconify.design/mdi:cog.svg?color=%23${color}`" alt="settings" />
     </div>
-    <div class="titlebar-button" id="titlebar-minimize">
+    <div class="titlebar-button" @click="appWindow.minimize()">
       <img
       :src="`https://api.iconify.design/mdi:window-minimize.svg?color=%23${color}`"
       alt="minimize"
       />
     </div>
-    <div class="titlebar-button" id="titlebar-maximize-unmaximize">
+    <div class="titlebar-button" @click="appWindow.toggleMaximize()">
       <div id="titlebar-maximize">
         <img
         :src="`https://api.iconify.design/mdi:window-maximize.svg?color=%23${color}`"
@@ -59,7 +56,7 @@
         />
       </div>
     </div>
-    <div class="titlebar-button" id="titlebar-close">
+    <div class="titlebar-button" @click="appWindow.hide()">
       <img :src="`https://api.iconify.design/mdi:close.svg?color=%23${color}`" alt="close" />
     </div>
   </div>
