@@ -195,7 +195,7 @@
   }
   .initiatorSelectOption p {
     font-size: 20px;
-    color: #ddd;
+    color: var(--secondary-text);
     margin: 10px;
   }
   .initiatorType:hover .initiatorSelect {

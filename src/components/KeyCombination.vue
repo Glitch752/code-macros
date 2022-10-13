@@ -121,7 +121,7 @@
     text-align: center;
     display: inline-block;
     width: 100%;
-    color: #ddd;
+    color: var(--secondary-text);
   }
   .keyCombination {
     font-size: 40px !important;

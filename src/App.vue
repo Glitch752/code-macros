@@ -33,6 +33,9 @@
     --secondary-background: #20242e;
     --primary-text: #ffffff;
     --secondary-text: #dddddd;
+
+    --accent: #242935;
+    --accent-light: #292f3d;
   }
   /* Light theme */
   body.lightTheme {
@@ -41,6 +44,9 @@
     --secondary-background: #f5f5f5;
     --primary-text: #000000;
     --secondary-text: #1d1d1d;
+    
+    --accent: #214a80;
+    --accent-light: #376aad;
   }
   *, *::before, *::after {
     box-sizing: border-box;

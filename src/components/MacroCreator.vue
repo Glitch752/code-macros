@@ -132,13 +132,13 @@
     transition: outline 0.3s cubic-bezier(.19,.9,.52,.91);
   }
   .macroName:hover, .macroDescription:hover, .macroName:focus, .macroDescription:focus {
-    outline: 2px solid #223547;
+    outline: 2px solid var(--accent-light);
   }
   .addInitiator, .addFunction {
     background-color: transparent;
     color: var(--primary-text);
     border: none;
-    outline: 3px solid #292f3d;
+    outline: 3px solid var(--accent);
     width: calc(100% - 20px);
     font-size: 1.5rem;
     font-weight: 500;
@@ -146,6 +146,6 @@
     cursor: pointer;
   }
   .addInitiator:hover, .addFunction:hover {
-    outline: 3px solid #32394b;
+    outline: 3px solid var(--accent-light);
   }
 </style>

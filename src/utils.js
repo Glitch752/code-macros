@@ -67,5 +67,7 @@ export function loadTheme(theme = null) {
     } else {
         document.body.className = "";
         document.body.classList.add(theme);
+
+        document.themeChangedCallback();
     }
 }

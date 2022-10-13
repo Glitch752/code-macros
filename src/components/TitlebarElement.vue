@@ -1,6 +1,6 @@
 <script setup>
   import { appWindow } from '@tauri-apps/api/window';
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   let router = useRouter();
@@ -23,39 +23,44 @@
     router.push("/settings");
   }
   
-  const color = getComputedStyle(document.documentElement).getPropertyValue("--primary-text")
+  const color = ref(getComputedStyle(document.body).getPropertyValue("--primary-text").replace("#", "").trim());
+
+  // TODO: Find a more Vue-like way of doing this
+  document.themeChangedCallback = () => {
+    color.value = getComputedStyle(document.body).getPropertyValue("--primary-text").replace("#", "").trim();
+  }
 </script>
 
 <template>
-  <div data-tauri-drag-region class="titlebar">
+  <div data-tauri-drag-region class="titlebar" :key="color">
     <div class="titlebar-name">
       Macro Creator
     </div>
     <div class="titlebar-button" @click="openSettings">
-      <img :src="`https://api.iconify.design/mdi:cog.svg?color=${color}`" alt="settings" />
+      <img :src="`https://api.iconify.design/mdi:cog.svg?color=%23${color}`" alt="settings" />
     </div>
     <div class="titlebar-button" id="titlebar-minimize">
       <img
-      :src="`https://api.iconify.design/mdi:window-minimize.svg?color=${color}`"
+      :src="`https://api.iconify.design/mdi:window-minimize.svg?color=%23${color}`"
       alt="minimize"
       />
     </div>
     <div class="titlebar-button" id="titlebar-maximize-unmaximize">
       <div id="titlebar-maximize">
         <img
-        :src="`https://api.iconify.design/mdi:window-maximize.svg?color=${color}`"
+        :src="`https://api.iconify.design/mdi:window-maximize.svg?color=%23${color}`"
         alt="maximize"
         />
       </div>
       <div id="titlebar-unmaximize">
         <img
-        :src="`https://api.iconify.design/mdi:window-restore.svg?color=${color}`"
+        :src="`https://api.iconify.design/mdi:window-restore.svg?color=%23${color}`"
         alt="unmaximize"
         />
       </div>
     </div>
     <div class="titlebar-button" id="titlebar-close">
-      <img :src="`https://api.iconify.design/mdi:close.svg?color=${color}`" alt="close" />
+      <img :src="`https://api.iconify.design/mdi:close.svg?color=%23${color}`" alt="close" />
     </div>
   </div>
 </template>
