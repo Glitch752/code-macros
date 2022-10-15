@@ -129,5 +129,16 @@ export default [
     ] }
   ], contentText: (parameters) => {
     return [`Release the mouse button`, {type: "string", string: parameters.button}];
+  }},
+  { name: "Read file", value: "readfile", description: "Read a file at a certain path.", parameters: [
+    { name: "File", value: "file", description: "The file to read", type: "string", defaultValue: "C:/" }
+  ], contentText: (parameters) => {
+    return [`Read the contents of the text file`, {type: "string", string: parameters.file}];
+  }},
+  { name: "Write to file", value: "writefile", description: "Write to an existing file.", parameters: [
+    { name: "File", value: "file", description: "The file to write to", type: "string", defaultValue: "C:/" },
+    { name: "Content", value: "content", description: "The content to write", type: "string", defaultValue: "Hello, world!" }
+  ], contentText: (parameters) => {
+    return [`Write`, {type: "string", string: parameters.content}, `to the text file`, {type: "string", string: parameters.file}];
   }}
 ];
