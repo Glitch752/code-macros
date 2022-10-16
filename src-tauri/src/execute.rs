@@ -14,6 +14,8 @@ use super::initiators::Initiator;
 
 use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
+use std::fs;
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Execution {
     pub type_: String,
@@ -32,7 +34,9 @@ pub struct ExecutionData {
     pub step: Option<f64>,
     pub condition: Option<Condition>,
     pub variable: Option<String>,
+    pub data: Option<String>,
     pub value: Option<f64>,
+    pub file: Option<String>,
     pub content: Option<Expression>,
     pub function: Option<String>,
     pub string: Option<String>,
@@ -257,7 +261,6 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 }
             }
             "if" => {
-                // TODO: Properly implement variables so 'if' can be used
                 let condition: &Condition = &execution.data.condition.as_ref().unwrap();
                 if get_condition_bool(evaluate_condition(condition, variables)) {
                     execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
@@ -368,6 +371,22 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     }
                     _ => todo!()
                 }
+            }
+            "readfile" => {
+                let file: &String = &execution.data.file.as_ref().unwrap();
+                let variable: &String = &execution.data.variable.as_ref().unwrap();
+
+                let file_contents: String = fs::read_to_string(file).unwrap_or("".to_string());
+
+                set_variable(variables, variable.to_string().clone(), VariableValue::String(file_contents));
+            }
+            "writefile" => {
+                let file: &String = &execution.data.file.as_ref().unwrap();
+                let content: &String = execution.data.data.as_ref().unwrap();
+
+                let file_contents: String = parse_string(content, &mut variables.clone());
+
+                fs::write(file, file_contents).unwrap();
             }
             _ => todo!()
         }
