@@ -15,6 +15,6 @@
         "typestring", "presskey", "releasekey", "pressmouse", "releasemouse"
     ]},
     {"name": "Filesystem", "value": "filesystem", "description": "Operations that can modify, add, or remove files and directories", "code": [
-        "readfile", "writefile"
+        "readfile", "writefile", "deletefile"
     ]}
 ]

@@ -388,6 +388,11 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
 
                 fs::write(file, file_contents).unwrap();
             }
+            "deletefile" => {
+                let file: &String = &execution.data.file.as_ref().unwrap();
+
+                fs::remove_file(file).unwrap();
+            }
             _ => todo!()
         }
     }

@@ -134,12 +134,17 @@ export default [
     { name: "File", value: "file", description: "The file to read", type: "string", defaultValue: "C:/" },
     { name: "Variable", value: "variable", description: "The variable you want to set", type: "string", defaultValue: "fileContent" }
   ], contentText: (parameters) => {
-    return [`Read the contents of the text file`, {type: "string", string: parameters.file}];
+    return [`Read the contents of the text file`, {type: "string", string: parameters.file}, `and set the variable`, {type: "string", string: parameters.variable}];
   }},
-  { name: "Write to file", value: "writefile", description: "Write to an existing file.", parameters: [
+  { name: "Write to file", value: "writefile", description: "Write to a file. Creates a new file if none exists.", parameters: [
     { name: "File", value: "file", description: "The file to write to", type: "string", defaultValue: "C:/" },
     { name: "Content", value: "data", description: "The content to write", type: "string", defaultValue: "Hello, world!" }
   ], contentText: (parameters) => {
-    return [`Write`, {type: "string", string: parameters.content}, `to the text file`, {type: "string", string: parameters.file}];
+    return [`Write`, {type: "string", string: parameters.data}, `to the text file`, {type: "string", string: parameters.file}];
+  }},
+  { name: "Delete file", value: "deletefile", description: "Delete an existing file.", parameters: [
+    { name: "File", value: "file", description: "The file to delete", type: "string", defaultValue: "C:/" }
+  ], contentText: (parameters) => {
+    return [`Delete the file`, {type: "string", string: parameters.file}];
   }}
 ];
