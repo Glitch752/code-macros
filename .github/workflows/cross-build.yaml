@@ -41,3 +41,4 @@ jobs:
         releaseDraft: true
         prerelease: false
         configPath: "src-tauri/tauri.conf.json"
+        distPath: "build"
