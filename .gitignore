@@ -23,3 +23,4 @@ pnpm-debug.log*
 *.sw?
 
 .github/workflows/cross-build-test.yaml
+src-tauri/tauri.conf.json.bak
