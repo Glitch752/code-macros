@@ -2,7 +2,7 @@ use serde::{ Deserialize, Serialize };
 
 use std::collections::HashMap;
 
-use tauri::api::notification::Notification;
+use tauri::{api::notification::Notification};
 
 static MAX_LOOP_ITERATIONS: u64 = 100000;
 
@@ -16,34 +16,104 @@ use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
 use std::fs;
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Execution {
-    pub type_: String,
-    pub data: ExecutionData,
-    pub variables: Vec<VariableType>,
-    pub code_inside: ExecutionCodeInside
-}
+// #[derive(Serialize, Deserialize, Clone, Debug)]
+// pub struct Execution {
+//     pub type_: String,
+//     pub data: ExecutionData,
+//     pub variables: Vec<VariableType>,
+//     pub code_inside: ExecutionCodeInside
+// }
+
+// pub struct ExecutionData {
+//     pub time: Option<f64>,
+//     pub title: Option<String>,
+//     pub message: Option<String>,
+//     pub start: Option<f64>,
+//     pub end: Option<f64>,
+//     pub step: Option<f64>,
+//     pub condition: Option<Condition>,
+//     pub variable: Option<String>,
+//     pub data: Option<String>,
+//     pub value: Option<f64>,
+//     pub file: Option<String>,
+//     pub content: Option<Expression>,
+//     pub function: Option<String>,
+//     pub string: Option<String>,
+//     pub key: Option<String>,
+//     pub button: Option<String>,
+//     pub x: Option<f64>,
+//     pub y: Option<f64>
+// }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct ExecutionData {
-    pub time: Option<f64>,
-    pub title: Option<String>,
-    pub message: Option<String>,
-    pub start: Option<f64>,
-    pub end: Option<f64>,
-    pub step: Option<f64>,
-    pub condition: Option<Condition>,
-    pub variable: Option<String>,
-    pub data: Option<String>,
-    pub value: Option<f64>,
-    pub file: Option<String>,
-    pub content: Option<Expression>,
-    pub function: Option<String>,
-    pub string: Option<String>,
-    pub key: Option<String>,
-    pub button: Option<String>,
-    pub x: Option<f64>,
-    pub y: Option<f64>
+#[serde(tag = "type_")]
+#[serde(rename_all = "lowercase")]
+pub enum Execution {
+    If {
+        condition: Condition,
+        code_inside: ExecutionCodeInside
+    },
+    Function {
+        function: String
+    },
+    FromToLoop {
+        start: f64,
+        end: f64,
+        step: f64,
+        variables: Vec<VariableType>,
+        code_inside: ExecutionCodeInside
+    },
+    WhileLoop {
+        condition: Condition,
+        variables: Vec<VariableType>,
+        code_inside: ExecutionCodeInside
+    },
+    Notification {
+        title: String,
+        message: String
+    },
+    Wait {
+        time: f64
+    },
+    SetVariable {
+        variable: String,
+        value: Expression
+    },
+    TypeString {
+        string: String
+    },
+    Stop { },
+    MouseMoveRelative {
+        x: f64,
+        y: f64
+    },
+    MouseMoveAbsolute {
+        x: f64, 
+        y: f64
+    },
+    PressKey {
+        key: String
+    },
+    ReleaseKey {
+        key: String
+    },
+    PressMouse {
+        button: String
+    },
+    ReleaseMouse {
+        button: String
+    },
+    ReadFile {
+        file: String,
+        variable: String
+    },
+    WriteFile {
+        file: String,
+        content: String
+    },
+    DeleteFile {
+        file: String
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -187,37 +257,31 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             return;
         }
 
-        match execution.type_.as_str() {
-            "wait" => {
-                let time = execution.data.time.as_ref().unwrap();
+        match execution {
+            Execution::Wait { time } => {
                 thread::sleep(std::time::Duration::from_millis((time * 1000.0) as u64));
             }
-            "notification" => {
-                let title = execution.data.title.as_ref().unwrap();
-                let message = execution.data.message.as_ref().unwrap();
+            Execution::Notification { title, message } => {
                 let _ = Notification::new("code-macros")
                     .title(parse_string(title, variables))
                     .body(parse_string(message, variables))
                     .show();
             }
-            "fromtoloop" => {
-                let from: f64 = *execution.data.start.as_ref().unwrap_or(&f64::from(0));
-                let to: f64 = *execution.data.end.as_ref().unwrap_or(&f64::from(4));
-                let step: f64 = *execution.data.step.as_ref().unwrap_or(&f64::from(1));
-                let mut i: f64 = from;
+            Execution::FromToLoop { start, end, step, variables: variablesSet, code_inside } => {
+                let mut i: f64 = *start;
                 let mut iterations: u64 = 0;
                 let mut value_variable: Option<String> = None;
-                for variable in &execution.variables {
+                for variable in variablesSet {
                     if variable.type_ == "value".to_string() {
                         value_variable = Some(variable.name.clone());
                     }
                 }
                 let variable_name: String = value_variable.unwrap_or("".to_string());
 
-                if to > from {
-                    while i <= to {
+                if end > start {
+                    while i <= *end {
                         set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i));
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                        execute_macro_code(&code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -225,9 +289,9 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         }
                     }
                 } else {
-                    while i >= to {
+                    while i >= *end {
                         set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i));
-                        execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                        execute_macro_code(&code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                         i += step;
                         iterations += 1;
                         if iterations > MAX_LOOP_ITERATIONS {
@@ -236,12 +300,9 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     }
                 }
             }
-            "whileloop" => {
-                // TODO: Properly implement variables so this loop can be used.
-                let condition: &Condition = &execution.data.condition.as_ref().unwrap();
-
+            Execution::WhileLoop { condition, variables: variablesSet, code_inside } => {
                 let mut value_variable: Option<String> = None;
-                for variable in &execution.variables {
+                for variable in variablesSet {
                     if variable.type_ == "iteration".to_string() {
                         value_variable = Some(variable.name.clone());
                     }
@@ -253,34 +314,29 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 while get_condition_bool(evaluate_condition(condition, variables)) {
                     set_variable(variables, variable_name.to_string().clone(), VariableValue::Number(i as f64));
                     i += 1;
-                    execute_macro_code(&execution.code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                    execute_macro_code(&code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                     
                     if i > MAX_LOOP_ITERATIONS {
                         break;
                     }
                 }
             }
-            "if" => {
-                let condition: &Condition = &execution.data.condition.as_ref().unwrap();
+            Execution::If { condition, code_inside } => {
                 if get_condition_bool(evaluate_condition(condition, variables)) {
-                    execute_macro_code(&execution.code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                    execute_macro_code(&code_inside.then.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 } else {
-                    execute_macro_code(&execution.code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                    execute_macro_code(&code_inside.else_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 }
             }
-            "stop" => {
+            Execution::Stop {  } => {
                 *stop_execution = true;
             }
-            "setvariable" => {
-                let variable: &String = &execution.data.variable.as_ref().unwrap();
-                let content: &Expression = execution.data.content.as_ref().unwrap();
-
+            Execution::SetVariable { variable, value } => {
                 set_variable(variables, variable.to_string().clone(), VariableValue::Number(
-                    get_expression_number(evaluate_expression(content, &mut variables.clone()))
+                    get_expression_number(evaluate_expression(value, &mut variables.clone()))
                 ));
             }
-            "function" => {
-                let function_name: &String = &execution.data.function.as_ref().unwrap();
+            Execution::Function { function: function_name } => {
                 for function in &macro_.clone().macro_.functions.unwrap() {
                     if function.name == *function_name {
                         run_macro_function(function.clone(), macro_.clone(), variables);
@@ -288,29 +344,19 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     }
                 }
             }
-            "typestring" => {
-                let string: &String = &execution.data.string.as_ref().unwrap();
-
+            Execution::TypeString { string } => {
                 // FIXME: Yes, this is really, really bad code. It is intentionally creating a memory leak.
                 let string_static = Box::leak(parse_string(&string.clone(), &mut variables.clone()).into_boxed_str());
 
                 KeySequence(string_static).send();
             }
-            "movemouserelative" => {
-                let x: f64 = *execution.data.x.as_ref().unwrap();
-                let y: f64 = *execution.data.y.as_ref().unwrap();
-
+            Execution::MouseMoveRelative { x, y } => {
                 MouseCursor::move_rel(x.round() as i32, y.round() as i32);
             }
-            "movemouseabsolute" => {
-                let x: f64 = *execution.data.x.as_ref().unwrap();
-                let y: f64 = *execution.data.y.as_ref().unwrap();
-
+            Execution::MouseMoveAbsolute { x, y } => {
                 MouseCursor::move_abs(x.round() as i32, y.round() as i32);
             }
-            "presskey" => {
-                let key: &String = &execution.data.key.as_ref().unwrap();
-
+            Execution::PressKey { key } => {
                 let key_char: char = key.chars().nth(0).unwrap();
 
                 // Check if the key pressed requires shift to be held
@@ -327,9 +373,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     None => { unimplemented!() }
                 }
             }
-            "releasekey" => {
-                let key: &String = &execution.data.key.as_ref().unwrap();
-
+            Execution::ReleaseKey { key } => {
                 let key_char: char = key.chars().nth(0).unwrap();
 
                 // Check if the key pressed requires shift to be held
@@ -346,9 +390,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     None => { unimplemented!() }
                 }
             }
-            "pressmouse" => {
-                let button: &String = &execution.data.button.as_ref().unwrap();
-
+            Execution::PressMouse { button } => {
                 match button.as_str() {
                     "LMB" => {
                         MouseButton::LeftButton.press();
@@ -359,9 +401,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     _ => todo!()
                 }
             }
-            "releasemouse" => {
-                let button: &String = &execution.data.button.as_ref().unwrap();
-
+            Execution::ReleaseMouse { button } => {
                 match button.as_str() {
                     "LMB" => {
                         MouseButton::LeftButton.release();
@@ -372,25 +412,17 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     _ => todo!()
                 }
             }
-            "readfile" => {
-                let file: &String = &execution.data.file.as_ref().unwrap();
-                let variable: &String = &execution.data.variable.as_ref().unwrap();
-
+            Execution::ReadFile { file, variable } => {
                 let file_contents: String = fs::read_to_string(file).unwrap_or("".to_string());
 
                 set_variable(variables, variable.to_string().clone(), VariableValue::String(file_contents));
             }
-            "writefile" => {
-                let file: &String = &execution.data.file.as_ref().unwrap();
-                let content: &String = execution.data.data.as_ref().unwrap();
-
+            Execution::WriteFile { file, content } => {
                 let file_contents: String = parse_string(content, &mut variables.clone());
 
                 fs::write(file, file_contents).unwrap();
             }
-            "deletefile" => {
-                let file: &String = &execution.data.file.as_ref().unwrap();
-
+            Execution::DeleteFile { file } => {
                 fs::remove_file(file).unwrap();
             }
             _ => todo!()
