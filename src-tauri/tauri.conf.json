@@ -1,30 +1,19 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
-  "build": {
-    "beforeBuildCommand": "",
-    "beforeDevCommand": "",
-    "devPath": "http://localhost:3000/",
-    "distDir": "../build"
-  },
   "package": {
     "productName": "codemacros",
-    "version": "0.1.0"
+    "version": "0.2.3"
+  },
+  "build": {
+    "distDir": "../build",
+    "devPath": "http://localhost:3000/",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
   },
   "tauri": {
-    "allowlist": {
-      "all": true,
-      "fs": {
-        "scope": ["**"]
-      }
-    },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
+      "targets": "all",
+      "identifier": "xyz.glitch752.codemacros",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -32,29 +21,35 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "xyz.glitch752.codemacros",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
       "resources": [],
+      "externalBin": [],
+      "copyright": "",
+      "category": "DeveloperTool",
       "shortDescription": "",
-      "targets": "all",
+      "longDescription": "",
+      "deb": {
+        "depends": [],
+        "useBootstrapper": false
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "",
+        "useBootstrapper": false,
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "entitlements": null
+      },
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
         "timestampUrl": ""
       }
     },
-    "security": {
-      "csp": null
-    },
     "updater": {
       "active": false
+    },
+    "allowlist": {
+      "all": true
     },
     "windows": [
       {
