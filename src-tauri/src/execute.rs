@@ -116,6 +116,9 @@ pub enum Execution {
     DeleteFolder {
         data: DeleteFolderData
     },
+    GetDataType {
+        data: GetDataTypeData
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -219,6 +222,12 @@ pub struct CreateFolderData {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct DeleteFolderData {
     pub path: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GetDataTypeData {
+    pub variable: String,
+    pub output: String
 }
 
 
@@ -536,6 +545,19 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             }
             Execution::DeleteFolder { data } => {
                 fs::remove_dir(&data.path).unwrap();
+            }
+            Execution::GetDataType { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.variable.to_string().clone());
+
+                let variable_type = match variable_value {
+                    Some(variable) => match variable.value {
+                        VariableValue::Number(_) => "number".to_string(),
+                        VariableValue::String(_) => "string".to_string()
+                    }
+                    None => "undefined".to_string()
+                };
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::String(variable_type));
             }
         }
     }

@@ -134,7 +134,7 @@ export default [
     { name: "File", value: "file", description: "The file to read", type: "string", defaultValue: "C:/" },
     { name: "Variable", value: "variable", description: "The variable you want to set", type: "string", defaultValue: "fileContent" }
   ], contentText: (parameters) => {
-    return [`Read the contents of the text file`, {type: "string", string: parameters.file}, `and set the variable`, {type: "string", string: parameters.variable}];
+    return [`Read the contents of the text file`, {type: "string", string: parameters.file}, `and set the variable`, {type: "variable", variable: parameters.variable}];
   }},
   { name: "Write to file", value: "writefile", description: "Write to a file. Creates a new file if none exists.", parameters: [
     { name: "File", value: "file", description: "The file to write to", type: "string", defaultValue: "C:/" },
@@ -156,5 +156,11 @@ export default [
     { name: "Path", value: "path", description: "The path to delete", type: "string", defaultValue: "C:/" }
   ], contentText: (parameters) => {
     return [`Delete the folder at`, {type: "string", string: parameters.path}];
-  }}
+  }},
+  { name: "Get variable data type", value: "getdatatype", description: "Get the data type of a variable.", parameters: [
+    { name: "Variable", value: "variable", description: "The variable to get the data type of", type: "string", defaultValue: "myVariable" },
+    { name: "Output", value: "output", description: "The variable to set to the data type", type: "string", defaultValue: "myVariableType" }
+  ], contentText: (parameters) => {
+    return [`Get the data type of the variable`, {type: "variable", variable: parameters.variable}, `and set the variable`, {type: "variable", variable: parameters.output}];
+  }},
 ];
