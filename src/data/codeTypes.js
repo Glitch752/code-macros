@@ -146,5 +146,15 @@ export default [
     { name: "File", value: "file", description: "The file to delete", type: "string", defaultValue: "C:/" }
   ], contentText: (parameters) => {
     return [`Delete the file`, {type: "string", string: parameters.file}];
+  }},
+  { name: "Create folder", value: "createfolder", description: "Create a folder at a certain path.", parameters: [
+    { name: "Path", value: "path", description: "The path to make a folder at", type: "string", defaultValue: "C:/" }
+  ], contentText: (parameters) => {
+    return [`Create a folder at`, {type: "string", string: parameters.path}];
+  }},
+  { name: "Delete folder", value: "deletefolder", description: "Delete an existing folder recursively.", parameters: [
+    { name: "Path", value: "path", description: "The path to delete", type: "string", defaultValue: "C:/" }
+  ], contentText: (parameters) => {
+    return [`Delete the folder at`, {type: "string", string: parameters.path}];
   }}
 ];

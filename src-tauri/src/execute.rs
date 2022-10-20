@@ -109,7 +109,13 @@ pub enum Execution {
     },
     DeleteFile {
         data: DeleteFileData
-    }
+    },
+    CreateFolder {
+        data: CreateFolderData
+    },
+    DeleteFolder {
+        data: DeleteFolderData
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -203,6 +209,16 @@ pub struct WriteFileData {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct DeleteFileData {
     pub file: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct CreateFolderData {
+    pub path: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct DeleteFolderData {
+    pub path: String
 }
 
 
@@ -514,6 +530,12 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             }
             Execution::DeleteFile { data } => {
                 fs::remove_file(&data.file).unwrap();
+            }
+            Execution::CreateFolder { data } => {
+                fs::create_dir(&data.path).unwrap();
+            }
+            Execution::DeleteFolder { data } => {
+                fs::remove_dir(&data.path).unwrap();
             }
         }
     }
