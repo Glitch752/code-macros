@@ -182,4 +182,10 @@ export default [
   ], contentText: (parameters) => {
     return [`Remove the item at index`, {type: "variable", variable: parameters.index}, `from the array`, { type: "variable", variable: parameters.array }];
   }},
+  { name: "Get array length", value: "getarraylength", description: "Get the length of an array.", parameters: [
+    { name: "Array", value: "array", description: "The array to get the length of", type: "string", defaultValue: "myArray" },
+    { name: "Output", value: "output", description: "The variable to set to the length", type: "string", defaultValue: "myArrayLength" }
+  ], contentText: (parameters) => {
+    return [`Get the length of the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
 ];

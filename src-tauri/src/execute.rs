@@ -128,6 +128,9 @@ pub enum Execution {
     RemoveFromArray {
         data: RemoveFromArrayData
     },
+    GetArrayLength {
+        data: GetArrayLengthData
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -254,6 +257,12 @@ pub struct AddToArrayData {
 pub struct RemoveFromArrayData {
     pub array: String,
     pub index: f64
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GetArrayLengthData {
+    pub array: String,
+    pub output: String
 }
 
 
@@ -640,6 +649,13 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 new_list_content.remove(data.index as usize);
 
                 set_variable(variables, data.array.to_string().clone(), VariableValue::Array(new_list_content));
+            }
+            Execution::GetArrayLength { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::Number(list_content.len() as f64));
             }
         }
     }
