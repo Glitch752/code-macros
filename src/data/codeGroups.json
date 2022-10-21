@@ -3,7 +3,7 @@
         "if", "function", "fromtoloop", "whileloop", "wait", "stop"
     ]},
     {"name": "Variables", "value": "veriables", "description": "Operations that modify variables.", "code": [
-        "setvariable", "getdatatype"
+        "setvariable", "getdatatype", "createarray", "addtoarray", "removefromarray"
     ]},
     {"name": "Mouse cursor", "value": "mouse", "description": "Operations that change something on the user's computer", "code": [
         "movemouserelative", "movemouseabsolute"

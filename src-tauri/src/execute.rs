@@ -118,7 +118,16 @@ pub enum Execution {
     },
     GetDataType {
         data: GetDataTypeData
-    }
+    },
+    CreateArray {
+        data: CreateArrayData
+    },
+    AddToArray {
+        data: AddToArrayData
+    },
+    RemoveFromArray {
+        data: RemoveFromArrayData
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -228,6 +237,23 @@ pub struct DeleteFolderData {
 pub struct GetDataTypeData {
     pub variable: String,
     pub output: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct CreateArrayData {
+    pub variable: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct AddToArrayData {
+    pub array: String,
+    pub data: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct RemoveFromArrayData {
+    pub array: String,
+    pub index: f64
 }
 
 
@@ -342,6 +368,7 @@ impl Variable {
 pub enum VariableValue {
     String(String),
     Number(f64),
+    Array(Vec<VariableValue>)
 }
 
 fn get_variable_string(variable_value: VariableValue) -> String {
@@ -351,6 +378,17 @@ fn get_variable_string(variable_value: VariableValue) -> String {
         },
         VariableValue::Number(value) => {
             return value.to_string();
+        },
+        VariableValue::Array(value) => {
+            let mut converted_value = "[".to_string();
+            for i in 0..value.len() {
+                converted_value.push_str(&(get_variable_string(value[i].clone())));
+                if i != (value.len()-1) {
+                    converted_value.push_str(", ");
+                }
+            }
+            converted_value.push_str("]");
+            return converted_value;
         }
     }
 }
@@ -358,9 +396,27 @@ fn get_variable_string(variable_value: VariableValue) -> String {
 fn get_variable_number(variable_value: VariableValue) -> f64 {
     match variable_value {
         VariableValue::String(_value) => {
+            // TODO: Make this return the number in the string if possible.
             return 0.0;
         },
         VariableValue::Number(value) => {
+            return value;
+        },
+        VariableValue::Array(_value) => {
+            return 0.0;
+        }
+    }
+}
+
+fn get_variable_vector(variable_value: VariableValue) -> Vec<VariableValue> {
+    match variable_value {
+        VariableValue::String(value) => {
+            return value.chars().map(|c| VariableValue::String(c.to_string())).collect();
+        },
+        VariableValue::Number(_value) => {
+            return Vec::new();
+        },
+        VariableValue::Array(value) => {
             return value;
         }
     }
@@ -552,12 +608,38 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let variable_type = match variable_value {
                     Some(variable) => match variable.value {
                         VariableValue::Number(_) => "number".to_string(),
-                        VariableValue::String(_) => "string".to_string()
+                        VariableValue::String(_) => "string".to_string(),
+                        VariableValue::Array(_) => "array".to_string()
                     }
                     None => "undefined".to_string()
                 };
 
                 set_variable(variables, data.output.to_string().clone(), VariableValue::String(variable_type));
+            }
+            Execution::CreateArray { data } => {
+                set_variable(variables, data.variable.to_string().clone(), VariableValue::Array(Vec::new()));
+            }
+            Execution::AddToArray { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                let new_value: Option<&Variable> = get_variable(variables, data.data.to_string().clone());
+
+                let mut new_list_content: Vec<VariableValue> = list_content.clone();
+                new_list_content.push(new_value.unwrap_or(&Variable::new(VariableValue::Number(0.0))).value.clone());
+
+                set_variable(variables, data.array.to_string().clone(), VariableValue::Array(new_list_content));
+            }
+            Execution::RemoveFromArray { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+                
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                let mut new_list_content: Vec<VariableValue> = list_content.clone();
+                new_list_content.remove(data.index as usize);
+
+                set_variable(variables, data.array.to_string().clone(), VariableValue::Array(new_list_content));
             }
         }
     }

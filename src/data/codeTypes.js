@@ -163,4 +163,23 @@ export default [
   ], contentText: (parameters) => {
     return [`Get the data type of the variable`, {type: "variable", variable: parameters.variable}, `and set the variable`, {type: "variable", variable: parameters.output}];
   }},
+  { name: "Create empty array", value: "createarray", description: "Create an empty array.", parameters: [
+    { name: "Variable", value: "variable", description: "The variable to set as the array", type: "string", defaultValue: "myArray" }
+  ], contentText: (parameters) => {
+    return [`Create a new empty array and set the variable`, { type: "variable", variable: parameters.variable }];
+  }},
+  { name: "Add item to array", value: "addtoarray", description: "Appends a variable to the end of an array by value.", parameters: [
+    { name: "Array", value: "array", description: "The array to add an item to", type: "string", defaultValue: "myArray" },
+    { name: "Item", value: "data", description: "The item to add, which comes from a variable.", type: "variable", defaultValue: 0 }
+  ], contentText: (parameters) => {
+    return [`Add`, {type: "variable", variable: parameters.data}, `to the array`, { type: "variable", variable: parameters.array }];
+  }},
+  { name: "Remove item from array", value: "removefromarray", description: "Removes the item at a certain index from the array. Arrays are 0-indexed.", parameters: [
+    { name: "Array", value: "array", description: "The array to remove an item from", type: "string", defaultValue: "myArray" },
+    { name: "Index", value: "index", description: "The index of the item to remove", type: "expression", defaultValue: {
+      expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
+    } }
+  ], contentText: (parameters) => {
+    return [`Remove the item at index`, {type: "variable", variable: parameters.index}, `from the array`, { type: "variable", variable: parameters.array }];
+  }},
 ];
