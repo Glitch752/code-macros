@@ -1,6 +1,6 @@
 [
     {"name": "Control flow", "value": "controlflow", "description": "Operations that can change the flow of the code", "code": [
-        "if", "function", "fromtoloop", "whileloop", "wait", "stop"
+        "if", "function", "fromtoloop", "whileloop", "wait", "stop", "looparray"
     ]},
     {"name": "Variables", "value": "veriables", "description": "Operations that modify variables.", "code": [
         "setvariable", "getdatatype", "createarray", "addtoarray", "removefromarray"

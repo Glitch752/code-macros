@@ -188,4 +188,15 @@ export default [
   ], contentText: (parameters) => {
     return [`Get the length of the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
   }},
+  { name: "Loop through array", value: "looparray", description: "Loop through an array and execute the actions inside the loop for each item.", parameters: [
+    { name: "Array", value: "array", description: "The array to loop through", type: "string", defaultValue: "myArray" },
+  ],
+  codeInside: [
+    { name: "Loop iteration", value: "loop", description: "The code to execute for each iteration.", },
+  ],
+  variables: [
+    { name: "Item", value: "item", description: "The item at the current index of the array.", },
+  ], contentText: (parameters) => {
+    return `Repeat from ${parameters["start"]} to ${parameters["end"]} by increments of ${parameters["step"]}`;
+  }},
 ];

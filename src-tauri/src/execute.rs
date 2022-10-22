@@ -131,6 +131,11 @@ pub enum Execution {
     GetArrayLength {
         data: GetArrayLengthData
     },
+    LoopArray {
+        data: LoopArrayData,
+        variables: Vec<VariableType>,
+        code_inside: ExecutionCodeInside
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -270,6 +275,11 @@ pub struct GetArrayLengthData {
 pub struct VariableType {
     pub type_: String,
     pub name: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct LoopArrayData {
+    pub array: String
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -656,6 +666,25 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
 
                 set_variable(variables, data.output.to_string().clone(), VariableValue::Number(list_content.len() as f64));
+            }
+            Execution::LoopArray { data, variables: variables_set, code_inside } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+                
+                let mut value_variable: Option<String> = None;
+                for variable in variables_set {
+                    if variable.type_ == "item".to_string() {
+                        value_variable = Some(variable.name.clone());
+                    }
+                }
+                let variable_name: String = value_variable.unwrap_or("".to_string());
+
+                for (_index, value) in list_content.iter().enumerate() {
+                    set_variable(variables, variable_name.clone(), value.clone());
+
+                    execute_macro_code(&code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
+                }
             }
         }
     }
