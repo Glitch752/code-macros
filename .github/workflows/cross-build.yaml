@@ -17,8 +17,8 @@ jobs:
       matrix:
         platform: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
-  env:
-    build_dir: /home/runner/work/code-macros/code-macros/builds
+    env:
+      build_dir: /home/runner/work/code-macros/code-macros/builds
     steps:
       - uses: actions/checkout@v2
       - name: setup node
