@@ -199,4 +199,22 @@ export default [
   ], contentText: (parameters) => {
     return `Repeat from ${parameters["start"]} to ${parameters["end"]} by increments of ${parameters["step"]}`;
   }},
+  { name: "Get item from array", value: "getarrayindex", description: "Get the item at a certain index from the array. Arrays are 0-indexed.", parameters: [
+    { name: "Array", value: "array", description: "The array to get an item from", type: "string", defaultValue: "myArray" },
+    { name: "Index", value: "index", description: "The index of the item to get", type: "expression", defaultValue: {
+      expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
+    } },
+    { name: "Output", value: "output", description: "The variable to set to the item", type: "string", defaultValue: "myArrayItem" }
+  ], contentText: (parameters) => {
+    return [`Get the item at index`, {type: "variable", variable: parameters.index}, `from the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
+  { name: "Set item in array", value: "setarrayindex", description: "Set the item at a certain index in the array. Arrays are 0-indexed.", parameters: [
+    { name: "Array", value: "array", description: "The array to set an item in", type: "string", defaultValue: "myArray" },
+    { name: "Index", value: "index", description: "The index of the item to set", type: "expression", defaultValue: {
+      expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
+    } },
+    { name: "Item", value: "data", description: "The item to set, which comes from a variable.", type: "variable", defaultValue: 0 }
+  ], contentText: (parameters) => {
+    return [`Set the item at index`, {type: "variable", variable: parameters.index}, `in the array`, { type: "variable", variable: parameters.array }, `to`, { type: "variable", variable: parameters.data }];
+  }},
 ];
