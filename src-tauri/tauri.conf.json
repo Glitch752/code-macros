@@ -1,19 +1,30 @@
 {
+  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "devPath": "Set automatically by Vue CLI plugin",
+    "distDir": "../dist"
+  },
   "package": {
     "productName": "codemacros",
-    "version": "0.2.3"
-  },
-  "build": {
-    "distDir": "../build",
-    "devPath": "http://localhost:3000/",
-    "beforeDevCommand": "",
-    "beforeBuildCommand": ""
+    "version": "0.1.0"
   },
   "tauri": {
+    "allowlist": {
+      "all": true,
+      "fs": {
+        "scope": ["**"]
+      }
+    },
     "bundle": {
       "active": true,
-      "targets": "all",
-      "identifier": "xyz.glitch752.codemacros",
+      "category": "DeveloperTool",
+      "copyright": "",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -21,35 +32,29 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": [],
-      "externalBin": [],
-      "copyright": "",
-      "category": "DeveloperTool",
-      "shortDescription": "",
+      "identifier": "xyz.glitch752.codemacros",
       "longDescription": "",
-      "deb": {
-        "depends": [],
-        "useBootstrapper": false
-      },
       "macOS": {
-        "frameworks": [],
-        "minimumSystemVersion": "",
-        "useBootstrapper": false,
+        "entitlements": null,
         "exceptionDomain": "",
-        "signingIdentity": null,
-        "entitlements": null
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
       },
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
         "timestampUrl": ""
       }
     },
+    "security": {
+      "csp": null
+    },
     "updater": {
       "active": false
-    },
-    "allowlist": {
-      "all": true
     },
     "windows": [
       {
