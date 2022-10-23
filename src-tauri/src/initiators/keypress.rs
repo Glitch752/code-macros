@@ -50,7 +50,6 @@ pub fn listen_initiator_keypress() {
                         let keys = initiator.data.keys.as_ref().unwrap();
                         for key in keys {
                             if !keys_pressed_js.contains(key) {
-                                println!("{:?}", key);
                                 continue 'macros;
                             }
                         }

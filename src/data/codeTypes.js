@@ -134,7 +134,7 @@ export default [
     { name: "File", value: "file", description: "The file to read", type: "string", defaultValue: "C:/" },
     { name: "Variable", value: "variable", description: "The variable you want to set", type: "string", defaultValue: "fileContent" }
   ], contentText: (parameters) => {
-    return [`Read the contents of the text file`, {type: "string", string: parameters.file}, `and set the variable`, {type: "string", string: parameters.variable}];
+    return [`Read the contents of the text file`, {type: "string", string: parameters.file}, `and set the variable`, {type: "variable", variable: parameters.variable}];
   }},
   { name: "Write to file", value: "writefile", description: "Write to a file. Creates a new file if none exists.", parameters: [
     { name: "File", value: "file", description: "The file to write to", type: "string", defaultValue: "C:/" },
@@ -146,5 +146,57 @@ export default [
     { name: "File", value: "file", description: "The file to delete", type: "string", defaultValue: "C:/" }
   ], contentText: (parameters) => {
     return [`Delete the file`, {type: "string", string: parameters.file}];
-  }}
+  }},
+  { name: "Create folder", value: "createfolder", description: "Create a folder at a certain path.", parameters: [
+    { name: "Path", value: "path", description: "The path to make a folder at", type: "string", defaultValue: "C:/" }
+  ], contentText: (parameters) => {
+    return [`Create a folder at`, {type: "string", string: parameters.path}];
+  }},
+  { name: "Delete folder", value: "deletefolder", description: "Delete an existing folder recursively.", parameters: [
+    { name: "Path", value: "path", description: "The path to delete", type: "string", defaultValue: "C:/" }
+  ], contentText: (parameters) => {
+    return [`Delete the folder at`, {type: "string", string: parameters.path}];
+  }},
+  { name: "Get variable data type", value: "getdatatype", description: "Get the data type of a variable.", parameters: [
+    { name: "Variable", value: "variable", description: "The variable to get the data type of", type: "string", defaultValue: "myVariable" },
+    { name: "Output", value: "output", description: "The variable to set to the data type", type: "string", defaultValue: "myVariableType" }
+  ], contentText: (parameters) => {
+    return [`Get the data type of the variable`, {type: "variable", variable: parameters.variable}, `and set the variable`, {type: "variable", variable: parameters.output}];
+  }},
+  { name: "Create empty array", value: "createarray", description: "Create an empty array.", parameters: [
+    { name: "Variable", value: "variable", description: "The variable to set as the array", type: "string", defaultValue: "myArray" }
+  ], contentText: (parameters) => {
+    return [`Create a new empty array and set the variable`, { type: "variable", variable: parameters.variable }];
+  }},
+  { name: "Add item to array", value: "addtoarray", description: "Appends a variable to the end of an array by value.", parameters: [
+    { name: "Array", value: "array", description: "The array to add an item to", type: "string", defaultValue: "myArray" },
+    { name: "Item", value: "data", description: "The item to add, which comes from a variable.", type: "variable", defaultValue: 0 }
+  ], contentText: (parameters) => {
+    return [`Add`, {type: "variable", variable: parameters.data}, `to the array`, { type: "variable", variable: parameters.array }];
+  }},
+  { name: "Remove item from array", value: "removefromarray", description: "Removes the item at a certain index from the array. Arrays are 0-indexed.", parameters: [
+    { name: "Array", value: "array", description: "The array to remove an item from", type: "string", defaultValue: "myArray" },
+    { name: "Index", value: "index", description: "The index of the item to remove", type: "expression", defaultValue: {
+      expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
+    } }
+  ], contentText: (parameters) => {
+    return [`Remove the item at index`, {type: "variable", variable: parameters.index}, `from the array`, { type: "variable", variable: parameters.array }];
+  }},
+  { name: "Get array length", value: "getarraylength", description: "Get the length of an array.", parameters: [
+    { name: "Array", value: "array", description: "The array to get the length of", type: "string", defaultValue: "myArray" },
+    { name: "Output", value: "output", description: "The variable to set to the length", type: "string", defaultValue: "myArrayLength" }
+  ], contentText: (parameters) => {
+    return [`Get the length of the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
+  { name: "Loop through array", value: "looparray", description: "Loop through an array and execute the actions inside the loop for each item.", parameters: [
+    { name: "Array", value: "array", description: "The array to loop through", type: "string", defaultValue: "myArray" },
+  ],
+  codeInside: [
+    { name: "Loop iteration", value: "loop", description: "The code to execute for each iteration.", },
+  ],
+  variables: [
+    { name: "Item", value: "item", description: "The item at the current index of the array.", },
+  ], contentText: (parameters) => {
+    return `Repeat from ${parameters["start"]} to ${parameters["end"]} by increments of ${parameters["step"]}`;
+  }},
 ];
