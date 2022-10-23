@@ -12,11 +12,11 @@ on:
 jobs:
   build:
     name: 'Build Release and publish'
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+    # strategy:
+      # fail-fast: false
+      # matrix:
+        # platform: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ubuntu-latest
     env:
       build_dir: /home/runner/work/code-macros/code-macros/builds
     steps:
@@ -30,10 +30,10 @@ jobs:
         with:
           toolchain: stable
       # https://tauri.app/v1/guides/getting-started/prerequisites/
-      - run: sudo apt update
+      - run: sudo apt-get update
       - name: Install dependencies
         run: |
-          sudo apt install libwebkit2gtk-4.0-dev \
+          sudo apt-get install libwebkit2gtk-4.0-dev \
             build-essential \
             curl \
             wget \
