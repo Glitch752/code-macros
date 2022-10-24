@@ -36,7 +36,7 @@ jobs:
       - name: install app dependencies and build it
         run: yarn && yarn build
       - name: Build Tauri app
-        uses: JonasKruckenberg/tauri-buildz @v1.0.3
+        uses: JonasKruckenberg/tauri-build@v1.0.3
         id: tauri_build
       - uses: actions/upload-artifact@v3
         with:
