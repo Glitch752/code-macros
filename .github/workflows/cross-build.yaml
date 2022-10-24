@@ -42,5 +42,3 @@ jobs:
         with:
           name: artifacts
           path:  "${{ join(fromJSON(steps.tauri_build.outputs.artifacts), '\n') }}"
-      - run: ls -l $build_dir
-      - run: echo $build_dir
