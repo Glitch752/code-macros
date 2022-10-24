@@ -16,5 +16,8 @@
     ]},
     {"name": "Filesystem", "value": "filesystem", "description": "Operations that can modify, add, or remove files and directories", "code": [
         "readfile", "writefile", "deletefile", "createfolder", "deletefolder", "getfoldercontents"
+    ]},
+    {"name": "Logging", "value": "logging", "description": "Operations that can modify, add, or remove files and directories", "code": [
+        "log", "clearlog"
     ]}
 ]

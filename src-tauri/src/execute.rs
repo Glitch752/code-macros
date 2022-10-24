@@ -145,6 +145,10 @@ pub enum Execution {
     GetFolderContents {
         data: GetFolderContentsData
     },
+    Log {
+        data: LogData
+    },
+    ClearLog { },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -302,6 +306,11 @@ pub struct SetArrayIndexData {
 pub struct GetFolderContentsData {
     pub path: String,
     pub output: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct LogData {
+    pub message: String
 }
 
 
@@ -746,6 +755,16 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 }
 
                 set_variable(variables, data.output.to_string().clone(), VariableValue::Array(list_content));
+            }
+            Execution::Log { data } => {
+                let message: String = data.message.clone();
+
+                // TODO: Save this to a text file and properly log it
+                println!("{}", parse_string(&message, variables));
+            }
+            Execution::ClearLog { } => {
+                // TODO: Clear the log file
+                println!("Clearing log");
             }
         }
     }

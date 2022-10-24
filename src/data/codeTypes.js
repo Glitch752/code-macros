@@ -223,4 +223,12 @@ export default [
   ], contentText: (parameters) => {
     return [`Get the contents of the folder`, { type: "variable", variable: parameters.folder }, `and set the variable`, { type: "variable", variable: parameters.output }];
   }},
+  { name: "Log", value: "log", description: "Add a message to the log.", parameters: [
+    { name: "Message", value: "message", description: "The message to log", type: "string", defaultValue: "Hello world!" },
+  ], contentText: (parameters) => {
+    return [`Log the message`, { type: "variable", variable: parameters.message }];
+  }},
+  { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: (parameters) => {
+    return ``;
+  }},
 ];
