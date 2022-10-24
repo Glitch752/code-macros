@@ -217,4 +217,10 @@ export default [
   ], contentText: (parameters) => {
     return [`Set the item at index`, {type: "variable", variable: parameters.index}, `in the array`, { type: "variable", variable: parameters.array }, `to`, { type: "variable", variable: parameters.data }];
   }},
+  { name: "Get folder contents", value: "getfoldercontents", description: "Get the contents of a folder. Returns an array of paths.", parameters: [
+    { name: "Folder", value: "folder", description: "The folder to get the contents of", type: "string", defaultValue: "C:/myFolder" },
+    { name: "Output", value: "output", description: "The variable to set to the contents", type: "string", defaultValue: "myFolderContents" }
+  ], contentText: (parameters) => {
+    return [`Get the contents of the folder`, { type: "variable", variable: parameters.folder }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
 ];

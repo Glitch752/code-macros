@@ -2,7 +2,7 @@ use serde::{ Deserialize, Serialize };
 
 use std::collections::HashMap;
 
-use tauri::{api::notification::Notification, regex::internal::Exec};
+use tauri::{api::notification::Notification};
 
 static MAX_LOOP_ITERATIONS: u64 = 100000;
 
@@ -141,6 +141,9 @@ pub enum Execution {
     },
     SetArrayIndex {
         data: SetArrayIndexData
+    },
+    GetFolderContents {
+        data: GetFolderContentsData
     },
 }
 
@@ -295,6 +298,11 @@ pub struct SetArrayIndexData {
     pub data: String
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GetFolderContentsData {
+    pub path: String,
+    pub output: String
+}
 
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -725,6 +733,19 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 new_list_content[data.index as usize] = new_value.unwrap_or(&Variable::new(VariableValue::Number(0.0))).value.clone();
 
                 set_variable(variables, data.array.to_string().clone(), VariableValue::Array(new_list_content));
+            }
+            Execution::GetFolderContents { data } => {
+                let mut list_content: Vec<VariableValue> = Vec::new();
+
+                for entry in fs::read_dir(&data.path).unwrap() {
+                    let entry = entry.unwrap();
+                    let path = entry.path();
+                    let file_path = path.to_str().unwrap().to_string();
+
+                    list_content.push(VariableValue::String(file_path));
+                }
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::Array(list_content));
             }
         }
     }
