@@ -42,7 +42,8 @@ jobs:
             libayatana-appindicator3-dev \
             libudev-dev \
             librsvg2-dev \
-            lld
+            lld \
+            libinput-dev
       - run: yarn install
       - run: yarn build
       - run: yarn tauri build
