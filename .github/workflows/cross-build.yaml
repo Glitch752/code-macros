@@ -82,7 +82,7 @@ jobs:
           name: binaries
           path: ${{ GITHUB.WORKSPACE }}/binaries
       - name: Compress releases
-        run: zip -r /home/runner/work/code-macros/binaries.zip $GITHUB_WORKSPACE/binaries
+        run: zip -r /home/runner/work/code-macros/binaries.zip $GITHUB_WORKSPACE/binaries/*
       - name: Delete old release
         uses: Archaholic/action-delete-release@v1
         env:
@@ -103,4 +103,4 @@ jobs:
           # files: |
             # /home/runner/work/code-macros/binaries.zip
             # ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/codemacros*
-          files: ${{ GITHUB.WORKSPACE }}/binaries
+          files: ${{ GITHUB.WORKSPACE }}/binaries/*
