@@ -11,14 +11,15 @@ on:
 
 jobs:
   build:
-    name: 'Build Release and publish'
-    # strategy:
-      # fail-fast: false
-      # matrix:
-        # platform: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ubuntu-22.04
+    name: 'Build Release and upload'
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ ubuntu-latest, windows-latest]
+    # runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.platform }}
     env:
-      build_dir: /home/runner/work/code-macros/code-macros/builds
+      CARGO_TARGET_DIR: /home/runner/work/code-macros/code-macros/builds
     steps:
       - uses: actions/checkout@v2
       - name: setup node
@@ -42,7 +43,6 @@ jobs:
             libayatana-appindicator3-dev \
             libudev-dev \
             librsvg2-dev \
-            lld \
             libinput-dev
       - run: yarn install
       - run: yarn build
