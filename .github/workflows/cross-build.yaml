@@ -79,7 +79,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: binaries
-          path: ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/*/*
+          path: ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/*
       - name: Compress releases
         run: zip -r /home/runner/work/code-macros/binaries.zip $GITHUB_WORKSPACE/src-tauri/target/release/bundle/*/codemacros*
       - name: Delete old release
