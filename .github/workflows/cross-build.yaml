@@ -38,7 +38,7 @@ jobs:
       - run: yarn install
       - run: yarn build
       - run: yarn tauri build
-      - uses: actions/upload-artifactmaster
+      - uses: actions/upload-artifact@master
         with:
           name: binaries
           path: ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/*/*
@@ -76,10 +76,6 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - name: setup node
-        uses: actions/setup-node@v3.5.1
-        with:
-          node-version: 17
       - uses: actions/download-artifact@master
         with:
           name: binaries
