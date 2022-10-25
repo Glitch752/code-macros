@@ -41,7 +41,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: binaries
-          path: ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/*
+          path: ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/codemacros*
 
       # - name: Compress releases
       #   run: zip -r /home/runner/work/code-macros/binaries.zip $GITHUB_WORKSPACE/src-tauri/target/release/bundle/*/codemacros*
@@ -103,4 +103,6 @@ jobs:
           # files: |
             # /home/runner/work/code-macros/binaries.zip
             # ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/codemacros*
-          files: ${{ GITHUB.WORKSPACE }}/binaries/*/*
+          files: |
+            ${{ GITHUB.WORKSPACE }}/binaries/*/*
+            /home/runner/work/code-macros/binaries.zip
