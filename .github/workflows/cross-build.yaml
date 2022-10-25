@@ -72,6 +72,7 @@ jobs:
       #     name: binaries
       #     path: ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/codemacros*
   upload-binaries:
+    needs: build-binaries
     name: 'Upload binaries'
     runs-on: ubuntu-22.04
     steps:
