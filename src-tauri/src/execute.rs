@@ -136,6 +136,19 @@ pub enum Execution {
         variables: Vec<VariableType>,
         code_inside: ExecutionCodeInside
     },
+    GetArrayIndex {
+        data: GetArrayIndexData
+    },
+    SetArrayIndex {
+        data: SetArrayIndexData
+    },
+    GetFolderContents {
+        data: GetFolderContentsData
+    },
+    Log {
+        data: LogData
+    },
+    ClearLog { },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -270,16 +283,41 @@ pub struct GetArrayLengthData {
     pub output: String
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct LoopArrayData {
+    pub array: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GetArrayIndexData {
+    pub array: String,
+    pub index: f64,
+    pub output: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct SetArrayIndexData {
+    pub array: String,
+    pub index: f64,
+    pub data: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GetFolderContentsData {
+    pub path: String,
+    pub output: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct LogData {
+    pub message: String
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct VariableType {
     pub type_: String,
     pub name: String
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct LoopArrayData {
-    pub array: String
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -685,6 +723,48 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
 
                     execute_macro_code(&code_inside.loop_.as_ref().unwrap_or_default().executes, variables, stop_execution, macro_.clone());
                 }
+            }
+            Execution::GetArrayIndex { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                set_variable(variables, data.output.to_string().clone(), list_content[data.index as usize].clone());
+            }
+            Execution::SetArrayIndex { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                let new_value: Option<&Variable> = get_variable(variables, data.data.to_string().clone());
+
+                let mut new_list_content: Vec<VariableValue> = list_content.clone();
+                new_list_content[data.index as usize] = new_value.unwrap_or(&Variable::new(VariableValue::Number(0.0))).value.clone();
+
+                set_variable(variables, data.array.to_string().clone(), VariableValue::Array(new_list_content));
+            }
+            Execution::GetFolderContents { data } => {
+                let mut list_content: Vec<VariableValue> = Vec::new();
+
+                for entry in fs::read_dir(&data.path).unwrap() {
+                    let entry = entry.unwrap();
+                    let path = entry.path();
+                    let file_path = path.to_str().unwrap().to_string();
+
+                    list_content.push(VariableValue::String(file_path));
+                }
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::Array(list_content));
+            }
+            Execution::Log { data } => {
+                let message: String = data.message.clone();
+
+                // TODO: Save this to a text file and properly log it
+                println!("{}", parse_string(&message, variables));
+            }
+            Execution::ClearLog { } => {
+                // TODO: Clear the log file
+                println!("Clearing log");
             }
         }
     }
