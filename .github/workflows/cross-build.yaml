@@ -31,8 +31,11 @@ jobs:
         with:
           toolchain: stable
       # https://tauri.app/v1/guides/getting-started/prerequisites/
-      - run: sudo apt-get update
-      - name: Install dependencies
+      - name: Update repositories (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: sudo apt-get update
+      - name: Install dependencies (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get install libwebkit2gtk-4.0-dev \
             build-essential \
