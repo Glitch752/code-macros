@@ -199,4 +199,36 @@ export default [
   ], contentText: (parameters) => {
     return `Repeat from ${parameters["start"]} to ${parameters["end"]} by increments of ${parameters["step"]}`;
   }},
+  { name: "Get item from array", value: "getarrayindex", description: "Get the item at a certain index from the array. Arrays are 0-indexed.", parameters: [
+    { name: "Array", value: "array", description: "The array to get an item from", type: "string", defaultValue: "myArray" },
+    { name: "Index", value: "index", description: "The index of the item to get", type: "expression", defaultValue: {
+      expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
+    } },
+    { name: "Output", value: "output", description: "The variable to set to the item", type: "string", defaultValue: "myArrayItem" }
+  ], contentText: (parameters) => {
+    return [`Get the item at index`, {type: "variable", variable: parameters.index}, `from the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
+  { name: "Set item in array", value: "setarrayindex", description: "Set the item at a certain index in the array. Arrays are 0-indexed.", parameters: [
+    { name: "Array", value: "array", description: "The array to set an item in", type: "string", defaultValue: "myArray" },
+    { name: "Index", value: "index", description: "The index of the item to set", type: "expression", defaultValue: {
+      expression: { type: "arithmetic", left: { type: "number", value: 0 }, kind: "addition", right: { type: "number", value: 0 }, },
+    } },
+    { name: "Item", value: "data", description: "The item to set, which comes from a variable.", type: "variable", defaultValue: 0 }
+  ], contentText: (parameters) => {
+    return [`Set the item at index`, {type: "variable", variable: parameters.index}, `in the array`, { type: "variable", variable: parameters.array }, `to`, { type: "variable", variable: parameters.data }];
+  }},
+  { name: "Get folder contents", value: "getfoldercontents", description: "Get the contents of a folder. Returns an array of paths.", parameters: [
+    { name: "Folder", value: "folder", description: "The folder to get the contents of", type: "string", defaultValue: "C:/myFolder" },
+    { name: "Output", value: "output", description: "The variable to set to the contents", type: "string", defaultValue: "myFolderContents" }
+  ], contentText: (parameters) => {
+    return [`Get the contents of the folder`, { type: "variable", variable: parameters.folder }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
+  { name: "Log", value: "log", description: "Add a message to the log.", parameters: [
+    { name: "Message", value: "message", description: "The message to log", type: "string", defaultValue: "Hello world!" },
+  ], contentText: (parameters) => {
+    return [`Log the message`, { type: "variable", variable: parameters.message }];
+  }},
+  { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: (parameters) => {
+    return ``;
+  }},
 ];

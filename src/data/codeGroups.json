@@ -3,7 +3,7 @@
         "if", "function", "fromtoloop", "whileloop", "wait", "stop", "looparray"
     ]},
     {"name": "Variables", "value": "veriables", "description": "Operations that modify variables.", "code": [
-        "setvariable", "getdatatype", "createarray", "addtoarray", "removefromarray"
+        "setvariable", "getdatatype", "createarray", "addtoarray", "removefromarray", "getarraylength", "getarrayindex", "setarrayindex"
     ]},
     {"name": "Mouse cursor", "value": "mouse", "description": "Operations that change something on the user's computer", "code": [
         "movemouserelative", "movemouseabsolute"
@@ -15,6 +15,9 @@
         "typestring", "presskey", "releasekey", "pressmouse", "releasemouse"
     ]},
     {"name": "Filesystem", "value": "filesystem", "description": "Operations that can modify, add, or remove files and directories", "code": [
-        "readfile", "writefile", "deletefile", "createfolder", "deletefolder"
+        "readfile", "writefile", "deletefile", "createfolder", "deletefolder", "getfoldercontents"
+    ]},
+    {"name": "Logging", "value": "logging", "description": "Operations that can modify, add, or remove files and directories", "code": [
+        "log", "clearlog"
     ]}
 ]
