@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: 'Build Release and upload'
+    name: 'Build binaries'
     strategy:
       fail-fast: false
       matrix:
@@ -71,8 +71,8 @@ jobs:
       #   with:
       #     name: binaries
       #     path: ${{ GITHUB.WORKSPACE }}/src-tauri/target/release/bundle/*/codemacros*
-  publish:
-    name: 'Publish Release'
+  build:
+    name: 'Upload binaries and release'
     needs: build
     runs-on: ubuntu-latest
     - uses: actions/checkout@v2
