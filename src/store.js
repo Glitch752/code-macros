@@ -28,7 +28,7 @@ export async function set(key, value) {
 }
 
 const createDataFolder = async () => {
-    await createDir("codeMacros", {
+    await createDir("CodeMacros", {
         dir: BaseDirectory.Config,
         recursive: true,
     })
@@ -38,7 +38,7 @@ const setFileData = async (data) => {
     return writeFile(
         {
             contents: JSON.stringify(data),
-            path: `codeMacros/config.json`,
+            path: `CodeMacros/config.json`,
         },
         {
             dir: BaseDirectory.Config,
@@ -47,7 +47,7 @@ const setFileData = async (data) => {
 };
 
 const readDataFile = () => {
-    return readTextFile("codeMacros/config.json", {
+    return readTextFile("CodeMacros/config.json", {
         dir: BaseDirectory.Config,
     })
 }

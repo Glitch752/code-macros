@@ -1,7 +1,6 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]
 
-use tauri::{ CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent };
-use tauri::Manager;
+use tauri::{ CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent, AppHandle, Manager };
 
 use std::thread;
 
@@ -9,6 +8,7 @@ use std::sync::{ Mutex };
 use once_cell::sync::Lazy;
 
 static MACROS: Lazy<Mutex<Macros>> = Lazy::new(|| Mutex::new(Macros::new()));
+static APPHANDLE: Lazy<Mutex<Option<AppHandle>>> = Lazy::new(|| Mutex::new(None));
 
 mod initiators;
 mod execute;
@@ -27,6 +27,14 @@ fn set_macros(macros: Macros) {
     *MACROS.lock().unwrap() = macros;
 }
 
+fn get_app_handle() -> Option<AppHandle> {
+    APPHANDLE.lock().unwrap().clone()
+}
+
+fn set_app_handle(app_handle: AppHandle) {
+    *APPHANDLE.lock().unwrap() = Some(app_handle);
+}
+
 fn main() {
     thread::spawn(move || {
         listen_initiator_keypress();
@@ -41,6 +49,11 @@ fn main() {
                 window.show().unwrap();
             })
         )
+        .setup(|app| {
+            set_app_handle(app.handle());
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![update_macros])
         .system_tray(
             SystemTray::new().with_menu(

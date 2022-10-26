@@ -1,8 +1,8 @@
 use serde::{ Deserialize, Serialize };
 
-use std::collections::HashMap;
+use std::{collections::HashMap, path::Path};
 
-use tauri::{api::notification::Notification};
+use tauri::{api::notification::Notification, PathResolver};
 
 static MAX_LOOP_ITERATIONS: u64 = 100000;
 
@@ -11,6 +11,10 @@ use std::thread;
 use super::Macro;
 
 use super::initiators::Initiator;
+
+use super::get_app_handle;
+
+use tauri::AppHandle;
 
 use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
@@ -759,12 +763,14 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             Execution::Log { data } => {
                 let message: String = data.message.clone();
 
-                // TODO: Save this to a text file and properly log it
-                println!("{}", parse_string(&message, variables));
+                let current_log_content: String = get_log_content().unwrap();
+
+                let new_log_content: String = format!("{}\n{}", current_log_content, message);
+
+                write_to_log(new_log_content);
             }
             Execution::ClearLog { } => {
-                // TODO: Clear the log file
-                println!("Clearing log");
+                write_to_log("".to_string());
             }
         }
     }
@@ -989,4 +995,63 @@ fn set_variable(variables: &mut Variables, variable: String, value: VariableValu
 
 fn get_variable(variables: &mut Variables, variable: String) -> Option<&Variable> {
     return variables.get(&variable);
+}
+
+fn get_log_path() -> Option<String> {
+    // TODO: Do this in a better way
+    let app_handle: Option<AppHandle> = get_app_handle();
+
+    match app_handle {
+        Some(app_handle) => {
+            let path_resolver: PathResolver = app_handle.path_resolver();
+            let log_path: String = path_resolver.log_dir().unwrap().to_str().unwrap().to_string();
+
+            let path: &Path = Path::new(&log_path);
+            let parent: &Path = path.parent().unwrap().parent().unwrap();
+
+            // TODO: Add multiple logs
+            let mut folder = parent.to_path_buf();
+            folder.push("CodeMacros");
+            folder.push("Logs");
+            folder.push("log.txt");
+
+            // println!("{}", folder.to_str().unwrap());
+            let folder_path: String = folder.to_str().unwrap().to_string();
+
+            return Some(folder_path);
+        }
+        None => {
+            println!("Waiting to get app handle for macro to execute...");
+            return None;
+        }
+    }
+}
+
+fn get_log_content() -> Option<String> {
+    let log_path: Option<String> = get_log_path();
+
+    match log_path {
+        Some(log_path) => {
+            let content: String = fs::read_to_string(log_path).unwrap_or(String::from(""));
+            return Some(content);
+        }
+        None => {
+            return None;
+        }
+    }
+}
+
+fn write_to_log(content: String) {
+    let log_path: Option<String> = get_log_path();
+
+    match log_path {
+        Some(log_path) => {
+            // Make sure the log_path folder exists
+            fs::create_dir_all(Path::new(&log_path).parent().unwrap()).unwrap();
+            fs::write(log_path, content).unwrap();
+        }
+        None => {
+            // Do nothing
+        }
+    }
 }
