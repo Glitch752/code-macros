@@ -107,6 +107,7 @@ pub struct MacroMacro {
 
 #[tauri::command]
 fn update_macros(macros: Macros) {
+    println!("Updating macros");
     set_macros(macros);
     listen_initiator_cron();
 }

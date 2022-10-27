@@ -19,6 +19,10 @@
   function openSettings() {
     router.push("/settings");
   }
+
+  function openLog() {
+    router.push("/log");
+  }
   
   const color = ref(getComputedStyle(document.body).getPropertyValue("--primary-text").replace("#", "").trim());
 
@@ -35,6 +39,9 @@
     </div>
     <div class="titlebar-button" @click="openSettings">
       <img :src="`https://api.iconify.design/mdi:cog.svg?color=%23${color}`" alt="settings" />
+    </div>
+    <div class="titlebar-button" @click="openLog">
+      <img :src="`https://api.iconify.design/mdi:list-box-outline.svg?color=%23${color}`" alt="log" />
     </div>
     <div class="titlebar-button" @click="appWindow.minimize()">
       <img

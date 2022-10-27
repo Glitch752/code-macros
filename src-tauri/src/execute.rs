@@ -765,7 +765,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
 
                 let current_log_content: String = get_log_content().unwrap();
 
-                let new_log_content: String = format!("{}\n{}", current_log_content, message);
+                let new_log_content: String = format!("{}{}\n", current_log_content, message);
 
                 write_to_log(new_log_content);
             }

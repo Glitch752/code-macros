@@ -37,20 +37,20 @@ pub fn listen_initiator_keypress() {
         for key in keys_pressed.keys() {
             keys_pressed_js.push(js_key(*key));
         }
-
+        
         println!("{:?}", keys_pressed_js);
 
-        'macros: for macro_ in get_macros() {
+        for macro_ in get_macros() {
             // Check if macro_.macro_.initiators is Some
             if macro_.macro_.initiators.is_some() {
                 let initiators = macro_.macro_.initiators.as_ref().unwrap();
                 // Check if the initiators are pressed
-                for initiator in initiators {
+                'initiators: for initiator in initiators {
                     if initiator.type_ == "keypress" {
                         let keys = initiator.data.keys.as_ref().unwrap();
                         for key in keys {
                             if !keys_pressed_js.contains(key) {
-                                continue 'macros;
+                                continue 'initiators;
                             }
                         }
                         run_macro_initiator(initiator.clone(), macro_.clone());

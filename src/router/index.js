@@ -4,6 +4,7 @@ import MacroEditor from "@/views/MacroEditor.vue";
 import MacrosList from "@/views/MacrosList.vue";
 import WelcomePage from "@/views/WelcomePage.vue";
 import SettingsPage from "@/views/SettingsPage.vue";
+import LogPage from "@/views/LogPage.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/settings",
     name: "Settings",
     component: SettingsPage,
+  },
+  {
+    path: "/log",
+    name: "Log",
+    component: LogPage,
   }
 ];
 
