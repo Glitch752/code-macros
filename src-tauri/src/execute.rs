@@ -2,7 +2,7 @@ use serde::{ Deserialize, Serialize };
 
 use std::{collections::HashMap, path::Path};
 
-use tauri::{api::notification::Notification, PathResolver};
+use tauri::{api::notification::Notification, PathResolver, Manager, Window};
 
 static MAX_LOOP_ITERATIONS: u64 = 100000;
 
@@ -768,9 +768,13 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let new_log_content: String = format!("{}{}\n", current_log_content, message);
 
                 write_to_log(new_log_content);
+                
+                update_log_page();
             }
             Execution::ClearLog { } => {
                 write_to_log("".to_string());
+
+                update_log_page();
             }
         }
     }
@@ -1049,6 +1053,21 @@ fn write_to_log(content: String) {
             // Make sure the log_path folder exists
             fs::create_dir_all(Path::new(&log_path).parent().unwrap()).unwrap();
             fs::write(log_path, content).unwrap();
+        }
+        None => {
+            // Do nothing
+        }
+    }
+}
+
+fn update_log_page() {
+    let app_handle: Option<AppHandle> = get_app_handle();
+
+    match app_handle {
+        Some(app_handle) => {
+            // Update the log if the user is currently on the log page
+            let window: Window = app_handle.get_window("main").unwrap();
+            window.eval("document.updateLog()").unwrap();
         }
         None => {
             // Do nothing

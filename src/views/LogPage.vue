@@ -1,6 +1,9 @@
 <script setup>
     import { BaseDirectory, createDir, writeFile, readTextFile } from "@tauri-apps/api/fs";
     import { ref } from "vue";
+    import { useRouter } from "vue-router";
+
+    let router = useRouter();
 
     async function getLog() {
         return new Promise(async (resolve, reject) => {
@@ -60,9 +63,21 @@
 
     let logText = ref(null);
 
-    getLog().then((data) => {
-        logText.value.innerHTML = data.replace(/\n/g, "<br>");
-    });
+    setlog();
+
+    document.updateLog = () => {
+        setlog();
+    }
+
+    function setlog() {
+        getLog().then((data) => {
+            logText.value.innerHTML = data.replace(/\n/g, "<br>");
+        });
+    }
+
+    function goBack() {
+        router.push("/macros");
+    }
 </script>
 
 <template>
