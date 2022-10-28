@@ -64,26 +64,6 @@
             }"/>
           </div>
         </template>
-        <!-- <template v-else-if="initiator.type === 'appLaunched'">
-            <span class="initiatorType">
-                <span>{{ initiator.data.appPath }}</span>
-                <div class="initiatorSelect narrow">
-                    --><!-- TODO: make this a list of applications instead of a file selected -->
-                    <!-- This would require looking through a ton of different directories depending on the OS, though, as far as I can tell
-                    <FileSelector :filterName="'executable'" :filterExtensions="['exe', 'app', 'AppImage', 'desktop', '']" @selected="(file) => {
-                      if(file.path.endsWith('.desktop')) {
-                        readTextFile(file.path).then(content => {
-                          let lines = content.split('\n');
-                          let appPath = lines.find(line => line.startsWith('Exec='))?.split('=')[1];
-                          initiator.data.appPath = appPath;
-                        });
-                      } else {
-                        initiator.data.appPath = file.path;
-                      }
-                    }" />
-                </div>
-            </span>
-        </template> -->
         <template v-else-if="initiator.type === 'time'">
           <span class="initiatorType noArrow">
             <input type="text" v-model="initiator.data.cron" placeholder="CRON syntax" class="initiatorTypeInput" />

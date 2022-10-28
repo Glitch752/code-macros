@@ -90,8 +90,6 @@ use serde::{ Deserialize, Serialize };
 
 type Macros = Vec<Macro>;
 
-// TODO: Refactor types to use #[serde(tag = "type")]
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Macro {
     pub name: String,

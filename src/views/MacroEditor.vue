@@ -110,7 +110,7 @@
           // Loop over the elements and find the gap between elements we are closest to
           let position = JSON.parse(codeArea.dataset.position);
 
-          // FIXME: Is there a more VueJS-based solution to this?
+          // MAYBE: there is a more VueJS-based solution to this?
           if(codeArea.dataset.noCode === "true") {
               let newPosition = {...position, treePosition: position.treePosition.concat(0)};
               
@@ -235,7 +235,7 @@
       string: 'String',
       number: 0, 
       condition: { type: 'boolean', value: true }, 
-      function: 'Function'
+      function: ''
     }
 
     for(let i = 0; i < codeType.parameters.length; i++) {
@@ -257,7 +257,6 @@
 
 <template>
   <div class="leftPane">
-    <!-- TODO: Make this a list of code -->
     <h1>Code</h1>
     <CodeList :dragCode="dragCode" />
   </div>
@@ -265,7 +264,7 @@
     <MacroCreator :openArgumentsPopup="openArgumentsPopup" v-if="macrosLoaded" :selectedMacro="selectedMacro" :setMacro="setMacro" :deleteMacro="() => deleteMacro(selectedMacroIndex)" :key="selectedMacroIndex"/>
   </div>
   <span class="backButton" @click="goBack">&lt;</span>
-  <CodeArgumentsPopup v-if="showPopup !== false" :execute="showPopup" :close="closePopup"/>
+  <CodeArgumentsPopup v-if="showPopup !== false" :execute="showPopup" :close="closePopup" :functions="selectedMacro?.macro?.functions?.map(_function => _function.name)" />
   <div ref="draggingCodeContainer" class="draggingCodeContainer">
     <DraggingCode v-if="draggingCode" :code="draggingCode" />
   </div>

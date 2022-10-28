@@ -26,7 +26,7 @@
   
   const color = ref(getComputedStyle(document.body).getPropertyValue("--primary-text").replace("#", "").trim());
 
-  // TODO: Find a more Vue-like way of doing this
+  // MAYBE: Find a more Vue-like way of doing this
   document.themeChangedCallback = () => {
     color.value = getComputedStyle(document.body).getPropertyValue("--primary-text").replace("#", "").trim();
   }

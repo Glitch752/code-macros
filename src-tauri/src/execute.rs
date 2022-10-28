@@ -20,6 +20,8 @@ use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
 use std::fs;
 
+// TODO: REACTOR: Split this into multiple files for parsing conditions, executions, etc.
+
 // #[derive(Serialize, Deserialize, Clone, Debug)]
 // pub struct Execution {
 //     pub type_: String,
@@ -49,7 +51,7 @@ use std::fs;
 //     pub y: Option<f64>
 // }
 
-// TODO: This may be better as an Adjacently tagged enum so we don't need another struct for every data type
+// MAYBE: this is probably be better as an Adjacently tagged enum so we don't need another struct for every data type
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "type_")]

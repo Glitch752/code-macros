@@ -17,7 +17,7 @@ export default [
   },
   {
     name: "Function call", value: "function", description: "Executes the code inside the function it calls.", parameters: [
-      { name: "Function", value: "function", type: "function", description: "The function to call.", },
+      { name: "Function", value: "function", type: "function", description: "The function to call." },
     ], contentText: (parameters, parsers) => {
       return [`Call the function`, {type: "string", string: parameters["function"]}];
     },
@@ -226,7 +226,7 @@ export default [
   { name: "Log", value: "log", description: "Add a message to the log.", parameters: [
     { name: "Message", value: "message", description: "The message to log", type: "string", defaultValue: "Hello world!" },
   ], contentText: (parameters) => {
-    return [`Log the message`, { type: "variable", variable: parameters.message }];
+    return [`Log the message`, { type: "string", string: parameters.message }];
   }},
   { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: (parameters) => {
     return ``;

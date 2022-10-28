@@ -6,7 +6,7 @@
     import ConditionCreator from '@/components/ConditionCreator.vue';
     import ExpressionCreator from '@/components/ExpressionCreator.vue'
   
-    const props = defineProps(["execute", "close"]);
+    const props = defineProps(["execute", "close", "functions"]);
   
     const execute = reactive(props.execute);
     
@@ -34,6 +34,7 @@
                     v-for="(argumentValue, argumentType, index) in toRefs(execute.data)" :key="index" 
                     :class="{codeArgument: ['condition', 'expression'].indexOf(getParameter(execute, argumentType)?.type) === -1}"
                 >
+                    <!-- TODO: Do the same thing for variables as we do for functions with a dropdown -->
                     <input 
                         v-if="getParameter(execute, argumentType)?.type === 'string'" 
                         v-model="argumentValue.value" 
@@ -46,13 +47,15 @@
                         type="number"
                         class="codeArgumentInput"
                         :placeholder="getParameter(execute, argumentType)?.name" />
-                    <!-- TODO: make this a dropdown of all possible functions -->
-                    <input 
+                    <!-- TODO: Make the value of this update when changing the name of a function -->
+                    <select
                         v-if="getParameter(execute, argumentType)?.type === 'function'" 
                         v-model="argumentValue.value" 
-                        type="text" 
                         class="codeArgumentInput"
-                        :placeholder="getParameter(execute, argumentType)?.name" />
+                        :placeholder="getParameter(execute, argumentType)?.name">
+                        <option value="" disabled :selected="argumentValue.value === ''">Select a function</option>
+                        <option v-for="functionName in props.functions" :value="functionName" :key="functionName">{{ functionName }}</option>
+                    </select>
                     <span
                         v-if="getParameter(execute, argumentType)?.type === 'condition'">
                         <ConditionCreator :condition="argumentValue" />  
