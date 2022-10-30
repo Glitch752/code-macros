@@ -20,6 +20,8 @@ use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
 use std::fs;
 
+use std::cmp::Ordering;
+
 // TODO: REACTOR: Split this into multiple files for parsing conditions, executions, etc.
 
 // #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -160,6 +162,12 @@ pub enum Execution {
     },
     JoinStrings {
         data: JoinStringsData
+    },
+    ReverseArray {
+        data: ReverseArrayData
+    },
+    SortArray {
+        data: SortArrayData
     },
 }
 
@@ -339,6 +347,18 @@ pub struct JoinStringsData {
     pub output: String
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ReverseArrayData {
+    pub array: String,
+    pub output: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct SortArrayData {
+    pub array: String,
+    pub output: String
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct VariableType {
@@ -452,6 +472,36 @@ pub enum VariableValue {
     String(String),
     Number(f64),
     Array(Vec<VariableValue>)
+}
+
+impl Ord for VariableValue {
+    fn cmp(&self, other: &VariableValue) -> Ordering {
+        match (self, other) {
+            (VariableValue::String(a), VariableValue::String(b)) => a.cmp(b),
+            (VariableValue::Number(a), VariableValue::Number(b)) => a.partial_cmp(b).unwrap(),
+            (VariableValue::Array(a), VariableValue::Array(b)) => a.cmp(b),
+            _ => panic!("Cannot compare different types")
+        }
+    }
+}
+
+impl PartialOrd for VariableValue {
+    fn partial_cmp(&self, other: &VariableValue) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl std::cmp::Eq for VariableValue {}
+
+impl PartialEq for VariableValue {
+    fn eq(&self, other: &VariableValue) -> bool {
+        match (self, other) {
+            (VariableValue::String(a), VariableValue::String(b)) => a == b,
+            (VariableValue::Number(a), VariableValue::Number(b)) => a == b,
+            (VariableValue::Array(a), VariableValue::Array(b)) => a == b,
+            _ => false
+        }
+    }
 }
 
 fn get_variable_string(variable_value: VariableValue) -> String {
@@ -820,6 +870,26 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let result: String = list_content_strings.join(&data.joiner);
 
                 set_variable(variables, data.output.to_string().clone(), VariableValue::String(result));
+            }
+            Execution::ReverseArray { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                let mut new_list_content: Vec<VariableValue> = list_content.clone();
+                new_list_content.reverse();
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::Array(new_list_content));
+            }
+            Execution::SortArray { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                let mut new_list_content: Vec<VariableValue> = list_content.clone();
+                new_list_content.sort();
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::Array(new_list_content));
             }
         }
     }
