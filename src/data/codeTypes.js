@@ -231,4 +231,19 @@ export default [
   { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: (parameters) => {
     return ``;
   }},
+  // TODO: Make it so code groups can be layered in each other so string manipulation can be a part of variables
+  { name: "Split string", value: "splitstring", description: "Split a string into an array of strings.", parameters: [
+    { name: "String", value: "string", description: "The string to split", type: "string", defaultValue: "Hello world!" },
+    { name: "Splitter", value: "splitter", description: "The string to split the string by", type: "string", defaultValue: " " },
+    { name: "Output", value: "output", description: "The variable to set to the array of strings", type: "string", defaultValue: "myStringArray" }
+  ], contentText: (parameters) => {
+    return [`Split the string`, { type: "string", string: parameters.string }, `by the string`, { type: "string", string: parameters.splitter }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
+  { name: "Join strings", value: "joinstrings", description: "Join an array of strings into a single string.", parameters: [
+    { name: "Array", value: "array", description: "The array of strings to join", type: "string", defaultValue: "myStringArray" },
+    { name: "Joiner", value: "joiner", description: "The string to join the strings by", type: "string", defaultValue: ", " },
+    { name: "Output", value: "output", description: "The variable to set to the joined string", type: "string", defaultValue: "myJoinedString" }
+  ], contentText: (parameters) => {
+    return [`Join the strings in the array`, { type: "variable", variable: parameters.array }, `by the string`, { type: "string", string: parameters.joiner }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }}  
 ];

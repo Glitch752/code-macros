@@ -155,6 +155,12 @@ pub enum Execution {
         data: LogData
     },
     ClearLog { },
+    SplitString {
+        data: SplitStringData
+    },
+    JoinStrings {
+        data: JoinStringsData
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -317,6 +323,20 @@ pub struct GetFolderContentsData {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct LogData {
     pub message: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct SplitStringData {
+    pub string: String,
+    pub splitter: String,
+    pub output: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct JoinStringsData {
+    pub array: String,
+    pub joiner: String,
+    pub output: String
 }
 
 
@@ -777,6 +797,29 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 write_to_log("".to_string());
 
                 update_log_page();
+            }
+            Execution::SplitString { data } => {
+                let string_content: String = parse_string(&data.string, variables);
+
+                let mut list_content: Vec<VariableValue> = Vec::new();
+
+                // Split the string by data.splitter
+                for split in string_content.split(&data.splitter) {
+                    list_content.push(VariableValue::String(split.to_string()));
+                }
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::Array(list_content));
+            }
+            Execution::JoinStrings { data } => {
+                let variable_value: Option<&Variable> = get_variable(variables, data.array.to_string().clone());
+
+                let list_content: Vec<VariableValue> = get_variable_vector(variable_value.unwrap_or(&Variable::new(VariableValue::Array(vec![]))).value.clone());
+
+                let list_content_strings: Vec<String> = list_content.iter().map(|x| parse_string(&get_variable_string(x.clone()), variables)).collect();
+
+                let result: String = list_content_strings.join(&data.joiner);
+
+                set_variable(variables, data.output.to_string().clone(), VariableValue::String(result));
             }
         }
     }

@@ -19,5 +19,8 @@
     ]},
     {"name": "Logging", "value": "logging", "description": "Operations that can modify, add, or remove files and directories", "code": [
         "log", "clearlog"
+    ]},
+    {"name": "String manipulation", "value": "stringmanipulation", "description": "Operations that change strings", "code": [
+        "splitstring", "joinstrings"
     ]}
 ]
