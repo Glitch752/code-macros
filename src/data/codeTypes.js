@@ -245,5 +245,17 @@ export default [
     { name: "Output", value: "output", description: "The variable to set to the joined string", type: "string", defaultValue: "myJoinedString" }
   ], contentText: (parameters) => {
     return [`Join the strings in the array`, { type: "variable", variable: parameters.array }, `by the string`, { type: "string", string: parameters.joiner }, `and set the variable`, { type: "variable", variable: parameters.output }];
-  }}  
+  }},
+  { name: "Reverse array", value: "reversearray", description: "Reverse an array.", parameters: [
+    { name: "Array", value: "array", description: "The array to reverse", type: "string", defaultValue: "myArray" },
+    { name: "Output", value: "output", description: "The variable to set to the reversed array", type: "string", defaultValue: "myReversedArray" }
+  ], contentText: (parameters) => {
+    return [`Reverse the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
+  { name: "Sort array", value: "sortarray", description: "Sort an array.", parameters: [
+    { name: "Array", value: "array", description: "The array to sort", type: "string", defaultValue: "myArray" },
+    { name: "Output", value: "output", description: "The variable to set to the sorted array", type: "string", defaultValue: "mySortedArray" }
+  ], contentText: (parameters) => {
+    return [`Sort the array`, { type: "variable", variable: parameters.array }, `and set the variable`, { type: "variable", variable: parameters.output }];
+  }},
 ];
