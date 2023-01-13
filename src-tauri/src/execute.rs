@@ -1,5 +1,6 @@
 pub mod string_parser;
 pub mod expression;
+pub mod condition;
 
 use serde::{ Deserialize, Serialize };
 
@@ -19,42 +20,13 @@ use std::thread;
 use std::cmp::Ordering;
 use std::{collections::HashMap, path::Path};
 
+use self::condition::Condition;
+use self::condition::evaluate_condition;
+use self::condition::get_condition_bool;
 use self::expression::Expression;
+use self::expression::get_expression_number;
 use self::string_parser::parse_string;
 use self::expression::evaluate_expression;
-
-// TODO: REACTOR: Split this into multiple files for parsing conditions, executions, etc.
-
-// #[derive(Serialize, Deserialize, Clone, Debug)]
-// pub struct Execution {
-//     pub type_: String,
-//     pub data: ExecutionData,
-//     pub variables: Vec<VariableType>,
-//     pub code_inside: ExecutionCodeInside
-// }
-
-// pub struct ExecutionData {
-//     pub time: Option<f64>,
-//     pub title: Option<String>,
-//     pub message: Option<String>,
-//     pub start: Option<f64>,
-//     pub end: Option<f64>,
-//     pub step: Option<f64>,
-//     pub condition: Option<Condition>,
-//     pub variable: Option<String>,
-//     pub data: Option<String>,
-//     pub value: Option<f64>,
-//     pub file: Option<String>,
-//     pub content: Option<Expression>,
-//     pub function: Option<String>,
-//     pub string: Option<String>,
-//     pub key: Option<String>,
-//     pub button: Option<String>,
-//     pub x: Option<f64>,
-//     pub y: Option<f64>
-// }
-
-// MAYBE: this is probably be better as an Adjacently tagged enum so we don't need another struct for every data type
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "type_")]
@@ -365,26 +337,6 @@ pub struct SortArrayData {
 pub struct VariableType {
     pub type_: String,
     pub name: String
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-#[serde(tag = "type_")]
-#[serde(rename_all = "lowercase")]
-pub enum Condition {
-    Boolean { value: bool },
-    Comparison {
-        left: Box<Condition>, 
-        comparison: String, 
-        right: Box<Condition> 
-    },
-    Logical {
-        left: Box<Condition>, 
-        kind: String, 
-        right: Box<Condition> 
-    },
-    Number { value: f64 },
-    Variable { variable: String },
-    Expression { expression: Expression }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -873,111 +825,6 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
 
                 set_variable(variables, data.output.to_string().clone(), VariableValue::Array(new_list_content));
             }
-        }
-    }
-}
-
-fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> Condition {
-    match condition {
-        Condition::Boolean { value: _ } => {
-            return condition.clone();
-        },
-        Condition::Number { value: _ } => {
-            return condition.clone();
-        },
-        Condition::Comparison { left, comparison, right } => {
-            let left_result: f64 = get_condition_number(evaluate_condition(left, variables));
-            let right_result: f64 = get_condition_number(evaluate_condition(right, variables));
-            match comparison.as_str() {
-                ">" => {
-                    return Condition::Boolean{ value: left_result > right_result };
-                },
-                "<" => {
-                    return Condition::Boolean{ value: left_result < right_result };
-                },
-                ">=" => {
-                    return Condition::Boolean{ value: left_result >= right_result };
-                },
-                "<=" => {
-                    return Condition::Boolean{ value: left_result <= right_result };
-                },
-                "==" => {
-                    return Condition::Boolean{ value: left_result == right_result };
-                },
-                "!==" => {
-                    return Condition::Boolean{ value: left_result != right_result };
-                },
-                _ => todo!()
-            }
-        },
-        Condition::Logical { left, kind, right } => {
-            let left_result: bool = get_condition_bool(evaluate_condition(left, variables));
-            let right_result: bool = get_condition_bool(evaluate_condition(right, variables));
-            match kind.as_str() {
-                "and" => {
-                    return Condition::Boolean{ value: left_result && right_result };
-                },
-                "or" => {
-                    return Condition::Boolean{ value: left_result || right_result };
-                },
-                "not" => {
-                    return Condition::Boolean{ value: !right_result };
-                },
-                _ => todo!()
-            }
-        },
-        Condition::Variable { variable } => {
-            return Condition::Number{ value: get_variable_number(
-                get_variable(variables, variable.to_string()).unwrap_or( &Variable::new(VariableValue::Number(0.0)) ).value.clone()
-            ) };
-        },
-        Condition::Expression { expression } => {
-            return Condition::Number{ value: get_expression_number(
-                evaluate_expression(expression, variables)
-            ) }
-        }
-    }
-}
-
-fn get_expression_number(value: Expression) -> f64 {
-    match value {
-        Expression::Number { value } => {
-            return value;
-        },
-        _ => {
-            return 0.0;
-        }
-    }
-}
-
-fn get_condition_bool(value: Condition) -> bool {
-    match value {
-        Condition::Boolean { value } => {
-            return value;
-        },
-        Condition::Number { value } => {
-            if value == 0.0 {
-                return false;
-            } else {
-                return true;
-            }
-        },
-        _ => {
-            return false;
-        }
-    }
-}
-
-fn get_condition_number(value: Condition) -> f64 {
-    match value {
-        Condition::Boolean { value } => {
-            return if value {1.0} else {0.0};
-        },
-        Condition::Number { value } => {
-            return value;
-        },
-        _ => {
-            return 0.0;
         }
     }
 }

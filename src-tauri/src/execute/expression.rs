@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use super::{Variables, get_variable_number, get_variable, get_expression_number, Variable, VariableValue};
+use super::{Variables, get_variable_number, get_variable, Variable, VariableValue};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "type_")]
@@ -17,6 +17,17 @@ pub enum Expression {
         left: Box<Expression>, 
         kind: String, 
         right: Box<Expression> 
+    }
+}
+
+pub fn get_expression_number(value: Expression) -> f64 {
+    match value {
+        Expression::Number { value } => {
+            return value;
+        },
+        _ => {
+            return 0.0;
+        }
     }
 }
 
