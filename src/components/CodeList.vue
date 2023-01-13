@@ -6,9 +6,14 @@
 </script>
 
 <template>
-    <CodeGroup v-for="codeGroupData in codeGroups" :dragCode="props.dragCode" :codeGroupData="codeGroupData" :key="codeGroupData.value" />
+    <div class="scroll">
+        <CodeGroup v-for="codeGroupData in codeGroups" :dragCode="props.dragCode" :codeGroupData="codeGroupData" :key="codeGroupData.value" />
+    </div>
 </template>
 
 <style scoped>
-    
+    .scroll {
+        overflow-y: scroll;
+        height: calc(100% - 40px);
+    }
 </style>

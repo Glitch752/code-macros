@@ -3,16 +3,16 @@
         "if", "function", "fromtoloop", "whileloop", "wait", "stop", "looparray"
     ]},
     {"name": "Variables", "value": "veriables", "description": "Operations that modify variables.", "code": [
-        "setvariable", "getdatatype", "createarray", "addtoarray", "removefromarray", "getarraylength", "getarrayindex", "setarrayindex", "reversearray", "sortarray"
-    ]},
-    {"name": "Mouse cursor", "value": "mouse", "description": "Operations that change something on the user's computer", "code": [
-        "movemouserelative", "movemouseabsolute"
+        "setvariable", "getdatatype", 
+        { "name": "Arrays", "value": "arrays", "description": "Operations that modify arrays.", "code": [
+            "createarray", "addtoarray", "removefromarray", "getarraylength", "getarrayindex", "setarrayindex", "reversearray", "sortarray"
+        ]}
     ]},
     {"name": "Miscellaneous", "value": "miscellaneous", "description": "Operations that change something on the user's computer", "code": [
         "notification"
     ]},
     {"name": "Keyboard and mouse", "value": "keyboardmouse", "description": "Operations that interact with the computer how you would with a keyboard or mouse", "code": [
-        "typestring", "presskey", "releasekey", "pressmouse", "releasemouse"
+        "typestring", "presskey", "releasekey", "pressmouse", "releasemouse", "movemouserelative", "movemouseabsolute"
     ]},
     {"name": "Filesystem", "value": "filesystem", "description": "Operations that can modify, add, or remove files and directories", "code": [
         "readfile", "writefile", "deletefile", "createfolder", "deletefolder", "getfoldercontents"
