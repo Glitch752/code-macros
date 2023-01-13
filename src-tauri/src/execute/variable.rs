@@ -9,7 +9,7 @@ pub struct Variable {
 
 impl Variable {
     pub fn new(value: VariableValue) -> Variable<> {
-        Variable { value: value }
+        Variable { value }
     }
 }
 
@@ -67,11 +67,11 @@ pub fn get_variable_string(variable_value: VariableValue) -> String {
             let mut converted_value = "[".to_string();
             for i in 0..value.len() {
                 converted_value.push_str(&(get_variable_string(value[i].clone())));
-                if i != (value.len()-1) {
+                if i != (value.len() - 1) {
                     converted_value.push_str(", ");
                 }
             }
-            converted_value.push_str("]");
+            converted_value.push(']');
             return converted_value;
         }
     }
@@ -80,14 +80,19 @@ pub fn get_variable_string(variable_value: VariableValue) -> String {
 pub fn get_variable_number(variable_value: VariableValue) -> f64 {
     match variable_value {
         VariableValue::String(_value) => {
-            // TODO: Make this return the number in the string if possible.
-            return 0.0;
+            // Get the number in the string. If the string isn't a number, return 0.
+            _value.parse::<f64>().unwrap_or(0.0)
         },
         VariableValue::Number(value) => {
-            return value;
+            value
         },
         VariableValue::Array(_value) => {
-            return 0.0;
+            // If the array is a single number, return that number. Otherwise, return 0.
+            if _value.len() == 1 {
+                return get_variable_number(_value[0].clone());
+            } else {
+                return 0.0;
+            }
         }
     }
 }

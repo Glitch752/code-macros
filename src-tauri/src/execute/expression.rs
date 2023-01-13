@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use super::{Variables};
+use super::Variables;
 use super::variable::{Variable, get_variable, VariableValue, get_variable_number};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
