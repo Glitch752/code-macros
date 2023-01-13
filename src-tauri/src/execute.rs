@@ -1,10 +1,13 @@
 pub mod string_parser;
 pub mod expression;
 pub mod condition;
+pub mod variable;
 
 use serde::{ Deserialize, Serialize };
 
 static MAX_LOOP_ITERATIONS: u64 = 100000;
+
+use crate::execute::variable::Variables;
 
 use super::Macro;
 use super::get_app_handle;
@@ -17,8 +20,7 @@ use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
 use std::fs;
 use std::thread;
-use std::cmp::Ordering;
-use std::{collections::HashMap, path::Path};
+use std::path::Path;
 
 use self::condition::Condition;
 use self::condition::evaluate_condition;
@@ -27,6 +29,12 @@ use self::expression::Expression;
 use self::expression::get_expression_number;
 use self::string_parser::parse_string;
 use self::expression::evaluate_expression;
+use self::variable::Variable;
+use self::variable::VariableValue;
+use self::variable::get_variable;
+use self::variable::get_variable_string;
+use self::variable::get_variable_vector;
+use self::variable::set_variable;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "type_")]
@@ -387,108 +395,6 @@ pub fn run_macro_function(function: Function, macro_: Macro, variables: &mut Var
     execute_macro_code(&function.executes, variables, &mut false, macro_);
 }
 
-
-type Variables = HashMap<String, Variable>;
-
-#[derive(Debug, Clone)]
-pub struct Variable {
-    pub value: VariableValue,
-}
-
-impl Variable {
-    fn new(value: VariableValue) -> Variable<> {
-        Variable { value: value }
-    }
-}
-
-#[derive(Clone, Debug)]
-pub enum VariableValue {
-    String(String),
-    Number(f64),
-    Array(Vec<VariableValue>)
-}
-
-impl Ord for VariableValue {
-    fn cmp(&self, other: &VariableValue) -> Ordering {
-        match (self, other) {
-            (VariableValue::String(a), VariableValue::String(b)) => a.cmp(b),
-            (VariableValue::Number(a), VariableValue::Number(b)) => a.partial_cmp(b).unwrap(),
-            (VariableValue::Array(a), VariableValue::Array(b)) => a.cmp(b),
-            _ => panic!("Cannot compare different types")
-        }
-    }
-}
-
-impl PartialOrd for VariableValue {
-    fn partial_cmp(&self, other: &VariableValue) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl std::cmp::Eq for VariableValue {}
-
-impl PartialEq for VariableValue {
-    fn eq(&self, other: &VariableValue) -> bool {
-        match (self, other) {
-            (VariableValue::String(a), VariableValue::String(b)) => a == b,
-            (VariableValue::Number(a), VariableValue::Number(b)) => a == b,
-            (VariableValue::Array(a), VariableValue::Array(b)) => a == b,
-            _ => false
-        }
-    }
-}
-
-fn get_variable_string(variable_value: VariableValue) -> String {
-    match variable_value {
-        VariableValue::String(value) => {
-            return value;
-        },
-        VariableValue::Number(value) => {
-            return value.to_string();
-        },
-        VariableValue::Array(value) => {
-            let mut converted_value = "[".to_string();
-            for i in 0..value.len() {
-                converted_value.push_str(&(get_variable_string(value[i].clone())));
-                if i != (value.len()-1) {
-                    converted_value.push_str(", ");
-                }
-            }
-            converted_value.push_str("]");
-            return converted_value;
-        }
-    }
-}
-
-fn get_variable_number(variable_value: VariableValue) -> f64 {
-    match variable_value {
-        VariableValue::String(_value) => {
-            // TODO: Make this return the number in the string if possible.
-            return 0.0;
-        },
-        VariableValue::Number(value) => {
-            return value;
-        },
-        VariableValue::Array(_value) => {
-            return 0.0;
-        }
-    }
-}
-
-fn get_variable_vector(variable_value: VariableValue) -> Vec<VariableValue> {
-    match variable_value {
-        VariableValue::String(value) => {
-            return value.chars().map(|c| VariableValue::String(c.to_string())).collect();
-        },
-        VariableValue::Number(_value) => {
-            return Vec::new();
-        },
-        VariableValue::Array(value) => {
-            return value;
-        }
-    }
-}
-
 fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_execution: &mut bool, macro_: Macro) {
     for execution in code {
         if *stop_execution {
@@ -827,14 +733,6 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
             }
         }
     }
-}
-
-fn set_variable(variables: &mut Variables, variable: String, value: VariableValue) {
-    *variables.entry(variable).or_insert(Variable::new(value.clone())) = Variable::new(value.clone());
-}
-
-fn get_variable(variables: &mut Variables, variable: String) -> Option<&Variable> {
-    return variables.get(&variable);
 }
 
 fn get_log_path() -> Option<String> {

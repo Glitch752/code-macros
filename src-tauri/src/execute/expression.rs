@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 
-use super::{Variables, get_variable_number, get_variable, Variable, VariableValue};
+use super::{Variables};
+use super::variable::{Variable, get_variable, VariableValue, get_variable_number};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "type_")]
