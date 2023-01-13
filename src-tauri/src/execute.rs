@@ -1,26 +1,24 @@
+pub mod string_parser;
+
 use serde::{ Deserialize, Serialize };
-
-use std::{collections::HashMap, path::Path};
-
-use tauri::{api::notification::Notification, PathResolver, Manager, Window};
 
 static MAX_LOOP_ITERATIONS: u64 = 100000;
 
-use std::thread;
-
 use super::Macro;
-
+use super::get_app_handle;
 use super::initiators::Initiator;
 
-use super::get_app_handle;
-
 use tauri::AppHandle;
+use tauri::{api::notification::Notification, PathResolver, Manager, Window};
 
 use inputbot::{KeySequence, MouseCursor, KeybdKey, MouseButton, get_keybd_key};
 
 use std::fs;
-
+use std::thread;
 use std::cmp::Ordering;
+use std::{collections::HashMap, path::Path};
+
+use self::string_parser::parse_string;
 
 // TODO: REACTOR: Split this into multiple files for parsing conditions, executions, etc.
 
@@ -1061,51 +1059,6 @@ fn get_condition_number(value: Condition) -> f64 {
             return 0.0;
         }
     }
-}
-
-fn parse_string<'a>(string: &'a String, variables: &'a mut Variables) -> String {
-    let variable_split: Vec<&str> = string.split("{{").collect();
-    let mut result = String::from(variable_split[0]);
-    let mut index: u64 = 0;
-    for split in variable_split {
-        index += 1;
-        if index == 1 {
-            continue;
-        }
-        let halves: Vec<&str> = split.split("}}").collect();
-        let variable_name: String = halves[0].to_string();
-        let variable_value = get_variable(variables, variable_name);
-        result.push_str(&get_variable_string(
-            variable_value.unwrap_or(
-                &Variable::new(VariableValue::String("undefined".to_string()))
-            ).value.clone()
-        ));
-        if halves.len() > 1 {
-            result.push_str(&halves[1].to_string());
-        }
-    }
-
-    let characters: std::str::Chars = result.chars();
-
-    let mut skip: bool = false;
-
-    let mut index: usize= 0;
-    let mut characters_copy: Vec<char> = characters.clone().collect();
-    for character in characters {
-        if skip {
-            skip = false;
-            continue;
-        }
-        if character == '\\' {
-            characters_copy.remove(index);
-            skip = true;
-        }
-        index += 1;
-    }
-
-    result = characters_copy.into_iter().collect();
-
-    return result;
 }
 
 fn set_variable(variables: &mut Variables, variable: String, value: VariableValue) {
