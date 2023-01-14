@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri';
-import * as store from './store';
+import store from './store';
 
 export default function updateMacros() {
     store.get('macros', []).then((data) => {
@@ -43,9 +43,9 @@ function recursivelyReplaceKeys(object, replacements) {
 
 function ensureKeys(object, keys) {
     // Remove all keys that are not in the keys array and return null if there are keys not in the keys array.
-    let result = {};
+    const result = {};
     for(const key of keys) {
-        if(object.hasOwnProperty(key)) {
+        if(Object.prototype.hasOwnProperty.call(object, key)) {
             result[key] = object[key];
         } else {
             return null;

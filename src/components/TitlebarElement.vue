@@ -3,14 +3,15 @@
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
-  let router = useRouter();
+  const router = useRouter();
 
   onMounted(() => {
     window.addEventListener('resize', updateWindow);
     updateWindow();
   });
+  
   function updateWindow() {
-    let app = document.getElementById("app");
+    const app = document.getElementById("app");
     appWindow.isMaximized().then(maximized => {
       app.classList.toggle('maximized', maximized);
     });

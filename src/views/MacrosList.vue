@@ -1,5 +1,5 @@
 <script setup>
-    import * as store from '@/store';
+    import store from '@/store';
     import { ref } from 'vue';
 
     import { useRouter } from 'vue-router';

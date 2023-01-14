@@ -1,4 +1,4 @@
-use inputbot::{ KeybdKey };
+use inputbot::KeybdKey;
 
 use std::collections::HashMap;
 use std::sync::{ Arc, Mutex };
@@ -22,7 +22,7 @@ pub fn listen_initiator_keypress() {
         let mut remove = Vec::new();
         for key in keys_pressed.clone().keys() {
             if !KeybdKey::is_pressed(*key) {
-                if keys_pressed[key] == false {
+                if !keys_pressed[key] {
                     remove.push(*key);
                 } else {
                     *keys_pressed.get_mut(&event).unwrap() = false;

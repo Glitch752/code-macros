@@ -3,65 +3,27 @@
     import { ref } from "vue";
     import { useRouter } from "vue-router";
 
-    let router = useRouter();
+    const router = useRouter();
 
     async function getLog() {
         return new Promise(async (resolve, reject) => {
-            let data;
             try {
-                data = await readDataFile();
+                let data = await readDataFile();
+
+                if (data) resolve(data);
             } catch(e) {
-                console.error(e);
-            } finally {
-                if (data) {
-                    resolve(data);
-                } else {
-                    resolve("No log data");
-                }
+                resolve("No log data");
             }
         });
     }
 
-    // async function setLog(key, value) {
-    //     createDataFolder();
-    //     let data;
-    //     try {
-    //         data = JSON.parse(await readDataFile().catch(() => "{}"));
-    //     } catch(e) {} finally {
-    //         if(!data) data = {};
-    //         data[key] = value;
-    //         setFileData({...data});
-    //     }
-    // }
-
-    // const createDataFolder = async () => {
-    //     await createDir("CodeMacros", {
-    //         dir: BaseDirectory.Config,
-    //         recursive: true,
-    //     })
-    // };
-
-    // const setFileData = async (data) => {
-    //     return writeFile(
-    //         {
-    //             contents: JSON.stringify(data),
-    //             path: `CodeMacros/config.json`,
-    //         },
-    //         {
-    //             dir: BaseDirectory.Config,
-    //         }
-    //     );
-    // };
-
     const readDataFile = () => {
         return readTextFile("CodeMacros/Logs/log.txt", {
-            // TODO: Make this BaseDirectory.Log instead of BaseDirectory.Config because that's what Rust writes to. 
-            // For now, this works on Windows and Linux which are the target OSes.
             dir: BaseDirectory.Config
         })
     }
 
-    let logText = ref(null);
+    const logText = ref(null);
 
     setlog();
 

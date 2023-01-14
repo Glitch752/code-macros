@@ -1,31 +1,33 @@
 import { BaseDirectory, createDir, writeFile, readTextFile } from "@tauri-apps/api/fs";
 
-export async function get(key, defaultValue) {
+async function get(key, defaultValue) {
     return new Promise(async (resolve, reject) => {
-        let data;
         try {
-            data = JSON.parse(await readDataFile());
-        } catch(e) {} finally {
-            if (data) {
-                resolve(data[key] || defaultValue);
-            } else {
-                resolve(defaultValue);
-            }
+            let data = JSON.parse(await readDataFile());
+            
+            if (data) resolve(data[key] && defaultValue);
+        } catch(e) {
+            resolve(defaultValue);
         }
     });
 }
 
-export async function set(key, value) {
+async function set(key, value) {
     createDataFolder();
-    let data;
     try {
-        data = JSON.parse(await readDataFile().catch(() => "{}"));
-    } catch(e) {} finally {
-        if(!data) data = {};
+        let data = JSON.parse(await readDataFile().catch(() => "{}"));
+        
         data[key] = value;
         setFileData({...data});
+    } catch(e) {
+        setFileData({
+            [key]: value
+        });
     }
 }
+
+// So we can use names like store.get and store.set, which looks cleaner.
+export default { get, set }
 
 const createDataFolder = async () => {
     await createDir("CodeMacros", {

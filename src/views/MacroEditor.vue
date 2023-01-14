@@ -1,5 +1,5 @@
 <script setup>
-  import * as store from '@/store';
+  import store from '@/store';
   import { ref, onUnmounted } from 'vue';
   import MacroCreator from '@/components/MacroCreator.vue';
   import DraggingCode from '@/components/DraggingCode.vue'
@@ -30,7 +30,6 @@
     macrosLoaded.value = true;
 
     selectedMacro.value = macros.value[selectedMacroIndex];
-    console.log(selectedMacro.value);
   });
 
   function setMacro(macro) {

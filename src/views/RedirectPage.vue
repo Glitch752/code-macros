@@ -1,8 +1,8 @@
 <script setup>
-  import * as store from '@/store';
+  import store from '@/store';
   import { useRouter } from 'vue-router';
 
-  let router = useRouter();
+  const router = useRouter();
 
   store.get("userWelcomed", false).then(value => {
     if(value) {

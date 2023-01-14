@@ -25,10 +25,10 @@ pub enum Condition {
 
 pub fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> Condition {
     match condition {
-        Condition::Boolean { value: _ } => {
+        Condition::Boolean { .. } => {
             return condition.clone();
         },
-        Condition::Number { value: _ } => {
+        Condition::Number { .. } => {
             return condition.clone();
         },
         Condition::Comparison { left, comparison, right } => {
@@ -53,7 +53,7 @@ pub fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> C
                 "!==" => {
                     return Condition::Boolean{ value: left_result != right_result };
                 },
-                _ => todo!()
+                _ => unimplemented!()
             }
         },
         Condition::Logical { left, kind, right } => {
@@ -69,7 +69,7 @@ pub fn evaluate_condition(condition: &Condition, variables: &mut Variables) -> C
                 "not" => {
                     return Condition::Boolean{ value: !right_result };
                 },
-                _ => todo!()
+                _ => unimplemented!()
             }
         },
         Condition::Variable { variable } => {
@@ -91,11 +91,8 @@ pub fn get_condition_bool(value: Condition) -> bool {
             return value;
         },
         Condition::Number { value } => {
-            if value == 0.0 {
-                return false;
-            } else {
-                return true;
-            }
+            // 0.0 is false, everything else is true.
+            return value != 0.0;
         },
         _ => {
             return false;

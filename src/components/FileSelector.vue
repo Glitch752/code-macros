@@ -9,20 +9,21 @@
     const emit = defineEmits(["selected"]);
 
     async function selectFile() {
-        let selected = await open({
+        const selected = await open({
             multiple: false,
             filters: [{
                 name: filterName.value,
                 extensions: filterExtensions.value
             }]
         });
+        
         if (selected === null) {
             return;
-        } else {
-            emit("selected", {
-                path: selected
-            });
         }
+
+        emit("selected", {
+            path: selected
+        });
     }
 </script>
 

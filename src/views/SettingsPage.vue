@@ -1,12 +1,12 @@
 <script setup>
   import { ref } from 'vue';
   import { useRouter } from "vue-router";
-  import * as store from '@/store';
+  import store from '@/store';
   import { selectTheme } from "@/utils";
 
-  let router = useRouter();
+  const router = useRouter();
 
-  let theme = ref(null);
+  const theme = ref(null);
 
   store.get("theme", "darkTheme").then((value) => {
     theme.value = value;

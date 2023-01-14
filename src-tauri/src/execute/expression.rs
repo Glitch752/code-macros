@@ -34,7 +34,7 @@ pub fn get_expression_number(value: Expression) -> f64 {
 
 pub fn evaluate_expression(expression: &Expression, variables: &mut Variables) -> Expression {
     match expression {
-        Expression::Number { value: _ } => {
+        Expression::Number { .. } => {
             return expression.clone();
         },
         Expression::Variable { variable } => {
@@ -64,7 +64,7 @@ pub fn evaluate_expression(expression: &Expression, variables: &mut Variables) -
                 "exponent" => {
                     return Expression::Number{ value: left_result.powf(right_result) };
                 },
-                _ => todo!()
+                _ => unimplemented!()
             }
         },
         Expression::Bitwise { left, kind, right } => {
@@ -89,7 +89,7 @@ pub fn evaluate_expression(expression: &Expression, variables: &mut Variables) -
                 "signrightshift" => {
                     return Expression::Number{ value: (left_result >> right_result) as f64 };
                 },
-                _ => todo!()
+                _ => unimplemented!()
             }
         }
     }

@@ -12,14 +12,14 @@ export default [
       { name: "Then", value: "then", description: "The code to execute if the condition is true.", },
       { name: "Else", value: "else", description: "The code to execute if the condition is false.", },
     ], contentText: (parameters, parsers) => {
-      return [`If`, ...parsers.parseCondition(parameters["condition"])];
+      return [`If`, ...parsers.parseCondition(parameters.condition)];
     },
   },
   {
     name: "Function call", value: "function", description: "Executes the code inside the function it calls.", parameters: [
       { name: "Function", value: "function", type: "function", description: "The function to call." },
     ], contentText: (parameters, parsers) => {
-      return [`Call the function`, {type: "string", string: parameters["function"]}];
+      return [`Call the function`, {type: "string", string: parameters.function}];
     },
   },
   {
@@ -34,7 +34,7 @@ export default [
     variables: [
       { name: "Value", value: "value", description: "The current value the loop is on.", },
     ], contentText: (parameters) => {
-      return `Repeat from ${parameters["start"]} to ${parameters["end"]} by increments of ${parameters["step"]}`;
+      return `Repeat from ${parameters.start} to ${parameters.end} by increments of ${parameters.step}`;
     },
   },
   {
@@ -52,7 +52,7 @@ export default [
     variables: [
       { name: "Iteration", value: "iteration", description: "The current iteration the loop is on.", },
     ], contentText: (parameters, parsers) => {
-      return [`Repeat while`, ...parsers.parseCondition(parameters["condition"])];
+      return [`Repeat while`, ...parsers.parseCondition(parameters.condition)];
     },
   },
   {
@@ -96,13 +96,13 @@ export default [
     { name: "X", value: "x", description: "How much to move the mouse horizontally", type: "number", defaultValue: 0, },
     { name: "Y", value: "y", description: "How much to move the mouse vertically", type: "number", defaultValue: 0, },
   ], contentText: (parameters) => {
-    return `Move the mouse by (${parameters["x"]}, ${parameters["y"]})`;
+    return `Move the mouse by (${parameters.x}, ${parameters.y})`;
   }},
   { name: "Move mouse absolute", value: "movemouseabsolute", description: "Move the mouse to a position on the screen.", parameters: [
     { name: "X", value: "x", description: "The horizontal position of the mouse", type: "number", defaultValue: 0, },
     { name: "Y", value: "y", description: "The vertical position of the mouse", type: "number", defaultValue: 0, },
   ], contentText: (parameters) => {
-    return `Move the mouse to (${parameters["x"]}, ${parameters["y"]})`;
+    return `Move the mouse to (${parameters.x}, ${parameters.y})`;
   }},
   { name: "Press key", value: "presskey", description: "Start pressing a key.", parameters: [
     { name: "Key", value: "key", description: "The key to press", type: "string", defaultValue: 0, }
@@ -197,7 +197,7 @@ export default [
   variables: [
     { name: "Item", value: "item", description: "The item at the current index of the array.", },
   ], contentText: (parameters) => {
-    return `Repeat from ${parameters["start"]} to ${parameters["end"]} by increments of ${parameters["step"]}`;
+    return `Repeat from ${parameters.start} to ${parameters.end} by increments of ${parameters.step}`;
   }},
   { name: "Get item from array", value: "getarrayindex", description: "Get the item at a certain index from the array. Arrays are 0-indexed.", parameters: [
     { name: "Array", value: "array", description: "The array to get an item from", type: "string", defaultValue: "myArray" },
@@ -231,7 +231,6 @@ export default [
   { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: (parameters) => {
     return ``;
   }},
-  // TODO: Make it so code groups can be layered in each other so string manipulation can be a part of variables
   { name: "Split string", value: "splitstring", description: "Split a string into an array of strings.", parameters: [
     { name: "String", value: "string", description: "The string to split", type: "string", defaultValue: "Hello world!" },
     { name: "Splitter", value: "splitter", description: "The string to split the string by", type: "string", defaultValue: " " },

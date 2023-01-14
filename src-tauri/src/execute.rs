@@ -420,7 +420,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         value_variable = Some(variable.name.clone());
                     }
                 }
-                let variable_name: String = value_variable.unwrap_or("".to_string());
+                let variable_name: String = value_variable.unwrap_or_else(|| { "".to_string() });
 
                 if data.end > data.start {
                     while i <= data.end {
@@ -451,7 +451,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         value_variable = Some(variable.name.clone());
                     }
                 }
-                let variable_name: String = value_variable.unwrap_or("".to_string());
+                let variable_name: String = value_variable.unwrap_or_else(|| { "".to_string() });
 
                 let mut i: u64 = 0;
 
@@ -501,7 +501,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 MouseCursor::move_abs(data.x.round() as i32, data.y.round() as i32);
             }
             Execution::PressKey { data } => {
-                let key_char: char = data.key.chars().nth(0).unwrap();
+                let key_char: char = data.key.chars().next().unwrap();
 
                 // Check if the key pressed requires shift to be held
                 if key_char.is_uppercase() || [ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?', '~' ].contains(&key_char) {
@@ -518,7 +518,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 }
             }
             Execution::ReleaseKey { data } => {
-                let key_char: char = data.key.chars().nth(0).unwrap();
+                let key_char: char = data.key.chars().next().unwrap();
 
                 // Check if the key pressed requires shift to be held
                 if key_char.is_uppercase() || [ '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?', '~' ].contains(&key_char) {
@@ -542,7 +542,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     "RMB" => {
                         MouseButton::RightButton.press();
                     }
-                    _ => todo!()
+                    _ => unimplemented!()
                 }
             }
             Execution::ReleaseMouse { data } => {
@@ -553,11 +553,11 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                     "RMB" => {
                         MouseButton::RightButton.release();
                     }
-                    _ => todo!()
+                    _ => unimplemented!()
                 }
             }
             Execution::ReadFile { data } => {
-                let file_contents: String = fs::read_to_string(&data.file).unwrap_or("".to_string());
+                let file_contents: String = fs::read_to_string(&data.file).unwrap_or_else(|_| { "".to_string() });
 
                 set_variable(variables, data.variable.to_string().clone(), VariableValue::String(file_contents));
             }
@@ -632,7 +632,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         value_variable = Some(variable.name.clone());
                     }
                 }
-                let variable_name: String = value_variable.unwrap_or("".to_string());
+                let variable_name: String = value_variable.unwrap_or_else(|| { "".to_string() });
 
                 for (_index, value) in list_content.iter().enumerate() {
                     set_variable(variables, variable_name.clone(), value.clone());
@@ -655,7 +655,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 let new_value: Option<&Variable> = get_variable(variables, data.data.to_string().clone());
 
                 let mut new_list_content: Vec<VariableValue> = list_content.clone();
-                new_list_content[data.index as usize] = new_value.unwrap_or(&Variable::new(VariableValue::Number(0.0))).value.clone();
+                new_list_content[data.index as usize].clone_from(&new_value.unwrap_or(&Variable::new(VariableValue::Number(0.0))).value);
 
                 set_variable(variables, data.array.to_string().clone(), VariableValue::Array(new_list_content));
             }
@@ -770,7 +770,7 @@ fn get_log_content() -> Option<String> {
 
     match log_path {
         Some(log_path) => {
-            let content: String = fs::read_to_string(log_path).unwrap_or(String::from(""));
+            let content: String = fs::read_to_string(log_path).unwrap_or_else(|_| { String::from("") });
             return Some(content);
         }
         None => {

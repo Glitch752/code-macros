@@ -4,7 +4,7 @@ use tauri::{ CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem, Sys
 
 use std::thread;
 
-use std::sync::{ Mutex };
+use std::sync::Mutex;
 use once_cell::sync::Lazy;
 
 static MACROS: Lazy<Mutex<Macros>> = Lazy::new(|| Mutex::new(Macros::new()));
@@ -64,22 +64,19 @@ fn main() {
             )
         )
         .on_system_tray_event(|app, event| {
-            match event {
-                SystemTrayEvent::MenuItemClick { id, .. } => {
-                    // let item_handle = app.tray_handle().get_item(&id);
-                    match id.as_str() {
-                        "quit" => {
-                            let window = app.get_window("main").unwrap();
-                            window.close().unwrap();
-                        }
-                        "open" => {
-                            let window = app.get_window("main").unwrap();
-                            window.show().unwrap();
-                        }
-                        _ => {}
+            if let SystemTrayEvent::MenuItemClick { id, .. } = event {
+                // let item_handle = app.tray_handle().get_item(&id);
+                match id.as_str() {
+                    "quit" => {
+                        let window = app.get_window("main").unwrap();
+                        window.close().unwrap();
                     }
+                    "open" => {
+                        let window = app.get_window("main").unwrap();
+                        window.show().unwrap();
+                    }
+                    _ => {}
                 }
-                _ => {}
             }
         })
         .run(tauri::generate_context!())
