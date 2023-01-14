@@ -18,7 +18,7 @@ export default [
   {
     name: "Function call", value: "function", description: "Executes the code inside the function it calls.", parameters: [
       { name: "Function", value: "function", type: "function", description: "The function to call." },
-    ], contentText: (parameters, parsers) => {
+    ], contentText: (parameters) => {
       return [`Call the function`, {type: "string", string: parameters.function}];
     },
   },
@@ -66,7 +66,7 @@ export default [
   {
     name: "Wait", value: "wait", description: "Waits for a certain amount of time.", parameters: [
       { name: "Time", value: "time", description: "The amount of time to wait, in miliseconds.", type: "number", defaultValue: 10, },
-    ], contentText: (parameters, parsers) => {
+    ], contentText: (parameters) => {
       return [`Wait for`, parameters.time, `second${parameters.time === 1 ? "" : "s"}`];
     },
   },
@@ -88,7 +88,7 @@ export default [
       return [`Type the string`, {type: "string", string: parameters.string}];
     },
   },
-  { name: "Stop", value: "stop", description: "Stops the macro.", parameters: [], contentText: (parameters) => {
+  { name: "Stop", value: "stop", description: "Stops the macro.", parameters: [], contentText: () => {
       return ``;
     },
   },
@@ -228,7 +228,7 @@ export default [
   ], contentText: (parameters) => {
     return [`Log the message`, { type: "string", string: parameters.message }];
   }},
-  { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: (parameters) => {
+  { name: "Clear log", value: "clearlog", description: "Clear the log.", parameters: [], contentText: () => {
     return ``;
   }},
   { name: "Split string", value: "splitstring", description: "Split a string into an array of strings.", parameters: [

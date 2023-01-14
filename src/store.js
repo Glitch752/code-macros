@@ -1,21 +1,21 @@
 import { BaseDirectory, createDir, writeFile, readTextFile } from "@tauri-apps/api/fs";
 
 async function get(key, defaultValue) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let data = JSON.parse(await readDataFile());
-            
-            if (data) resolve(data[key] && defaultValue);
-        } catch(e) {
-            resolve(defaultValue);
-        }
-    });
+    try {
+        const data = JSON.parse(await readDataFile());
+        
+        if (data) return data[key] ?? defaultValue;
+    } catch(e) {
+        return defaultValue;
+    }
+
+    return defaultValue;
 }
 
 async function set(key, value) {
     createDataFolder();
     try {
-        let data = JSON.parse(await readDataFile().catch(() => "{}"));
+        const data = JSON.parse(await readDataFile().catch(() => "{}"));
         
         data[key] = value;
         setFileData({...data});

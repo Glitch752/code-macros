@@ -39,7 +39,7 @@ pub fn listen_initiator_cron() {
     let mut runner: Runner = Runner::new();
 
     for macro_ in macros {
-        let initiators: Vec<Initiator> =  macro_.clone().macro_.initiators.unwrap_or_else(|| { vec![] });
+        let initiators: Vec<Initiator> =  macro_.clone().macro_.initiators.unwrap_or_else(|| vec![]);
         for initiator in initiators {
             if initiator.type_ == "time" {
                 runner = runner.add(Box::new(ExampleJob::new(

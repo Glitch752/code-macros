@@ -1,20 +1,20 @@
 <script setup>
-    import { BaseDirectory, createDir, writeFile, readTextFile } from "@tauri-apps/api/fs";
+    import { BaseDirectory, readTextFile } from "@tauri-apps/api/fs";
     import { ref } from "vue";
     import { useRouter } from "vue-router";
 
     const router = useRouter();
 
     async function getLog() {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let data = await readDataFile();
+        try {
+            const data = await readDataFile();
 
-                if (data) resolve(data);
-            } catch(e) {
-                resolve("No log data");
-            }
-        });
+            if (data) return data;
+        } catch(e) {
+            return "No log data";
+        }
+
+        return "No log data";
     }
 
     const readDataFile = () => {

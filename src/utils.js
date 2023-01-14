@@ -61,8 +61,8 @@ export function selectTheme(e) {
 
 export function loadTheme(theme = null) {
     if(theme === null) {
-        store.get("theme", "darkTheme").then((theme) => {
-            loadTheme(theme);
+        store.get("theme", "darkTheme").then((currentTheme) => {
+            loadTheme(currentTheme);
         });
     } else {
         document.body.className = "";

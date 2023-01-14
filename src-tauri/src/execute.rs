@@ -420,7 +420,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         value_variable = Some(variable.name.clone());
                     }
                 }
-                let variable_name: String = value_variable.unwrap_or_else(|| { "".to_string() });
+                let variable_name: String = value_variable.unwrap_or_else(|| "".to_string());
 
                 if data.end > data.start {
                     while i <= data.end {
@@ -451,7 +451,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         value_variable = Some(variable.name.clone());
                     }
                 }
-                let variable_name: String = value_variable.unwrap_or_else(|| { "".to_string() });
+                let variable_name: String = value_variable.unwrap_or_else(|| "".to_string());
 
                 let mut i: u64 = 0;
 
@@ -557,7 +557,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 }
             }
             Execution::ReadFile { data } => {
-                let file_contents: String = fs::read_to_string(&data.file).unwrap_or_else(|_| { "".to_string() });
+                let file_contents: String = fs::read_to_string(&data.file).unwrap_or_else(|_| "".to_string());
 
                 set_variable(variables, data.variable.to_string().clone(), VariableValue::String(file_contents));
             }
@@ -570,7 +570,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                 fs::remove_file(&data.file).unwrap();
             }
             Execution::CreateFolder { data } => {
-                fs::create_dir(&data.path).unwrap();
+                fs::create_dir_all(&data.path).unwrap();
             }
             Execution::DeleteFolder { data } => {
                 fs::remove_dir(&data.path).unwrap();
@@ -632,7 +632,7 @@ fn execute_macro_code(code: &Vec<Execution>, variables: &mut Variables, stop_exe
                         value_variable = Some(variable.name.clone());
                     }
                 }
-                let variable_name: String = value_variable.unwrap_or_else(|| { "".to_string() });
+                let variable_name: String = value_variable.unwrap_or_else(|| "".to_string());
 
                 for (_index, value) in list_content.iter().enumerate() {
                     set_variable(variables, variable_name.clone(), value.clone());
@@ -770,7 +770,7 @@ fn get_log_content() -> Option<String> {
 
     match log_path {
         Some(log_path) => {
-            let content: String = fs::read_to_string(log_path).unwrap_or_else(|_| { String::from("") });
+            let content: String = fs::read_to_string(log_path).unwrap_or_else(|_| String::from(""));
             return Some(content);
         }
         None => {
